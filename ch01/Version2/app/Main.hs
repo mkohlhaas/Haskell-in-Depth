@@ -1,24 +1,26 @@
-import Data.Char
-import Data.List (sort, group)
+import Data.Char (isLetter)
+import Data.Function ((&))
+import Data.List (group, sort)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import System.Environment
+import System.Environment (getArgs)
 
 type Entry = (T.Text, Int)
+
 type Vocabulary = [Entry]
 
 extractVocab :: T.Text -> Vocabulary
-extractVocab t = map buildEntry $ group $ sort ws
+extractVocab text = ws & sort & group & map buildEntry
   where
-    ws = map T.toCaseFold $ filter (not . T.null) $ map cleanWord $ T.words t
-    buildEntry xs@(x:_) = (x, length xs)
+    ws = text & T.words & map cleanWord & filter (not . T.null) & map T.toCaseFold
     buildEntry [] = error "unexpected"
+    buildEntry xs@(x : _) = (x, length xs)
     cleanWord = T.dropAround (not . isLetter)
 
 printAllWords :: Vocabulary -> IO ()
 printAllWords vocab = do
   putStrLn "All words: "
-  TIO.putStrLn $ T.unlines $ map fst vocab
+  vocab & map fst & T.unlines & TIO.putStrLn
 
 processTextFile :: FilePath -> IO ()
 processTextFile fname = do
