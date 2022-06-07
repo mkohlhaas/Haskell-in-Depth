@@ -10,4 +10,3 @@ main :: IO ()
 main = do
   print homer
   print spj
-

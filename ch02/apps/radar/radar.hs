@@ -1,12 +1,12 @@
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE StandaloneDeriving #-}
 
-import Radar
-
-import System.Environment (getArgs)
 import Fmt
+import Radar
+import System.Environment (getArgs)
 
 deriving instance Read Direction
+
 deriving instance Read Turn
 
 instance Buildable Direction where
@@ -27,7 +27,7 @@ rotateFromFile dir fname = do
   let turns = map read $ lines f
       finalDir = rotateMany dir turns
       dirs = rotateManySteps dir turns
-  fmtLn $ "Final direction: "+||finalDir||+""
+  fmtLn $ "Final direction: " +|| finalDir ||+ ""
   fmt $ nameF "Intermediate directions" (unwordsF dirs)
 
 orientFromFile :: FilePath -> IO ()
@@ -42,5 +42,5 @@ main = do
   case args of
     ["-r", fname, dir] -> rotateFromFile (read dir) fname
     ["-o", fname] -> orientFromFile fname
-    _ -> putStrLn $ "Usage: locator -o filename\n" ++
-                    "       locator -r filename direction"
+    _ -> putStrLn $ "Usage: locator -o filename\n"
+                 ++ "       locator -r filename direction"

@@ -4,7 +4,11 @@ module Person where
 
 import Data.String
 
-data Person = Person String (Maybe Int)
+type Age = Int
+
+type Name = String
+
+data Person = Person Name (Maybe Age)
 
 instance IsString Person where
   fromString name = Person name Nothing

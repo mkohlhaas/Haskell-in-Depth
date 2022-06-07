@@ -45,7 +45,7 @@ rotateMany' :: Direction -> [Turn] -> Direction
 rotateMany' dir ts = rotate (mconcat ts) dir
 
 rotateManySteps :: Direction -> [Turn] -> [Direction]
-rotateManySteps= scanl (flip rotate)
+rotateManySteps = scanl (flip rotate)
 
 every :: (Enum a, Bounded a) => [a]
 every = enumFrom minBound
@@ -54,5 +54,5 @@ orient :: Direction -> Direction -> Turn
 orient d1 d2 = head $ filter (\t -> rotate t d1 == d2) every
 
 orientMany :: [Direction] -> [Turn]
-orientMany ds@(_:_:_) = zipWith orient ds (tail ds)
+orientMany ds@(_ : _ : _) = zipWith orient ds (tail ds)
 orientMany _ = []

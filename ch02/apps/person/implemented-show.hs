@@ -1,5 +1,3 @@
-{-# LANGUAGE StandaloneDeriving #-}
-
 import Person
 
 instance Show Person where
