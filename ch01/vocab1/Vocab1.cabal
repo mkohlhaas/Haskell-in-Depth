@@ -1,10 +1,10 @@
 cabal-version:      2.4
-name:               Version2
+name:               Vocab1
 version:            0.1.0.0
 author:             Michael Kohlhaas
 maintainer:         michael.kohlhaas@chammy.info
 
-executable Version2
+executable vocab
     main-is:          Main.hs
     build-depends:    base ^>=4.14.3.0
                      ,text
