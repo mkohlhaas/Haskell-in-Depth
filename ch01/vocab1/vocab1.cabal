@@ -1,5 +1,5 @@
 cabal-version:      2.4
-name:               Vocab1
+name:               vocab1
 version:            0.1.0.0
 author:             Michael Kohlhaas
 maintainer:         michael.kohlhaas@chammy.info
