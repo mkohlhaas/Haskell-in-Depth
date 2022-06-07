@@ -5,9 +5,7 @@ module Person where
 import Data.String
 
 type Age = Int
-
 type Name = String
-
 data Person = Person Name (Maybe Age)
 
 instance IsString Person where

@@ -3,10 +3,9 @@
 
 import Fmt
 import Radar
-import System.Environment (getArgs)
+import System.Environment (getArgs, getProgName)
 
 deriving instance Read Direction
-
 deriving instance Read Turn
 
 instance Buildable Direction where
@@ -42,5 +41,7 @@ main = do
   case args of
     ["-r", fname, dir] -> rotateFromFile (read dir) fname
     ["-o", fname] -> orientFromFile fname
-    _ -> putStrLn $ "Usage: locator -o filename\n"
-                 ++ "       locator -r filename direction"
+    _ -> do
+      progName <- getProgName
+      putStrLn $ "Usage: " ++ progName ++ " -o filename\n"
+              ++ "       " ++ progName ++ " -r filename direction"
