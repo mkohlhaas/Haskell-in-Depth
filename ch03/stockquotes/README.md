@@ -19,8 +19,8 @@ dot -Tsvg modules.dot > modules.svg
 #### Run examples
 ```
 cabal run stockquotes -- -h
-cabal run stockquotes -- ../data/quotes.csv
-cabal run stockquotes -- ../data/quotes.csv -n Example -c --html Example.html
+cabal run stockquotes -- ../../data/quotes.csv
+cabal run stockquotes -- ../../data/quotes.csv -n Example -c --html Example.html
 xdg-open chart_Example.svg
 xdg-open Example.html
 ```
