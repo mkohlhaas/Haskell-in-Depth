@@ -9,7 +9,7 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Fmt (blockListF', fmt, nameF, unlinesF, (+|), (|+))
-import System.Environment (getArgs)
+import System.Environment (getArgs, getProgName)
 
 type Entry = (Text, Int)
 
@@ -60,4 +60,6 @@ main = do
   case args of
     ["-a", fname, num] -> processTextFile fname True (read num)
     [fname, num] -> processTextFile fname False (read num)
-    _ -> putStrLn "Usage: vocab3 [-a] filename freq_words_num"
+    _ -> do
+      progName <- getProgName
+      putStrLn $ "Usage: " ++ progName ++ " [-a] filename freq_words_num"
