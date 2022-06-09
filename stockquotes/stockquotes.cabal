@@ -1,8 +1,8 @@
-cabal-version:      2.4
-name:               stockquotes
-version:            0.1.0.0
-maintainer:         michael.kohlhaas@chammy.info
-author:             Michael Kohlhaas
+cabal-version: 2.4
+name:          stockquotes
+version:       0.1.0.0
+maintainer:    michael.kohlhaas@chammy.info
+author:        Michael Kohlhaas
 
 executable stockquotes
     main-is:          Main.hs
@@ -16,15 +16,15 @@ executable stockquotes
 
     default-language: Haskell2010
     build-depends:
-        Chart >=1.8 && <1.10,
-        Chart-diagrams >=1.8 && <1.10,
         base >=4.14.3.0 && <4.15,
         blaze-colonnade >=1.1 && <1.3,
-        blaze-html >=0.9 && <0.10,
-        bytestring >=0.10 && <0.11,
-        cassava >=0.5 && <0.6,
+        blaze-html ==0.9.*,
+        bytestring ==0.10.*,
+        cassava ==0.5.*,
+        Chart >=1.8 && <1.10,
+        Chart-diagrams >=1.8 && <1.10,
         colonnade >=1.1 && <1.3,
         fmt >=0.5 && <0.7,
         optparse-applicative >=0.14 && <0.16,
-        text >=1.2 && <1.3,
+        text ==1.2.*,
         time >=1.8 && <1.11
