@@ -3,7 +3,7 @@ import Data.Function ((&))
 import Data.List (group, sort)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import System.Environment (getArgs)
+import System.Environment (getArgs, getProgName)
 
 type Entry = (T.Text, Int)
 
@@ -33,4 +33,6 @@ main = do
   args <- getArgs
   case args of
     [fname] -> processTextFile fname
-    _ -> putStrLn "Usage: vocab2 filename"
+    _ -> do
+      progName <- getProgName
+      putStrLn $ "Usage: " ++ progName ++ " filename"
