@@ -1,21 +1,21 @@
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
 
 module QuoteData where
 
-import Data.Time (Day, parseTimeM, defaultTimeLocale)
 import Data.ByteString.Char8 (unpack)
+import Data.Csv (FromField (..), FromNamedRecord)
+import Data.Time (Day, defaultTimeLocale, parseTimeM)
 import GHC.Generics (Generic)
-import Data.Csv (FromNamedRecord, FromField (..))
 
-data QuoteData = QuoteData {
-                   day :: Day,
-                   volume :: Int,
-                   open :: Double,
-                   close :: Double,
-                   high :: Double,
-                   low :: Double
-                 }
+data QuoteData = QuoteData
+  { day :: Day,
+    volume :: Int,
+    open :: Double,
+    close :: Double,
+    high :: Double,
+    low :: Double
+  }
   deriving (Generic, FromNamedRecord)
 
 instance FromField Day where
