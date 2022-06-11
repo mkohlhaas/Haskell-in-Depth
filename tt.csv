@@ -1,4 +1,4 @@
-Chapter,Date,Actual,Status
+Chapter,Planned Date,Actual Date,Status
 3,10.06.2022,10.06.2022,✓
 4,12.06.2022,,✗
 5,14.06.2022,,✗
@@ -7,5 +7,4 @@ Chapter,Date,Actual,Status
 8,23.06.2022,,✗
 9,26.06.2022,,✗
 10,28.06.2022,,✗
-Order,FPGA Board,,✗
 11-16,10 p./day,End of July,✗
