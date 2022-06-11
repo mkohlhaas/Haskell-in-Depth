@@ -24,3 +24,20 @@ cabal run stockquotes -- ../../data/quotes.csv -n Example -c --html Example.html
 xdg-open chart_Example.svg
 xdg-open Example.html
 ```
+
+#### Test in REPL
+```
+cabal repl stockquotes
+ghci> quotes <- readQuotes "../../data/quotes.csv
+ghci> day $ head quotes
+ghci> field2fun High $ last quotes
+ghci> field2fun Volume $ last quotes
+ghci> plotChart "Sample quotes" quotes "chart.svg"
+ghci> si = statInfo quotes
+ghci> import Fmt
+ghci> pretty $ unlinesF si
+ghci> putStr $ textReport $ statInfo quotes
+ghci> readQuotes "data/quotes.csv" >>= putStr . textReport . statInfo
+ghci> import Text.Blaze.Colonnade
+ghci> printCompactHtml (encodeHtmlTable mempty colStats si)
+```

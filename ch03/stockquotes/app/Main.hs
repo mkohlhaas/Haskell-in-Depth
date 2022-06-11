@@ -39,12 +39,13 @@ work params = do
     Left err -> putStrLn err
     Right (_, quotes) -> generateReports params quotes
 
--- readQuotes :: FilePath -> IO [QuoteData]
--- readQuotes fpath = do
---   csvData <- BL.readFile fpath
---   case decodeByName csvData of
---     Left err -> error err
---     Right (_, quotes) -> pure (toList quotes)
+-- for use in the repl
+readQuotes :: FilePath -> IO [QuoteData]
+readQuotes fpath = do
+  csvData <- BL.readFile fpath
+  case decodeByName csvData of
+    Left err -> error err
+    Right (_, quotes) -> pure (toList quotes)
 
 main :: IO ()
 main = cmdLineParser >>= work

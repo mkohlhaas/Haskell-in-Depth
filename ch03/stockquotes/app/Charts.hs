@@ -9,7 +9,7 @@ import QuoteData
 
 plotChart :: Foldable t => String -> t QuoteData -> FilePath -> IO ()
 plotChart title quotes fname = do
-    _ <- renderableToFile fileOptions fname (toRenderable chart)
+    _ <- renderableToFile fileOptions fname $ toRenderable chart
     pure ()
   where
     fileOptions = FileOptions (800, 600) SVG loadSansSerifFonts
@@ -58,7 +58,7 @@ plotChart title quotes fname = do
      $ plot_bars_item_styles .~ [(fillStyle color, Nothing)]
      $ def
 
-    fillStyle color = solidFillStyle (opaque color)
+    fillStyle color = solidFillStyle $ opaque color
 
     lineStyle n color =
        line_width .~ n

@@ -27,6 +27,7 @@ data StatValue = StatValue
     value :: Double
   }
 
+-- statistics for one field
 data StatEntry = StatEntry
   { qfield :: QField,
     meanVal :: StatValue,
@@ -64,6 +65,7 @@ statInfo quotes = fmap qFieldStatInfo [minBound .. maxBound]
 instance Buildable StatValue where
   build sv = fixedF (decimalPlaces sv) (value sv)
 
+-- for use in the REPL
 instance Buildable StatEntry where
   build StatEntry {..} =
     "" +|| qfield ||+ ": "
@@ -81,7 +83,7 @@ textReport = ascii colStats
           headed "Mean" (pretty . meanVal),
           headed "Min" (pretty . minVal),
           headed "Max" (pretty . maxVal),
-          headed "Days between Min/Max" (pretty . daysBetweenMinMax)
+          headed "Days btw. Min/Max" (pretty . daysBetweenMinMax)
         ]
 
 showPrice :: Double -> Builder

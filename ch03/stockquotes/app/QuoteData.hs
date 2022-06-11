@@ -16,7 +16,7 @@ data QuoteData = QuoteData
     high :: Double,
     low :: Double
   }
-  deriving (Generic, FromNamedRecord)
+  deriving (Generic, FromNamedRecord, Show)
 
 instance FromField Day where
   parseField = parseTimeM True defaultTimeLocale "%Y-%m-%d" . unpack
