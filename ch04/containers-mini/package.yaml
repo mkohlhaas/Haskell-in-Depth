@@ -1,0 +1,35 @@
+name:       containers-mini
+version:    0.1.0.0
+maintainer: michael.kohlhaas@chammy.info
+author:     Michael Kohlhaas
+
+dependencies:
+  - base >=4.14.3.0 && <4.15,
+  - containers ==0.6.*
+
+library:
+  exposed-modules:
+    - Data.Stack
+    - Data.Deque
+    - Data.Queue
+  other-modules: []
+  other-extensions: NoImplicitPrelude
+
+tests:
+  stack:
+    main: TestStack.hs
+    other-modules: Data.Stack
+  queue:
+    main: TestQueue.hs
+    other-modules:
+      - Data.Queue
+      - Data.Deque
+
+benchmarks:
+  bench:
+    main: Bench.hs
+    other-modules:
+      - Data.Stack
+      - Data.Deque
+    dependencies:
+      - timeit ==2.0.*
