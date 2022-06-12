@@ -1,8 +1,8 @@
-Import the whole module.
-Import only specific names from the module by listing them in parentheses after the module name.
-Import no names at all with an empty list of names (note that this imports all the instances because they have no names in Haskell).
-Import names with optional or mandatory qualification with an alias ( as) or a full module name to avoid name clashes.
-Import all names except those listed after the hiding keyword.
+Import the whole module, `import Data.List`
+Import only specific names from the module by listing them in parentheses after the module name, `import Data.Char (toLower, toUpper)`
+Import no names at all with an empty list of names (note that this IMPORTS ALL THE INSTANCES because they have no names in Haskell), `import Data.Char ()`
+Import names with optional or mandatory qualification with an alias (`as`) or a full module name to avoid name clashes, `import qualified MyModuleWithAVeryLongModuleName as Shorty`,  `import qualified MyModule`
+Import all names except those listed after the hiding keyword. `import Data.Char hiding (toLower, toUpper)`
 
 Remember also that instances of type classes are always exported.
 The module name can be hierarchical, with components separated by dots (e.g., Graphics.Rendering.Chart.Backend.Cairo). The Haskell Report does not set out a meaning for this hierarchy, ALTHOUGH EXISTING IMPLEMENTATIONS normally use it as an instruction for finding module source code files in subdirectories.
