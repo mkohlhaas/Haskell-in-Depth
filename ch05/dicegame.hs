@@ -1,5 +1,12 @@
 import Control.Monad.RWS
-import System.Random
+  ( MonadReader (ask),
+    MonadState (get, put, state),
+    MonadWriter (tell),
+    RWS,
+    evalRWS,
+    replicateM,
+  )
+import System.Random (StdGen, newStdGen, uniformR)
 
 type Dice = Int
 
@@ -31,8 +38,10 @@ dices :: Int -> DiceGame [Dice]
 dices n = replicateM n dice
 
 diceGame :: DiceGame (Dice, Dice)
-diceGame = dice >> dices 5 >> replicateM 2 (dices 3)
-                >> dices 10 >> doubleDice
+diceGame =
+  dice >> dices 5 >> replicateM 2 (dices 3)
+    >> dices 10
+    >> doubleDice
 
 main :: IO ()
 main = newStdGen >>= print . evalRWS diceGame (1, 6)

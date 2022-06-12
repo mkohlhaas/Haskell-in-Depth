@@ -1,7 +1,7 @@
+import Control.Monad.State (MonadState (state), State, evalState, replicateM)
 import Data.List (group, sort)
-import Control.Monad.State
-import System.Random
-import System.Random.Stateful (uniformRM, uniformM)
+import System.Random (StdGen, Uniform, UniformRange, newStdGen, uniform)
+import System.Random.Stateful (uniformM, uniformRM)
 
 data Weapon = Rock | Paper | Scissors
   deriving (Show, Bounded, Enum, Eq)
@@ -35,7 +35,7 @@ game :: Int -> State StdGen [(Winner, Int)]
 game n = counts <$> replicateM n (winner <$> gameRound)
   where
     counts xs = map headLength $ group $ sort xs
-    headLength xs@(x:_) = (x, length xs)
+    headLength xs@(x : _) = (x, length xs)
     headLength [] = error "unexpected"
 
 main :: IO ()

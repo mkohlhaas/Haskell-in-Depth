@@ -1,10 +1,10 @@
-import Data.IORef
+import Data.IORef (modifyIORef', newIORef, readIORef)
 import Text.Read (readMaybe)
 
 sumNumbers :: IO Int
 sumNumbers = do
-    s <- newIORef 0
-    go s
+  s <- newIORef 0
+  go s
   where
     go acc = readNumber >>= processNumber acc
 
