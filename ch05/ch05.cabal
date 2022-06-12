@@ -1,0 +1,88 @@
+cabal-version: 2.4
+name:          ch05
+version:       0.1.0.0
+
+executable countzeros
+    main-is:          countzeros.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:    base ^>=4.14.3.0
+
+executable dicegame
+    main-is:          dicegame.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl -any,
+        random -any
+
+executable filecount
+    main-is:          filecount.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:
+        base ^>=4.14.3.0,
+        extra >=1.5 && <1.8
+
+executable gcd
+    main-is:          gcd.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl >=2.0 && <2.3
+
+executable genSQL
+    main-is:          genSQL.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    other-extensions: OverloadedStrings ViewPatterns
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl >=2.0 && <2.3,
+        text >=1.2 && <1.3
+
+executable ioref
+    main-is:          ioref.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:    base ^>=4.14.3.0
+
+executable maybe
+    main-is:          maybe.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:    base ^>=4.14.3.0
+
+executable reader
+    main-is:          reader.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    other-extensions: NamedFieldPuns
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl >=2.0 && <2.3
+
+executable stref
+    main-is:          stref.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:    base ^>=4.14.3.0
+
+executable sumlist
+    main-is:          sumlist.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl >=2.0 && <2.3
+
+executable weapons
+    main-is:          weapons.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl >=2.0 && <2.3,
+        random >=1.2 && <1.3
