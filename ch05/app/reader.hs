@@ -29,13 +29,14 @@ doSomething :: ConfigM ()
 doSomething = do
   -- ...
   doSomethingSpecial
-
+  doSomethingSpecialSilently
 -- ...
 
 doSomethingSpecial :: ConfigM ()
 doSomethingSpecial = do
   -- ...
   -- Config {verbose} <- ask
+  -- when verbose beVerbose
   vrb <- asks verbose
   when vrb beVerbose
 
