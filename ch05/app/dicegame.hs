@@ -12,8 +12,8 @@ type Dice = Int
 
 type DiceGame = RWS (Int, Int) [Dice] StdGen
 
-dice' :: DiceGame Dice
-dice' = do
+dice :: DiceGame Dice
+dice = do
   bs <- ask
   g <- get
   let (r, g') = uniformR bs g
@@ -21,10 +21,10 @@ dice' = do
   tell [r]
   pure r
 
-dice :: DiceGame Dice
-dice = do
+dice' :: DiceGame Dice
+dice' = do
   bs <- ask
-  r <- state (uniformR bs)
+  r <- state $ uniformR bs
   tell [r]
   pure r
 
