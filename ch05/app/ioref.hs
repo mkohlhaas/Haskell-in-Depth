@@ -3,8 +3,8 @@ import Text.Read (readMaybe)
 
 sumNumbers :: IO Int
 sumNumbers = do
-  s <- newIORef 0
-  go s
+  acc <- newIORef 0 -- we store our acc in an IORef
+  go acc
   where
     go acc = readNumber >>= processNumber acc
 

@@ -1,3 +1,4 @@
+-- ST = Strict State Threads
 import Control.Monad.ST (ST, runST)
 import Data.STRef (STRef, newSTRef, readSTRef)
 
@@ -5,7 +6,6 @@ comp1 :: ST s (STRef s Int)
 comp1 = newSTRef 42
 
 comp2 :: STRef s Int -> ST s Int
--- comp2 ref = readSTRef ref
 comp2 = readSTRef
 
 main :: IO ()

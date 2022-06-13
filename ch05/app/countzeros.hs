@@ -6,6 +6,7 @@ import Data.STRef (modifySTRef', newSTRef, readSTRef)
 countZeros :: [Int] -> Int
 countZeros = length . filter (== 0)
 
+-- The ST monad allows hiding mutability inside pure functions.
 countZerosST :: [Int] -> Int
 countZerosST xs = runST $ do
   c <- newSTRef 0

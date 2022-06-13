@@ -25,13 +25,15 @@ instance UniformRange Weapon where
 instance Uniform Weapon where
   uniformM rng = uniformRM (minBound, maxBound) rng
 
-randomWeapon :: State StdGen Weapon
+type StdGenS = State StdGen
+
+randomWeapon :: StdGenS Weapon
 randomWeapon = state uniform
 
-gameRound :: State StdGen (Weapon, Weapon)
+gameRound :: StdGenS (Weapon, Weapon)
 gameRound = (,) <$> randomWeapon <*> randomWeapon
 
-game :: Int -> State StdGen [(Winner, Int)]
+game :: Int -> StdGenS [(Winner, Int)]
 game n = counts <$> replicateM n (winner <$> gameRound)
   where
     counts xs = map headLength $ group $ sort xs
