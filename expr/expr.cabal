@@ -1,12 +1,27 @@
-cabal-version:      2.4
-name:               expr
-version:            0.1.0.0
-author:             Michael Kohlhaas
-maintainer:         michael.kohlhaas@chammy.info
+cabal-version: 2.4
+name:          expr
+version:       0.1.0.0
+maintainer:    michael.kohlhaas@chammy.info
+author:        Michael Kohlhaas
 
-library expr-simple
-  exposed-modules:  Expr
-  hs-source-dirs:   libs
-  build-depends:    base ^>=4.14.3.0,
-                    text-show
-  default-language: Haskell2010
+library expr-lib
+    exposed-modules:
+        Expr
+        ShuntingYard
+
+    hs-source-dirs:   libs
+    default-language: Haskell2010
+    build-depends:
+        base -any,
+        mtl -any,
+        text-show -any
+
+executable prefix-postfix
+    main-is:          prefix-postfix.hs
+    hs-source-dirs:   apps
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        mtl >=2.2.2 && <2.3,
+        expr-lib -any,
+        text-show >=3.9.7 && <3.10
