@@ -23,19 +23,19 @@ pop' :: EvalM Integer
 pop' = do
   xs <- get
   when (null xs) $ lift Nothing
-  put (tail xs)
-  pure (head xs)
+  put $ tail xs
+  pure $ head xs
 
 pop'' :: EvalM Integer
 pop'' = do
   xs <- get
   guard (not $ null xs)
-  put (tail xs)
-  pure (head xs)
+  put $ tail xs
+  pure $ head xs
 
 pop :: EvalM Integer
 pop = do
-  (x : xs) <- get
+  (x : xs) <- get -- do block MonadFail desugaring
   put xs
   pure x
 
