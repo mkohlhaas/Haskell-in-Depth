@@ -1,6 +1,5 @@
-import System.Environment
-
-import EvalRPNTrans
+import EvalRPNTrans (evalRPN)
+import System.Environment (getArgs)
 
 evalPrintExpr :: String -> IO ()
 evalPrintExpr str = do

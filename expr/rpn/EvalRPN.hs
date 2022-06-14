@@ -1,6 +1,11 @@
 module EvalRPN where
 
 import Control.Monad.State
+  ( MonadState (get, put),
+    State,
+    evalState,
+    modify,
+  )
 
 {-
    Function evalRPN evaluates an expression given
@@ -16,7 +21,7 @@ type Stack = [Integer]
 type EvalM = State Stack
 
 push :: Integer -> EvalM ()
-push x = modify (x:)
+push x = modify (x :)
 
 pop :: EvalM Integer
 pop = do
@@ -31,5 +36,5 @@ evalRPN expr = evalState evalRPN' []
     step "+" = processTops (+)
     step "*" = processTops (*)
     step "-" = processTops (-)
-    step t  = push (read t)
+    step t = push (read t)
     processTops op = flip op <$> pop <*> pop >>= push

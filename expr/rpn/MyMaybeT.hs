@@ -1,22 +1,26 @@
 {-# LANGUAGE CPP #-}
-{-# LANGUAGE FlexibleInstances  #-}
-{-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE LambdaCase #-}
+{-# LANGUAGE MultiParamTypeClasses #-}
+{-# LANGUAGE UndecidableInstances #-}
 
-module MyMaybeT (MaybeT(..)) where
+module MyMaybeT (MaybeT (..)) where
 
-import Control.Monad.Trans.Class
-import Control.Applicative
+import Control.Applicative (Alternative (empty, (<|>)))
 import Control.Monad.State
+  ( MonadIO (..),
+    MonadState (state),
+    MonadTrans (..),
+  )
+import Control.Monad.Trans.Class ()
 
 #if !MIN_VERSION_base(4,13,0)
 -- Control.Monad.Fail import is redundant since GHC 8.8.1
 import Control.Monad.Fail
 #endif
 
-newtype MaybeT m a = MaybeT { runMaybeT :: m (Maybe a) }
+newtype MaybeT m a = MaybeT {runMaybeT :: m (Maybe a)}
 
 instance Functor m => Functor (MaybeT m) where
   fmap :: (a -> b) -> MaybeT m a -> MaybeT m b
@@ -45,21 +49,22 @@ instance Monad m => Monad (MaybeT m) where
   (>>=) :: MaybeT m a -> (a -> MaybeT m b) -> MaybeT m b
   (MaybeT ma) >>= f =
     MaybeT $
-       ma >>=
-         \case
-            Nothing -> pure Nothing
-            Just a -> runMaybeT (f a)
+      ma
+        >>= \case
+          Nothing -> pure Nothing
+          Just a -> runMaybeT (f a)
 
 instance MonadTrans MaybeT where
   lift :: Monad m => m a -> MaybeT m a
-  lift ma = MaybeT $
-               fmap Just ma
+  lift ma =
+    MaybeT $
+      fmap Just ma
 
 instance Monad m => MonadFail (MaybeT m) where
   fail :: String -> MaybeT m a
   fail _ = MaybeT (pure Nothing)
 
-instance MonadState s m => MonadState s (MaybeT m)  where
+instance MonadState s m => MonadState s (MaybeT m) where
   state :: (s -> (a, s)) -> MaybeT m a
   state = lift . state
 
