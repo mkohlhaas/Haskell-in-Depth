@@ -1,7 +1,6 @@
 import Data.List (intersperse)
-
-import Expr
-import ShuntingYard
+import Expr (Expr (..))
+import ShuntingYard (convertToExpr)
 
 -- Converting expressions to prefix and postfix forms
 
@@ -13,12 +12,12 @@ exprTo form (Add e1 e2) = binOp "+" form e1 e2
 exprTo form (Mult e1 e2) = binOp "*" form e1 e2
 
 binOp :: Show a => String -> ExprForm -> Expr a -> Expr a -> String
-binOp op form e1 e2 = concat $ intersperse " " (args form)
-   where
-     e1' = exprTo form e1
-     e2' = exprTo form e2
-     args Prefix = [op, e1', e2']
-     args Postfix = [e1', e2', op]
+binOp op form e1 e2 = unwords $ args form -- concat $ intersperse " " (args form)
+  where
+    e1' = exprTo form e1
+    e2' = exprTo form e2
+    args Prefix = [op, e1', e2']
+    args Postfix = [e1', e2', op]
 
 main :: IO ()
 main = mapM_ printExpr strs
