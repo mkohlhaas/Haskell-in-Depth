@@ -60,16 +60,3 @@ executable evalrpn3
         base >=4.12 && <4.15,
         mtl >=2.0 && <2.3,
         transformers ==0.5.*
-
--- executable rpnexpr
---     main-is:          rpnexpr.hs
---     hs-source-dirs:   rpn
---     other-modules:    EvalRPNExcept
---     default-language: Haskell2010
---     other-extensions: OverloadedStrings
---     build-depends:
---         base >=4.12 && <4.15,
---         mtl >=2.0 && <2.3,
---         text ==1.2.*,
---         text-show >=3.0 && <4,
---         transformers ==0.5.*
