@@ -1,3 +1,5 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module DirTree where
 
 import App
@@ -12,7 +14,9 @@ import App
   )
 import Utils (currentPathStatus, traverseDirectoryWith)
 
-dirTree :: MyApp (FilePath, Int) s ()
+type Depth = Int
+
+dirTree :: MyApp (FilePath, Depth) s ()
 dirTree = do
   AppEnv {..} <- ask
   fs <- currentPathStatus

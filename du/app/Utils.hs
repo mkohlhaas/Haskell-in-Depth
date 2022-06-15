@@ -1,3 +1,5 @@
+{-# LANGUAGE NamedFieldPuns #-}
+
 module Utils where
 
 import App
@@ -17,7 +19,7 @@ import System.Directory (listDirectory)
 traverseDirectoryWith :: MyApp le s () -> MyApp le s ()
 traverseDirectoryWith app = do
   curPath <- asks path
-  content <- liftIO $ listDirectory curPath
+  content <- liftIO $ listDirectory curPath -- https://hackage.haskell.org/package/directory-1.3.7.0/docs/System-Directory.html#v:listDirectory
   traverse_ go content
   where
     go name = flip local app $
@@ -45,4 +47,4 @@ currentPathStatus = do
 
 checkExtension :: AppConfig -> FilePath -> Bool
 checkExtension cfg fp =
-  maybe True (`isExtensionOf` fp) (extension cfg)
+  maybe True (`isExtensionOf` fp) (extension cfg) -- https://hackage.haskell.org/package/filepath-1.4.2.2/docs/System-FilePath.html#v:isExtensionOf

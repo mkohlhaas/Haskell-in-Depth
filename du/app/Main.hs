@@ -1,3 +1,5 @@
+{-# LANGUAGE OverloadedStrings #-}
+
 module Main where
 
 import App (AppConfig (AppConfig), FileOffset, runMyApp)
@@ -46,40 +48,29 @@ treeEntryBuilder (fp, n) = fromString indent <> fromString fp
   where
     indent = replicate (2 * n) ' '
 
+type FileSize = FileOffset
+
 work :: AppConfig -> IO ()
 work config = do
   (_, dirs) <- runMyApp dirTree config ()
   (_, counters) <- runMyApp fileCount config ()
-  (_, usages) <- runMyApp diskUsage config (0 :: FileOffset)
+  (_, usages) <- runMyApp diskUsage config (0 :: FileSize)
   let report =
         toText $
           buildEntries "Directory tree:" treeEntryBuilder dirs
-            <> buildEntries "File counter:" tabEntryBuilder counters
-            <> buildEntries "File space usage:" tabEntryBuilder usages
+            <> buildEntries "\nFile counter:" tabEntryBuilder counters
+            <> buildEntries "\nFile space usage:" tabEntryBuilder usages
   TIO.putStr report
-
-main :: IO ()
-main = execParser opts >>= work
-  where
-    opts =
-      info
-        (mkConfig <**> helper)
-        (fullDesc <> progDesc "Directory usage info")
 
 mkConfig :: Opt.Parser AppConfig
 mkConfig =
   AppConfig
     <$> strArgument (metavar "DIRECTORY" <> value "." <> showDefault)
-    <*> option
-      auto
-      ( metavar "DEPTH" <> short 'd' <> long "depth" <> value maxBound
-          <> help "Display an entry for all directories DEPTH directories deep"
-      )
-    <*> optional
-      ( strOption
-          ( metavar "EXT" <> long "extension" <> short 'e'
-              <> help "Filter files by extension"
-          )
-      )
-    <*> switch
-      (short 'L' <> help "Follow symlinks (OFF by default)")
+    <*> option auto (metavar "DEPTH" <> short 'd' <> long "depth" <> value maxBound <> help "Display an entry for all directories DEPTH directories deep")
+    <*> optional (strOption (metavar "EXT" <> short 'e' <> long "extension" <> help "Filter files by extension"))
+    <*> switch (short 'L' <> help "Follow symlinks (OFF by default)")
+
+main :: IO ()
+main = execParser opts >>= work
+  where
+    opts = info (mkConfig <**> helper) (fullDesc <> progDesc "Directory usage info")

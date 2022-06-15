@@ -1,3 +1,6 @@
+{-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE RecordWildCards #-}
+
 module DiskUsage (diskUsage) where
 
 import App
@@ -17,14 +20,24 @@ import App
   )
 import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
 
+-- To compute the total space used by some directory, we have to find the difference between the total space
+-- used after leaving the directory and before entering it. NOTE: This task requires traversing the whole
+-- directory tree, no matter the maximum depth given!
 data DUEntryAction
   = TraverseDir {dirpath :: FilePath, requireReporting :: Bool}
   | RecordFileSize {fsize :: FileOffset}
   | None
 
-diskUsage :: MyApp (FilePath, FileOffset) FileOffset ()
+type FileSize = FileOffset
+
+type TotalSize = FileOffset
+
+-- Monadic                             ≅ Applicative
+-- liftM2 decide ask currentPathStatus ≅ decide <$> ask <*> currentPathStatus
+diskUsage :: MyApp (FilePath, FileSize) TotalSize ()
 diskUsage = liftM2 decide ask currentPathStatus >>= processEntry
   where
+    -- decide :: AppEnv -> FileStatus -> DUEntryActionn
     decide AppEnv {..} fs
       | isDirectory fs =
         TraverseDir path (depth <= maxDepth cfg)

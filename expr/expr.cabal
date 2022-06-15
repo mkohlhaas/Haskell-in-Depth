@@ -7,9 +7,11 @@ author:        Michael Kohlhaas
 library expr-lib
     exposed-modules:
         Expr
+        EvalRPNTrans
         ShuntingYard
 
     hs-source-dirs:   libs
+                      rpn
     default-language: Haskell2010
     build-depends:
         base -any,

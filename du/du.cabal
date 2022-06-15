@@ -16,8 +16,8 @@ executable du
         Utils
 
     default-language:   Haskell2010
-    default-extensions: RecordWildCards NamedFieldPuns OverloadedStrings
-    other-extensions:   GeneralizedNewtypeDeriving
+    -- default-extensions: RecordWildCards NamedFieldPuns OverloadedStrings
+    -- other-extensions:   GeneralizedNewtypeDeriving
     build-depends:
         base >=4.12 && <4.15,
         directory ==1.3.*,

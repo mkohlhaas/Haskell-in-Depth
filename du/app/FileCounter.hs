@@ -1,3 +1,5 @@
+{-# LANGUAGE RecordWildCards #-}
+
 module FileCounter (fileCount) where
 
 import App
@@ -17,7 +19,9 @@ import Utils
     traverseDirectoryWith,
   )
 
-fileCount :: MyApp (FilePath, Int) s ()
+type NumberOfFiles = Int
+
+fileCount :: MyApp (FilePath, NumberOfFiles) s ()
 fileCount = do
   AppEnv {..} <- ask
   fs <- currentPathStatus
