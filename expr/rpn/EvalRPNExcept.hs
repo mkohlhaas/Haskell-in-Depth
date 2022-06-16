@@ -42,6 +42,7 @@ pop = get >>= pop'
     pop' [] = throwError NotEnoughElements
     pop' (x : xs) = put xs >> pure x
 
+-- throws an error if not exactly one item is on the stack
 isOneElementOnStack :: EvalM ()
 isOneElementOnStack = do
   len <- gets length

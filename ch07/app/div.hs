@@ -1,10 +1,14 @@
 {-# LANGUAGE DeriveAnyClass #-}
 
+-- {-# OPTIONS_GHC -Wno-unrecognised-pragmas #-}
+-- {-# HLINT ignore "Use <&>" #-}
+
 import Control.Exception (throw, throwIO)
-import Control.Monad.Catch
+import Control.Monad.Catch (Exception, MonadCatch (catch), MonadThrow (..), try, tryJust)
+import Data.Functor ((<&>))
 
 data MyArithException = DivByZero | OtherArithException
- deriving (Show, Exception)
+  deriving (Show, Exception)
 
 divPure :: Int -> Int -> Int
 divPure _ 0 = throw DivByZero
@@ -25,18 +29,16 @@ divM a b = pure (a `div` b)
 testComputation :: MonadThrow m => Int -> Int -> Int -> m Int
 testComputation a b c = divM a b >>= divM c
 
-divTestWithRecovery ::  Int -> Int -> Int -> IO Int
-divTestWithRecovery a b c =
-    try (testComputation a b c)
-    >>= pure . dealWith
+divTestWithRecovery :: Int -> Int -> Int -> IO Int
+divTestWithRecovery a b c = try (testComputation a b c) <&> dealWith
   where
     dealWith :: Either MyArithException Int -> Int
     dealWith (Right r) = r
     dealWith (Left _) = 0
 
-divTestWithRecovery2 ::  Int -> Int -> Int -> IO Int
-divTestWithRecovery2 a b c =
-    tryJust isDivByZero (testComputation a b c) >>= pure . dealWith
+-- TODO
+divTestWithRecovery2 :: Int -> Int -> Int -> IO Int
+divTestWithRecovery2 a b c = tryJust isDivByZero (testComputation a b c) <&> dealWith
   where
     isDivByZero :: MyArithException -> Maybe ()
     isDivByZero DivByZero = Just ()
@@ -44,14 +46,12 @@ divTestWithRecovery2 a b c =
     dealWith (Right r) = r
     dealWith (Left _) = 0
 
-
 divTestIO :: Int -> Int -> Int -> IO Int
 divTestIO a b c = testComputation a b c `catch` handler
   where
     handler :: MyArithException -> IO Int
     handler e = do
-      putStrLn $ "We've got an exception: " ++ show e
-                 ++ "\nUsing default value 0"
+      putStrLn $ "We've got an exception: " ++ show e ++ ". Using default value 0"
       pure 0
 
 main :: IO ()
