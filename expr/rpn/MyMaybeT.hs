@@ -27,13 +27,14 @@ instance Functor m => Functor (MaybeT m) where
   -- fmap f (MaybeT mma) = MaybeT _help
   -- fmap f (MaybeT mma) = MaybeT (fmap _help mma)
   fmap f (MaybeT mma) = MaybeT (fmap (fmap f) mma)
+  -- fmap f (MaybeT mma) = MaybeT (fmap f <$> mma)
 
 instance Applicative m => Applicative (MaybeT m) where
   pure :: a -> MaybeT m a
   pure a = MaybeT (pure $ Just a)
 
   (<*>) :: MaybeT m (a -> b) -> MaybeT m a -> MaybeT m b
-  (MaybeT mf) <*> (MaybeT mx) = MaybeT ((<*>) <$> mf <*> mx)
+  (MaybeT mf) <*> (MaybeT mx) = MaybeT ((<*>) <$> mf <*> mx) -- TODO
 
 {-
 instance Monad m => Monad (MaybeT m) where
@@ -56,9 +57,8 @@ instance Monad m => Monad (MaybeT m) where
 
 instance MonadTrans MaybeT where
   lift :: Monad m => m a -> MaybeT m a
-  lift ma =
-    MaybeT $
-      fmap Just ma
+  lift ma = MaybeT $ fmap Just ma
+  -- lift ma = MaybeT $ Just <$> ma
 
 instance Monad m => MonadFail (MaybeT m) where
   fail :: String -> MaybeT m a
