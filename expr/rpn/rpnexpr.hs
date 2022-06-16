@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 
 import Data.Text (Text)
-import Data.Text.IO as TIO
-import EvalRPNExcept
+import Data.Text.IO as TIO (putStr)
+import EvalRPNExcept (evalRPNMany)
 
 rpns :: [Text]
 rpns =
