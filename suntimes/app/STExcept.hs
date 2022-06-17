@@ -2,23 +2,23 @@
 
 module STExcept where
 
+import Control.Monad.Catch (Exception (toException), MonadThrow (..), SomeException)
 import Data.Text (Text)
-import Control.Monad.Catch
-import Network.HTTP.Req
 import qualified Network.HTTP.Client as NC
-
-import Types
+import Network.HTTP.Req (HttpException (..))
+import Types (GeoCoords)
 
 data RequestError = EmptyRequest | WrongDay Text
-  deriving Show
+  deriving (Show)
 
-data SunInfoException = UnknownLocation Text
-                      | UnknownTime GeoCoords
-                      | FormatError RequestError
-                      | ServiceAPIError String
-                      | NetworkError SomeException
-                      | ConfigError
-   deriving Exception
+data SunInfoException
+  = UnknownLocation Text
+  | UnknownTime GeoCoords
+  | FormatError RequestError
+  | ServiceAPIError String
+  | NetworkError SomeException
+  | ConfigError
+  deriving (Exception)
 
 instance Show SunInfoException where
   show (UnknownLocation _) = "Failed while determining coordinates"
@@ -30,8 +30,5 @@ instance Show SunInfoException where
 
 rethrowReqException :: MonadThrow m => HttpException -> m a
 rethrowReqException (JsonHttpException s) = throwM (ServiceAPIError s)
-rethrowReqException (VanillaHttpException (
-                        NC.HttpExceptionRequest _
-                          (NC.StatusCodeException resp _ ))) =
-  throwM (ServiceAPIError $ show $ NC.responseStatus resp)
+rethrowReqException (VanillaHttpException (NC.HttpExceptionRequest _ (NC.StatusCodeException resp _))) = throwM (ServiceAPIError $ show $ NC.responseStatus resp)
 rethrowReqException (VanillaHttpException e) = throwM (NetworkError $ toException e)

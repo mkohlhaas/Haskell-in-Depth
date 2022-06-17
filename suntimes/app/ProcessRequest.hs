@@ -1,29 +1,29 @@
-{-# LANGUAGE RecordWildCards, FlexibleContexts #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module ProcessRequest (processMany, processInteractively) where
 
-import Control.Monad.Catch
-import Data.Text(Text)
+import App (MyApp)
+import Control.Concurrent (threadDelay)
+import Control.Monad (unless, when)
+import Control.Monad.Catch (MonadCatch (catch), MonadThrow (throwM), finally)
+import Control.Monad.Reader (MonadIO (liftIO))
+import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import Data.Time
-import Control.Monad
-import Control.Monad.Reader
-
-import Control.Concurrent
-
-import App
-import Types
-import GeoCoordsReq
-import SunTimes
-import STExcept
+import Data.Time (TimeLocale, ZonedTime, defaultTimeLocale, formatTime, parseTimeM)
+import GeoCoordsReq (getCoords)
+import STExcept (RequestError (..), SunInfoException (FormatError, NetworkError, ServiceAPIError))
+import SunTimes (getSunTimes)
+import Types (SunTimes (..), When (..))
 
 parseRequestLine :: Text -> Either RequestError (Text, When)
 parseRequestLine txt = parse (split txt)
   where
     split t = case T.breakOn "@" t of
-                (addr, "") -> ("", addr)
-                (day, addr) -> (T.strip day, T.strip $ T.tail addr)
+      (addr, "") -> ("", addr)
+      (day, addr) -> (T.strip day, T.strip $ T.tail addr)
     parse (_, "") = Left EmptyRequest
     parse ("", addr) = Right (addr, Now)
     parse (d, addr) =
@@ -33,9 +33,7 @@ parseRequestLine txt = parse (split txt)
 
 formatResult :: Text -> SunTimes ZonedTime -> TimeLocale -> Text
 formatResult req SunTimes {..} loc =
-  mconcat [day, " @ ", req,
-           "\n    ", fmt sunrise,
-           "\n    ", fmt sunset]
+  mconcat [day, " @ ", req, "\n    ", fmt sunrise, "\n    ", fmt sunset]
   where
     day = T.pack $ formatTime loc "%x" sunrise
     fmt t = T.pack $ formatTime loc "%X %Z" t
@@ -53,20 +51,19 @@ processMany :: [Text] -> MyApp ()
 processMany = mapM_ processRequestWrapper
   where
     processRequestWrapper r =
-      unless ("#" `T.isPrefixOf` r)
-             $ (processRequest r >>= liftIO .TIO.putStrLn) `catch` handler r
-               `finally` delaySec 3
+      unless ("#" `T.isPrefixOf` r) $
+        (processRequest r >>= liftIO . TIO.putStrLn) `catch` handler r
+          `finally` delaySec 3
     delaySec sec = liftIO $ threadDelay (sec * 1000000)
     handler :: Text -> SunInfoException -> MyApp ()
-    handler r e = liftIO $ TIO.putStrLn $ "Error in request '" <> r <> "': "
-                         <> T.pack (show e)
+    handler r e = liftIO $ TIO.putStrLn $ "Error in request '" <> r <> "': " <> T.pack (show e)
 
 processInteractively :: MyApp ()
 processInteractively = action `catch` handler
   where
     action = do
       liftIO $ TIO.putStrLn "Enter your request:"
-      req <- liftIO $ TIO.getLine
+      req <- liftIO TIO.getLine
       res <- processRequest req
       liftIO $ TIO.putStrLn res
 
@@ -74,8 +71,10 @@ processInteractively = action `catch` handler
     handler e@(ServiceAPIError _) = liftIO $ print e
     handler e@(NetworkError _) = liftIO $ print e
     handler e = do
-      liftIO $ TIO.putStr
-             $ "There was an error while processing your request: "
-             <> T.pack (show e) <> "\nDo you want to try again (Y/N)?"
-      yesno <- liftIO $ TIO.getLine
+      liftIO $
+        TIO.putStr $
+          "There was an error while processing your request: "
+            <> T.pack (show e)
+            <> "\nDo you want to try again (Y/N)?"
+      yesno <- liftIO TIO.getLine
       when (yesno `elem` ["y", "Y", "yes"]) processInteractively
