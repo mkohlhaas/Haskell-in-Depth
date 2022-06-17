@@ -20,12 +20,11 @@ newtype SunTimesWrapper dt = SunTimesWrapper {results :: SunTimes dt}
   deriving (Show, Generic, FromJSON)
 
 getSunTimesUTC :: GeoCoords -> When -> MyApp (SunTimes UTCTime)
-getSunTimesUTC GeoCoords {..} w =
-  handle rethrowReqException $
-    liftIO $
-      runReq defaultHttpConfig $ do
-        r <- req GET ep NoReqBody jsonResponse reqParams
-        pure (results $ responseBody r)
+getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
+  liftIO $
+    runReq defaultHttpConfig $ do
+      r <- req GET ep NoReqBody jsonResponse reqParams
+      pure (results $ responseBody r)
   where
     ep = https "api.sunrise-sunset.org" /: "json" -- ep = end-point
     reqParams =
@@ -38,14 +37,11 @@ getSunTimesUTC GeoCoords {..} w =
     whenToOptions Now = []
     whenToOptions (On day) = ["date" =: formatTime defaultTimeLocale "%Y-%m-%d" day]
 
-getSunTimes :: GeoCoords -> When -> MyApp (SunTimes ZonedTime)
+getSunTimes :: GeoCoords -> When -> MyApp (SunTimes ZonedTime) -- https://hackage.haskell.org/package/time-1.9.3/docs/Data-Time-LocalTime.html#t:ZonedTime
 getSunTimes gc d = do
   SunTimes {..} <- getSunTimesUTC gc d `catch` noTimeHandler
-  ltz <- lookupTimeZone gc sunrise `catchAll` const (pure utc)
-  return $
-    SunTimes
-      (utcToZonedTime ltz sunrise)
-      (utcToZonedTime ltz sunset)
+  ltz <- lookupTimeZone gc sunrise `catchAll` const (pure utc) -- if lookup of timezone fails just use UTC timezone (https://hackage.haskell.org/package/time-1.13/docs/Data-Time-LocalTime.html#v:utc)
+  pure $ SunTimes (utcToZonedTime ltz sunrise) (utcToZonedTime ltz sunset)
   where
     noTimeHandler :: MonadThrow m => SunInfoException -> m a
     noTimeHandler (ServiceAPIError _) = throwM (UnknownTime gc)

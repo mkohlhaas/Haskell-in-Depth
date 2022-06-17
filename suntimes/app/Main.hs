@@ -40,7 +40,7 @@ withConfig (Params appMode config) = do
 main :: IO ()
 main =
   (execParser opts >>= withConfig)
-    `catches` [ Handler parserExit,
+    `catches` [ Handler parserExit, -- handling is done based on the handler's type signature
                 Handler printIOError,
                 Handler printOtherErrors
               ]
@@ -54,5 +54,5 @@ main =
         let mbfn = ioeGetFileName e
         putStrLn $ "File " ++ fromMaybe "" mbfn ++ " not found"
       | otherwise = putStrLn $ "I/O error: " ++ show e
-    printOtherErrors :: SomeException -> IO ()
+    printOtherErrors :: SomeException -> IO () -- print any other exception that hasn't been handled before
     printOtherErrors = print

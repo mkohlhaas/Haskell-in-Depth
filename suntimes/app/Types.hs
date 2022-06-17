@@ -18,7 +18,8 @@ data When = Now | On Day
 -- given a city name get its coordinates
 data GeoCoords = GeoCoords
   { lat :: Text,
-    lon :: Text
+    lon :: Text,
+    display_name :: Text
   }
   deriving (Show, Generic, FromJSON)
 
