@@ -21,11 +21,11 @@ data Params
       FilePath -- config file
 
 mkParams :: Opt.Parser Params
-mkParams = Params <$> (fileInput <|> interactive) <*> config
+mkParams = Params <$> (fileInput <|> interactive) <*> configFile
   where
     fileInput = FileInput <$> strOption (long "file" <> short 'f' <> metavar "FILENAME" <> help "Input file")
     interactive = flag Interactive Interactive (long "interactive" <> short 'i' <> help "Interactive mode")
-    config = strOption (long "conf" <> short 'c' <> value "config.json" <> showDefault <> metavar "CONFIGNAME" <> help "Configuration file")
+    configFile = strOption (long "conf" <> short 'c' <> value "config.json" <> showDefault <> metavar "CONFIGNAME" <> help "Configuration file")
 
 withConfig :: Params -> IO ()
 withConfig (Params appMode config) = do
@@ -34,9 +34,7 @@ withConfig (Params appMode config) = do
     Right wauth' -> runMyApp (run appMode) wauth'
     Left _ -> throwM ConfigError
   where
-    run (FileInput fname) =
-      liftIO (TIO.readFile fname)
-        >>= processMany . T.lines
+    run (FileInput fname) = liftIO (TIO.readFile fname) >>= processMany . T.lines
     run Interactive = processInteractively
 
 main :: IO ()

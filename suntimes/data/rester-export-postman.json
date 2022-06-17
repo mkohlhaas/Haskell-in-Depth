@@ -1,0 +1,109 @@
+{
+    "info": {
+        "name": "RESTer",
+        "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+    },
+    "item": [
+        {
+            "name": "Openstreetmap",
+            "item": [
+                {
+                    "name": "Cities",
+                    "item": [
+                        {
+                            "request": {
+                                "url": "https://nominatim.openstreetmap.org/search?q=houston&format=json&limit=1",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-3",
+                            "name": "Houston"
+                        },
+                        {
+                            "request": {
+                                "url": "https://nominatim.openstreetmap.org/search?q=paris&format=json&limit=1",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-1",
+                            "name": "Paris"
+                        },
+                        {
+                            "request": {
+                                "url": "https://nominatim.openstreetmap.org/search?q=stuttgart&format=json&limit=1",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-2",
+                            "name": "Stuttgart"
+                        }
+                    ]
+                },
+                {
+                    "name": "Sunrise - Sunset",
+                    "item": [
+                        {
+                            "request": {
+                                "url": "https://api.sunrise-sunset.org/json?lat=29.7589382&lng=-95.3676974&formatted=0",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-4",
+                            "name": "Houston"
+                        },
+                        {
+                            "request": {
+                                "url": "https://api.sunrise-sunset.org/json?lat=48.8588897&lng=2.3200410217200766&formatted=0",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-6",
+                            "name": "Paris"
+                        },
+                        {
+                            "request": {
+                                "url": "https://api.sunrise-sunset.org/json?lat=48.7784485&lng=9.1800132&formatted=0",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-5",
+                            "name": "Stuttgart"
+                        }
+                    ]
+                },
+                {
+                    "name": "TimeZoneDB",
+                    "item": [
+                        {
+                            "request": {
+                                "url": "http://api.timezonedb.com/v2.1/get-time-zone?key=AG6C0TV2CAGE&format=json&fields=gmtOffset,abbreviation,dst&by=position&lat=29.7589382&lng=-95.3676974&formatted=0",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-7",
+                            "name": "Houston"
+                        },
+                        {
+                            "request": {
+                                "url": "http://api.timezonedb.com/v2.1/get-time-zone?key=AG6C0TV2CAGE&format=json&fields=gmtOffset,abbreviation,dst&by=position&lat=48.8588897&lng=2.3200410217200766&formatted=0",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-9",
+                            "name": "Paris"
+                        },
+                        {
+                            "request": {
+                                "url": "http://api.timezonedb.com/v2.1/get-time-zone?key=AG6C0TV2CAGE&format=json&fields=gmtOffset,abbreviation,dst&by=position&lat=48.7784485&lng=9.1800132&formatted=0",
+                                "method": "GET",
+                                "header": []
+                            },
+                            "id": "rester-8",
+                            "name": "Stuttgart"
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

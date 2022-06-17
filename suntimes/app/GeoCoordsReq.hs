@@ -14,7 +14,7 @@ import Types (Address, GeoCoords, WebAPIAuth (agent, email))
 getCoords :: Address -> MyApp GeoCoords
 getCoords addr = handle rethrowReqException $ do
   wauth <- ask
-  let ep = https "nominatim.openstreetmap.org" /: "search"
+  let ep = https "nominatim.openstreetmap.org" /: "search" -- ep = end-point
       reqParams =
         mconcat
           [ "q" =: addr,
@@ -26,5 +26,5 @@ getCoords addr = handle rethrowReqException $ do
       request = req GET ep NoReqBody jsonResponse reqParams
   res <- liftIO $ responseBody <$> runReq defaultHttpConfig request
   case res of
-    [] -> throwM (UnknownLocation addr)
+    [] -> throwM $ UnknownLocation addr
     (coords : _) -> pure coords

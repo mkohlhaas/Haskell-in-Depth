@@ -27,7 +27,7 @@ getSunTimesUTC GeoCoords {..} w =
         r <- req GET ep NoReqBody jsonResponse reqParams
         pure (results $ responseBody r)
   where
-    ep = https "api.sunrise-sunset.org" /: "json"
+    ep = https "api.sunrise-sunset.org" /: "json" -- ep = end-point
     reqParams =
       mconcat $
         [ "lat" =: lat,
