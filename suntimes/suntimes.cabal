@@ -20,6 +20,7 @@ executable suntimes
         bytestring >=0.10 && <0.12,
         exceptions ==0.10.*,
         http-client >=0.4 && <0.8,
+        monad-logger,
         mtl >=2.0 && <2.3,
         optparse-applicative >=0.14 && <0.17,
         req >=2.0 && <3.10,

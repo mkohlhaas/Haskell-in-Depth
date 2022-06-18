@@ -9,3 +9,14 @@ executable div
     build-depends:
         base >=4.14.3.0 && <4.15,
         exceptions ==0.10.*
+
+executable logging
+    main-is:          logging.hs
+    hs-source-dirs:   app
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        monad-logger ==0.3.*,
+        mtl >=2.0 && <2.3,
+        text ==1.2.*,
+        transformers ==0.5.*

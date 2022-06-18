@@ -17,6 +17,7 @@ import GeoCoordsReq (getCoords)
 import STExcept (RequestError (..), SunInfoException (FormatError, NetworkError, ServiceAPIError))
 import SunTimes (getSunTimes)
 import Types (GeoCoords (display_name), SunTimes (..), When (..))
+import Control.Monad.Logger (logInfoN)
 
 -- [<date>@]<address/location>
 parseRequestLine :: Text -> Either RequestError (Text, When)
@@ -45,6 +46,7 @@ processRequest t = processR $ parseRequestLine $ T.strip t
     processR (Left e) = throwM (FormatError e)
     processR (Right (addr, day)) = do
       coords <- getCoords addr
+      logInfoN $ T.pack $ "Coordinates: " <> show coords
       st <- getSunTimes coords day
       pure $ formatResult (display_name coords) st defaultTimeLocale
 
