@@ -1,13 +1,12 @@
 module LookupIP where
 
 import Data.List (find)
+import IPTypes (IP, IPRange (IPRange), IPRangeDB (..))
 
-import IPTypes
-
-lookupIP ::  IPRangeDB -> IP -> Bool
+lookupIP :: IPRangeDB -> IP -> Bool
 lookupIP (IPRangeDB ips) ip = case find (inRange ip) ips of
-                    Nothing -> False
-                    Just _ -> True
+  Nothing -> False
+  Just _ -> True
   where
     inRange ip' (IPRange beg end) = beg <= ip' && ip' <= end
 
