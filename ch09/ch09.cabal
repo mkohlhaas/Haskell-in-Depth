@@ -1,0 +1,28 @@
+cabal-version: 2.4
+name:          ch09
+version:       0.1.0.0
+
+library isprime-lib
+    exposed-modules:
+        IsPrime
+        IsPrimeUnfolded
+
+    hs-source-dirs:   isprime
+    default-language: Haskell2010
+    build-depends:    base ^>=4.14.3.0
+
+executable unboxed
+    main-is:          unboxed.hs
+    default-language: Haskell2010
+    other-extensions: UnboxedTuples UnboxedSums
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable isprime
+    main-is:          Main.hs
+    hs-source-dirs:   isprime
+    other-modules:    IsPrime
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        isprime-lib -any,
+        timeit ==2.0.*
