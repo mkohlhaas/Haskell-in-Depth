@@ -15,7 +15,7 @@ testsDir = normalise "data/tests/iplookup/"
 goldenLookupIP :: IO TestTree
 goldenLookupIP = testGroup "lookupIP" . map createTest <$> findByExtension [".iprs"] testsDir
 
-createTest :: String -> TestTree
+createTest :: FilePath -> TestTree
 createTest iprsf = goldenVsFile (takeBaseName iprsf) goldenf outf testAction
   where
     ipsf = replaceExtension iprsf ".ips"

@@ -6,7 +6,8 @@ module ParseIP where
 import Control.Applicative (Alternative (empty))
 import Control.Monad ((>=>))
 import Data.Bits (shiftL, toIntegralSized)
-import Data.Char (digitToInt, isDigit)
+import Data.Char (digitToInt, isDigit, isSpace)
+import Data.List (dropWhileEnd)
 import Data.List.Split (splitOn)
 import Data.Maybe (mapMaybe)
 import Data.Word (Word8)
@@ -55,9 +56,8 @@ isLengthOf n xs = length xs == n
 -- >>> parseIP "not an IP address"
 -- Nothing
 parseIP :: String -> Maybe IP
-parseIP = parseIPIterStrict
+parseIP = parseIPMonadic
 
--- TODO
 -- >=> (fish operator)
 {-# INLINE parseIPMonadic #-}
 parseIPMonadic :: String -> Maybe IP
@@ -137,12 +137,13 @@ parseIP'' cs
 
 parseIPRange :: String -> Maybe IPRange
 parseIPRange =
-  guarded (2 `isLengthOf`) . splitOn ","
+  guarded (2 `isLengthOf`) . fmap trim . splitOn ","
     >=> mapM parseIP
     >=> listToIPRange
   where
     listToIPRange [a, b] | a <= b = pure $ IPRange a b
     listToIPRange _ = empty
+    trim = dropWhileEnd isSpace . dropWhile isSpace
 
 parseIPRanges :: String -> Either ParseError IPRangeDB
 parseIPRanges = fmap IPRangeDB . mapM parseLine . zip [1 ..] . lines

@@ -1,19 +1,19 @@
 module GenIP where
 
-import Hedgehog
+import Data.List (intercalate)
+import Data.Word (Word8)
+import Hedgehog (Gen)
 import qualified Hedgehog.Gen as Gen
 import qualified Hedgehog.Range as Range
-import Data.Word
-import Data.List (intercalate)
-
-import IPTypes
+import IPTypes (IP (..), IPRange (..), IPRangeDB (..))
 
 genIP :: Gen IP
 genIP = IP <$> Gen.word32 Range.linearBounded
 
 genIPComponents :: Gen [Word8]
 genIPComponents = Gen.list (Range.singleton 4) genOctet
-  where genOctet = Gen.word8 Range.linearBounded
+  where
+    genOctet = Gen.word8 Range.linearBounded
 
 genIPString :: Gen String
 genIPString = intercalate "." . map show <$> genIPComponents
@@ -38,8 +38,8 @@ genIPRangeDBSized minLen maxLen = IPRangeDB <$> Gen.list (Range.constant minLen 
 
 genIPRangeDB :: Gen IPRangeDB
 genIPRangeDB = do
-  n1 <- Gen.integral (Range.constant 1 100)
-  n2 <- Gen.integral (Range.constant n1 100)
+  n1 <- Gen.integral $ Range.constant 1 100
+  n2 <- Gen.integral $ Range.constant n1 100
   genIPRangeDBSized n1 n2
 
 genIPList :: Int -> IO [IP]
