@@ -1,6 +1,10 @@
 cabal-version: 2.4
 name:          ip-filter
 version:       0.1.0.0
+data-files:
+    data/benchmarks/1.iprs
+    data/benchmarks/2.iprs
+    data/benchmarks/3.iprs
 
 library ipgen-lib
     exposed-modules:  GenIP
@@ -55,11 +59,10 @@ executable iplookup-simulation
 test-suite iplookup-doctest
     type:             exitcode-stdio-1.0
     main-is:          tests/iplookup-doctest/Doctests.hs
-    -- hs-source-dirs:   tests/iplookup-doctest
     default-language: Haskell2010
     build-depends:
         base >=4.14.3.0 && <4.15,
-        doctest,
+        doctest >=0.20.0 && <0.21,
         split ==0.2.*
 
 test-suite iplookup-test
@@ -83,3 +86,24 @@ test-suite iplookup-test
         tasty-golden ==2.3.*,
         tasty-hedgehog >=0.1 && <1.1,
         tasty-hspec ==1.1.*
+
+benchmark iplookup-bench
+    type:             exitcode-stdio-1.0
+    main-is:          Bench.hs
+    hs-source-dirs:   benchmarks
+    other-modules:
+        BenchBuildIP
+        BenchBuildIPGroups
+        BenchLookupIP
+        BenchParseIP
+        BenchRanges
+        Data
+        NFUtils
+        Paths_ip_filter
+
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        criterion >=1.4 && <1.6,
+        deepseq >=1.3 && <1.5,
+        iplookup-lib -any
