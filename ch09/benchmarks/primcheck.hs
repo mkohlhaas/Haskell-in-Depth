@@ -1,5 +1,4 @@
-import Criterion.Main (defaultMain, bench, whnf)
-
+import Criterion.Main (bench, defaultMain, whnf)
 import qualified IsPrime as IP
 import qualified IsPrimeUnfolded as IPU
 
@@ -12,8 +11,9 @@ primeNumber :: Integer
 primeNumber = 16183
 
 main :: IO ()
-main = defaultMain [
-    bench "isPrime (declarative)" $ whnf IP.isPrime primeNumber
-  , bench "isPrime (unfolded)" $ whnf IPU.isPrime primeNumber
-  , bench "isPrime (rewritten)" $ whnf isPrime primeNumber
-  ]
+main =
+  defaultMain
+    [ bench "isPrime (declarative)" $ whnf IP.isPrime primeNumber,
+      bench "isPrime (unfolded)" $ whnf IPU.isPrime primeNumber,
+      bench "isPrime (rewritten)" $ whnf isPrime primeNumber
+    ]
