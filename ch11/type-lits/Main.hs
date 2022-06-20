@@ -2,16 +2,16 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-import Pointers
-import SuffixedStrings
+import Pointers (Pointer, inc, maybePtr, ptrValue, zeroPtr)
+import SuffixedStrings (SuffixedString, asString, suffixed)
 
 main :: IO ()
 main = do
-    print $ ptrValue $ somePtr -- must be 8
-    print $ ptrValue <$> mbptr1
-    print $ ptrValue <$> mbptr2
-    putStrLn $ asString id1
-    putStrLn $ asString id2
+  print $ ptrValue somePtr -- must be 8
+  print $ ptrValue <$> mbptr1
+  print $ ptrValue <$> mbptr2
+  putStrLn $ asString id1
+  putStrLn $ asString id2
   where
     somePtr :: Pointer 4
     somePtr = inc $ inc zeroPtr

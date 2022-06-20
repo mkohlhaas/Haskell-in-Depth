@@ -3,8 +3,11 @@
 module XListable where
 
 data family XList a
-data instance XList () = XListUnit Integer
+
+newtype instance XList () = XListUnit Integer
+
 data instance XList Bool = XBits Integer Integer
+
 data instance XList Char = XCons Char (XList Char) | XNil
 
 class XListable a where
@@ -27,7 +30,7 @@ instance XListable Bool where
 
   xheadMay (XBits bits n)
     | n <= 0 = Nothing
-    | otherwise = Just (bits `mod` 2 /= 0)
+    | otherwise = Just $ odd bits
 
 instance XListable Char where
   xempty = XNil
@@ -38,4 +41,3 @@ instance XListable Char where
 
 testXList :: (Eq a, XListable a) => a -> Bool
 testXList a = xheadMay (xcons a xempty) == Just a
-

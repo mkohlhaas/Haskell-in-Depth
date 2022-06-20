@@ -10,6 +10,7 @@ newtype Temp unit = Temp Double
 
 -- empty declarations
 data F
+
 data C
 
 paperBurning :: Temp F
@@ -19,7 +20,7 @@ absoluteZero :: Temp C
 absoluteZero = -273.15
 
 f2c :: Temp F -> Temp C
-f2c (Temp f) = Temp ((f-32)*5/9)
+f2c (Temp f) = Temp ((f -32) * 5 / 9)
 
 -- TYPE ERROR: Couldn't match type ‘C’ with ‘F’
 -- err = tf - tc

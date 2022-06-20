@@ -32,4 +32,3 @@ main = do
   print val1
   print val2
   print zero2D
-

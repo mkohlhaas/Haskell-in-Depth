@@ -1,11 +1,11 @@
-{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
 module UnitNameTypeApps where
 
-import TempPhantom
+import TempPhantom (C, F, Temp (..))
 
 class UnitName u where
   unitName :: String

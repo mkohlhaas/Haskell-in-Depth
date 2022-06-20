@@ -1,9 +1,9 @@
-{-# LANGUAGE DataKinds #-}
-{-# LANGUAGE KindSignatures #-}
-{-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE AllowAmbiguousTypes #-}
-{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
 
 data TempUnits = F | C
 
@@ -17,7 +17,7 @@ absoluteZero :: Temp C
 absoluteZero = -273.15
 
 f2c :: Temp F -> Temp C
-f2c (Temp f) = Temp ((f-32)*5/9)
+f2c (Temp f) = Temp ((f -32) * 5 / 9)
 
 -- TYPE ERROR: Expected kind ‘TempUnits’, but ‘Bool’ has kind ‘*’
 -- nonsense :: Temp Bool

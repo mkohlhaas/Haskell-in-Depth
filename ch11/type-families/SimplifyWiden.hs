@@ -1,16 +1,20 @@
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE TypeFamilies #-}
 
 module SimplifyWiden where
-
 
 type family Simplify t
 
 type instance Simplify Integer = Integer
+
 type instance Simplify Int = Integer
+
 type instance Simplify Double = Integer
+
 type instance Simplify String = String
+
 type instance Simplify Char = String
+
 type instance Simplify Bool = String
 
 class Simplifier t where
@@ -32,7 +36,7 @@ instance Simplifier Bool where
   simplify = show
 
 instance Simplifier Char where
-  simplify = (:"")
+  simplify = (: "")
 
 type family Widen a where
   Widen Bool = Int

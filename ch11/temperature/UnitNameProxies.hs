@@ -1,11 +1,11 @@
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 
 module UnitNameProxies where
 
-import Data.Proxy
-import TempPhantom
+import Data.Proxy (Proxy (..))
+import TempPhantom (C, F, Temp (..))
 
 class UnitName u where
   unitName :: Proxy u -> String

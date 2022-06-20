@@ -1,5 +1,5 @@
-import TempPhantom
-import UnitNameProxies
+import TempPhantom (Temp, absoluteZero, diff, paperBurning)
+import UnitNameProxies (UnitName (..), unit)
 
 data K
 

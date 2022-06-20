@@ -1,5 +1,5 @@
-import TempPhantom
-import UnitNameTypeApps
+import TempPhantom (Temp, absoluteZero, diff, paperBurning)
+import UnitNameTypeApps (UnitName, unit)
 
 printTemp :: UnitName u => Temp u -> IO ()
 printTemp t = do

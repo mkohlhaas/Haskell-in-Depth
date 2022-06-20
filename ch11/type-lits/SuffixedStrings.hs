@@ -4,16 +4,19 @@
 
 module SuffixedStrings (SuffixedString, suffixed, asString) where
 
-import GHC.TypeLits
-import Data.Proxy
+import Data.Proxy (Proxy (..))
+import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 
 -- Example: suffixed strings
 
-data SuffixedString (suffix :: Symbol) = SS String
+newtype SuffixedString (suffix :: Symbol) = SuffixedString String
 
 suffixed :: String -> SuffixedString suffix
-suffixed s = SS s
+suffixed = SuffixedString
 
-asString :: forall suffix. KnownSymbol suffix =>
-            SuffixedString suffix -> String
-asString (SS str) = str ++ "@" ++ symbolVal (Proxy :: Proxy suffix)
+asString ::
+  forall suffix.
+  KnownSymbol suffix =>
+  SuffixedString suffix ->
+  String
+asString (SuffixedString str) = str ++ "@" ++ symbolVal (Proxy :: Proxy suffix)

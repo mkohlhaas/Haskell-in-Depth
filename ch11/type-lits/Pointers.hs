@@ -5,8 +5,8 @@
 -- Example: aligned pointers
 module Pointers (Pointer, ptrValue, inc, maybePtr, zeroPtr) where
 
-import GHC.TypeLits
-import Data.Proxy
+import Data.Proxy (Proxy (..))
+import GHC.TypeLits (KnownNat, Nat, natVal)
 
 newtype Pointer (align :: Nat) = Pointer Integer
 

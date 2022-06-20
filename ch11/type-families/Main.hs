@@ -1,7 +1,7 @@
-import SimplifyWiden
-import Unescape
-import XListable
-import Graphs
+import Graphs (Edge (MkEdge1), g1, isLoop, neighbors)
+import SimplifyWiden (Simplifier (simplify), Widener (widen))
+import Unescape (uprint)
+import XListable (testXList)
 
 testGraphs :: IO ()
 testGraphs = do
@@ -13,10 +13,13 @@ main = do
   print $ simplify True ++ " " ++ widen 'x'
   print $ simplify answer + widen (widen False)
   uprint "Привет, мир!"
-  print $ and [testXList (),
-                    testXList True,
-                    testXList False,
-                    testXList 'x']
+  print $
+    and
+      [ testXList (),
+        testXList True,
+        testXList False,
+        testXList 'x'
+      ]
   where
     answer :: Integer
     answer = 42
