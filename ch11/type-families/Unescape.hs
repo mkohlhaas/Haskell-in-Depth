@@ -35,12 +35,8 @@ uprint = putStrLn . ushow
 
 instance Show UnescapingChar where
   showsPrec _ (UnescapingChar '\'') = showString "'\\''"
-  showsPrec _ (UnescapingChar c) =
-    showChar '\'' . showLitChar' c . showChar '\''
-
-  showList cs =
-    showChar '"' . showLitString' (map unescapingChar cs)
-      . showChar '"'
+  showsPrec _ (UnescapingChar c) = showChar '\'' . showLitChar' c . showChar '\''
+  showList cs = showChar '"' . showLitString' (map unescapingChar cs) . showChar '"'
 
 showLitChar' :: Char -> ShowS
 showLitChar' c s | c > '\DEL' = showChar c s

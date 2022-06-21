@@ -3,6 +3,7 @@
 
 module SimplifyWiden where
 
+-- open type family
 type family Simplify t
 
 type instance Simplify Integer = Integer
@@ -38,6 +39,7 @@ instance Simplifier Bool where
 instance Simplifier Char where
   simplify = (: "")
 
+-- closed type family
 type family Widen a where
   Widen Bool = Int
   Widen Int = Integer

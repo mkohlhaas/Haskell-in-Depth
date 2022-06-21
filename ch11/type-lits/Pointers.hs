@@ -1,6 +1,7 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 -- Example: aligned pointers
 module Pointers (Pointer, ptrValue, inc, maybePtr, zeroPtr) where
@@ -10,15 +11,15 @@ import GHC.TypeLits (KnownNat, Nat, natVal)
 
 newtype Pointer (align :: Nat) = Pointer Integer
 
-ptrValue :: forall align. KnownNat align => Pointer align -> Integer
+ptrValue :: ∀ align. KnownNat align => Pointer align -> Integer
 ptrValue (Pointer p) = p * natVal (Proxy :: Proxy align)
 
 inc :: Pointer align -> Pointer align
-inc (Pointer p) = Pointer (p + 1)
+inc (Pointer p) = Pointer $ p + 1
 
-maybePtr :: forall align. KnownNat align => Integer -> Maybe (Pointer align)
+maybePtr :: ∀ align. KnownNat align => Integer -> Maybe (Pointer align)
 maybePtr p
-  | reminder == 0 = Just (Pointer quotient)
+  | reminder == 0 = Just $ Pointer quotient
   | otherwise = Nothing
   where
     (quotient, reminder) = divMod p (natVal (Proxy :: Proxy align))

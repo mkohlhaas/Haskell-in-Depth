@@ -4,6 +4,7 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 data TempUnits = F | C
 
@@ -41,13 +42,13 @@ instance UnitName F where
 instance UnitName u => Show (Temp u) where
   show (Temp t) = show t ++ "°" ++ unitName @u
 
-unit :: forall u. UnitName u => Temp u -> String
+unit :: ∀ u. UnitName u => Temp u -> String
 unit _ = unitName @u
 
-printTemp :: forall u. UnitName u => Temp u -> IO ()
+printTemp :: ∀ u. UnitName u => Temp u -> IO ()
 printTemp t = do
   putStrLn $ "Temperature: " ++ show t
-  putStrLn $ "Units: " ++ unit t
+  putStrLn $ "Unit: " ++ unit t
 
 main :: IO ()
 main = do
