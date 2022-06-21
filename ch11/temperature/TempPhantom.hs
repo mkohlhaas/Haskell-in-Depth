@@ -9,9 +9,9 @@ newtype Temp unit = Temp Double
   deriving (Num, Fractional)
 
 -- empty declarations
-data F
-
-data C
+data C -- Celsius
+data F -- Fahrenheit
+data K -- Kelvin
 
 paperBurning :: Temp F
 paperBurning = 451
@@ -23,7 +23,7 @@ f2c :: Temp F -> Temp C
 f2c (Temp f) = Temp ((f -32) * 5 / 9)
 
 -- TYPE ERROR: Couldn't match type ‘C’ with ‘F’
--- err = tf - tc
+-- err = paperBurning - absoluteZero
 
 diff :: Temp C
 diff = f2c paperBurning - absoluteZero
