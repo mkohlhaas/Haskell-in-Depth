@@ -15,6 +15,7 @@ printValue (B b) = print b
 printValue (C c) = print c
 printValue (S s) = print s
 
+-- existential wrapper
 data WrappedDynValue where
   Wrap :: DynValue a -> WrappedDynValue
 

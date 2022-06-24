@@ -1,1 +1,3 @@
 https://github.com/lovasko/tablize
+https://serokell.io/blog/type-families-haskell
+https://serokell.io/blog/haskell-type-level-witness
