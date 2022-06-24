@@ -1,4 +1,5 @@
 {-# LANGUAGE TemplateHaskell #-}
+
 module Projectors where
 
 import Language.Haskell.TH
@@ -25,25 +26,23 @@ proj n k = do
    pure $ LamE [TupP $ map mkPat [0..n-1]] (VarE x)
 -}
 
-
 proj n k
   | n > 1 && 0 <= k && k < n = do
-     x <- newName "x"
-     [| \ $(mkArg x) -> $(varE x) |]
-  | n <=1 = fail "Wrong number of tuple elements (must be > 1)"
-  | otherwise = fail $ "Incorrect projection: "
-               <> show k <> " of " <> show n <> " elements"
+    x <- newName "x"
+    [|\ $(mkArg x) -> $(varE x)|]
+  | n <= 1 = fail "Wrong number of tuple elements (must be > 1)"
+  | otherwise = fail $ "Incorrect projection: " <> show k <> " of " <> show n <> " elements"
   where
     mkPat x j
       | j == k = varP x
       | otherwise = wildP
-    mkArg x = tupP $ map (mkPat x) [0..n-1]
+    mkArg x = tupP $ map (mkPat x) [0 .. n -1]
 
 mkProjName :: Int -> Int -> Name
 mkProjName n k = mkName $ "proj_" <> show n <> "_" <> show k
 
 mkProjDec :: Int -> Int -> Q [Dec]
-mkProjDec n k = [d| $nm = $(proj n k) |]
+mkProjDec n k = [d|$nm = $(proj n k)|]
   where
     nm = varP $ mkProjName n k
 
@@ -54,10 +53,11 @@ mkProjType n k = sigD nm funTy
 
     funTy = do
       resTy <- newName "res"
-      tys <- mapM (getTy resTy) [0..n-1]
-      forallT (map plainTV tys)
-              (pure [])
-              [t| $(mkTuple tys) -> $(varT resTy) |]
+      tys <- mapM (getTy resTy) [0 .. n -1]
+      forallT
+        (map plainTV tys)
+        (pure [])
+        [t|$(mkTuple tys) -> $(varT resTy)|]
 
     getTy resTy j
       | k == j = pure resTy
@@ -69,7 +69,7 @@ mkProjType n k = sigD nm funTy
 mkProjectors :: [Int] -> Q [Dec]
 mkProjectors = fmap concat . mapM projectors
   where
-    projectors n = concat <$> mapM (mkProj n) [0..n-1]
+    projectors n = concat <$> mapM (mkProj n) [0 .. n -1]
     mkProj n k = (:) <$> mkProjType n k <*> mkProjDec n k
 
 {-

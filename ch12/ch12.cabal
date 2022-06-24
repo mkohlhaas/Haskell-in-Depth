@@ -1,0 +1,137 @@
+cabal-version: 2.4
+name:          ch12
+version:       0.1.0.0
+
+library rpc-lib
+    exposed-modules:
+        ClientUtils
+        ServerUtils
+        RpcCommon
+
+    hs-source-dirs:   rpc/lib
+    other-modules:
+        DeclsGenerator
+        RemoteIO
+        RemoteParser
+
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        bytestring >=0.10 && <0.12,
+        cereal >=0.5 && <0.6,
+        connection >=0.3 && <0.4,
+        exceptions >=0.10 && <0.11,
+        haskell-src-exts >=1.20 && <1.24,
+        haskell-src-meta >=0.6 && <0.9,
+        mtl >=2.0 && <2.3,
+        network >=2.8 && <3.2,
+        network-simple >=0.4.5 && <0.5,
+        template-haskell >=2.13 && <2.17
+
+executable basic-deriv
+    main-is:          basic-deriv.hs
+    hs-source-dirs:   deriv
+    default-language: Haskell2010
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable coerce
+    main-is:          coerce.hs
+    hs-source-dirs:   deriv
+    default-language: Haskell2010
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable generic-sql
+    main-is:          Main.hs
+    hs-source-dirs:   genSQL
+    other-modules:    GenericSQL
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        text ==1.2.*,
+        text-show >=3.0 && <4
+
+executable hello-th
+    main-is:          Main.hs
+    hs-source-dirs:   th/hello
+    other-modules:    Hello
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        template-haskell >=2.13 && <2.17
+
+executable mstr-literals
+    main-is:          Main.hs
+    hs-source-dirs:   th/mstr-lits
+    other-modules:    Str
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        template-haskell >=2.13 && <2.17
+
+executable newtype
+    main-is:          newtype.hs
+    hs-source-dirs:   deriv
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        mtl >=2.0 && <2.3
+
+executable ping-client
+    main-is:          client.hs
+    hs-source-dirs:   rpc/ping
+    other-modules:    PingCommon
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        cereal ==0.5.*,
+        mtl >=2.0 && <2.3,
+        rpc-lib -any
+
+executable ping-server
+    main-is:          server.hs
+    hs-source-dirs:   rpc/ping
+    other-modules:    PingCommon
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        cereal ==0.5.*,
+        mtl >=2.0 && <2.3,
+        rpc-lib -any
+
+executable predicates
+    main-is:          Main.hs
+    hs-source-dirs:   th/predicates
+    other-modules:    Predicates
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        template-haskell >=2.13 && <2.17
+
+executable projectors
+    main-is:          Main.hs
+    hs-source-dirs:   th/projectors
+    other-modules:    Projectors
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        template-haskell >=2.13 && <2.17
+
+executable strategies
+    main-is:          strategies.hs
+    hs-source-dirs:   deriv
+    default-language: Haskell2010
+    build-depends:
+        aeson >=1.2 && <1.6,
+        base >=4.14.3.0 && <4.15
+
+executable via
+    main-is:          via.hs
+    hs-source-dirs:   deriv
+    default-language: Haskell2010
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable view-generic
+    main-is:          view-generic.hs
+    hs-source-dirs:   generics
+    default-language: Haskell2010
+    build-depends:    base >=4.14.3.0 && <4.15

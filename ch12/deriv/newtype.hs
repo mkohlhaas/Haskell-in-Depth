@@ -1,15 +1,16 @@
 {-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE GeneralisedNewtypeDeriving #-}
-{-# LANGUAGE ScopedTypeVariables #-}
-{-# LANGUAGE InstanceSigs #-}
-{-# LANGUAGE TypeFamilies #-}
-{-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE FlexibleInstances #-}
+-- {-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+-- {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE TypeFamilies #-}
 
-import Data.Coerce
 import Control.Monad.State
+import Data.Coerce
 
 newtype Age = Age Int
+
 --  deriving newtype (Eq, Ord)
 
 instance Eq Age where
@@ -18,9 +19,8 @@ instance Eq Age where
 instance Ord Age where
   compare = coerce (compare :: Int -> Int -> Ordering)
 
-newtype MyApp a = MyApp {
-    runApp :: StateT Int IO a
-  }
+newtype MyApp a = MyApp {runApp :: StateT Int IO a}
+
 --  deriving (Functor, Applicative, Monad)
 
 instance Functor MyApp where
@@ -28,7 +28,9 @@ instance Functor MyApp where
   fmap = coerce (fmap :: (a -> b) -> StateT Int IO a -> StateT Int IO b)
 
 type family Inspect t
+
 type instance Inspect Int = Bool
+
 type instance Inspect Age = Int
 
 class Inspector a where
@@ -43,4 +45,3 @@ instance Inspector Int where
 main :: IO ()
 main = do
   print $ Age 42 < Age 42
-

@@ -1,10 +1,12 @@
 {-# LANGUAGE QuasiQuotes #-}
+
 module Main where
 
 import Str
 
 verse :: String
-verse = [str|What needs my Shakespeare for his honoured bones,
+verse =
+  [str|What needs my Shakespeare for his honoured bones,
 The labor of an age in pilèd stones,
 Or that his hallowed relics should be hid
 Under a star-ypointing pyramid?

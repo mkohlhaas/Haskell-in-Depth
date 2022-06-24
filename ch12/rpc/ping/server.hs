@@ -1,11 +1,12 @@
 {-# LANGUAGE TemplateHaskell #-}
+
 import Control.Monad.State
-import ServerUtils
 import PingCommon
+import ServerUtils
 
 ping :: RemotePing PingAnswer
 ping = do
-  modify (+1)
+  modify (+ 1)
   n <- get
   liftIO $ putStrLn $ "Ping received/answered with " <> show n
   pure $ PingAnswer "OK" n

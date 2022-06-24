@@ -1,5 +1,5 @@
-{-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE RoleAnnotations #-}
+{-# LANGUAGE TypeFamilies #-}
 
 import Data.Coerce
 import Unsafe.Coerce
@@ -14,6 +14,7 @@ toAges' :: [Int] -> [Age]
 toAges' = coerce
 
 data Student ageType = Student String ageType
+
 --type role Student nominal
 
 check :: Student Int -> Student Age
@@ -32,8 +33,8 @@ check2 :: Student2 Maybe Int -> Student2 Maybe Age
 check2 = coerce
 -}
 
-
 type family Id t
+
 type instance Id t = t
 
 data Student3 ageType = Student3 String (Id ageType)

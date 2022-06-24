@@ -1,21 +1,20 @@
-{-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE DerivingStrategies #-}
-{-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE DerivingStrategies #-}
+{-# LANGUAGE OverloadedStrings #-}
 
-import GHC.Generics
 import Data.Text (Text)
 import qualified Data.Text.IO as TIO
-
+import GHC.Generics
 import GenericSQL
 
 data Student = Student {studentId :: Int, name :: Text, year :: Int}
-  deriving stock Generic
-  deriving anyclass ToSQL
+  deriving stock (Generic)
+  deriving anyclass (ToSQL)
 
 data Course = Course {courseId :: Int, title :: Text, instructor :: Text}
-  deriving stock Generic
-  deriving anyclass ToSQL
+  deriving stock (Generic)
+  deriving anyclass (ToSQL)
 
 -- Doesn't compile:
 {-
