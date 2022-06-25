@@ -4,9 +4,9 @@
 
 module PingCommon where
 
-import Data.Serialize
-import GHC.Generics
-import RpcCommon
+import Data.Serialize (Serialize)
+import GHC.Generics (Generic)
+import RpcCommon (RSIO, RemoteState (..))
 
 instance RemoteState Integer where
   initState = 0

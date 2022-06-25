@@ -1,7 +1,7 @@
 -- {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
-{-# LANGUAGE StandaloneDeriving #-}
+-- {-# LANGUAGE StandaloneDeriving #-}
 
 import Data.Monoid
 
@@ -13,13 +13,12 @@ newtype Age' = Age' Int
 
 newtype MAge = MAge (Maybe Int)
   deriving stock (Show)
+  deriving (Semigroup, Monoid) via (Alt Maybe Int)
+  -- deriving (Semigroup, Monoid) via (Dual (Alt Maybe Int))
 
---  deriving (Semigroup, Monoid) via (Alt Maybe Int)
---  deriving (Semigroup, Monoid) via (Dual (Alt Maybe Int))
-
-deriving via (Alt Maybe Int) instance Semigroup MAge
-
-deriving via (Alt Maybe Int) instance Monoid MAge
+-- standalone deriving
+-- deriving via (Alt Maybe Int) instance Semigroup MAge
+-- deriving via (Alt Maybe Int) instance Monoid MAge
 
 main :: IO ()
 main = undefined

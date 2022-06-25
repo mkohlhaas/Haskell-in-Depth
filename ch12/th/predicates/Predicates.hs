@@ -1,9 +1,10 @@
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# OPTIONS_GHC -ddump-splices #-}
 
 module Predicates (mkPredicates) where
 
-import Language.Haskell.TH
+import Language.Haskell.TH (Con (NormalC), Dec (DataD), Info (TyConI), Name, Q, conP, mkName, nameBase, reify, varP, wildP)
 
 mkPredicates :: Name -> Q [Dec]
 mkPredicates name = reify name >>= fmap concat . mapM mkPredicate . extractConstructors

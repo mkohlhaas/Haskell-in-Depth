@@ -1,8 +1,9 @@
 {-# LANGUAGE TemplateHaskell #-}
+{-# OPTIONS_GHC -ddump-splices #-}
 
 module Projectors where
 
-import Language.Haskell.TH
+import Language.Haskell.TH (Dec, Exp, Name, Q, Type (AppT, TupleT, VarT), forallT, mkName, newName, plainTV, sigD, tupP, varE, varP, varT, wildP)
 
 proj :: Int -> Int -> Q Exp
 {-

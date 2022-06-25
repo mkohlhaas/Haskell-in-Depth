@@ -2,7 +2,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE TypeOperators #-}
 
-import GHC.Generics
+import GHC.Generics (C1, D1, FixityI (PrefixI), Generic (from, to), M1 (M1, unM1), Meta (MetaCons, MetaData), U1 (..), type (:+:) (R1))
 
 data Status = Ok | Err
   deriving (Show, Eq, Generic)

@@ -1,9 +1,10 @@
 {-# LANGUAGE QuasiQuotes #-}
+{-# OPTIONS_GHC -ddump-splices #-}
 
-import ClientUtils
-import Control.Monad
-import Control.Monad.Trans
-import PingCommon
+import ClientUtils (callRemote, remote, runRemote)
+import Control.Monad (replicateM_, void)
+import Control.Monad.Trans (MonadIO (liftIO))
+import PingCommon (PingAnswer, RemotePing)
 
 [remote|
 ping :: RemotePing PingAnswer

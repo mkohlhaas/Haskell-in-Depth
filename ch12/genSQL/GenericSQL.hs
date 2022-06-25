@@ -7,8 +7,8 @@
 module GenericSQL where
 
 import Data.Text (Text)
-import GHC.Generics
-import TextShow
+import GHC.Generics (Generic (Rep, from), K1 (K1), M1 (M1), S, Selector (selName), U1, type (:*:) (..))
+import TextShow (Builder, TextShow (showb), fromString, fromText, showbCommaSpace, singleton, toText)
 
 {-
 INSERT INTO table_name (column1, column2, column3, ...)

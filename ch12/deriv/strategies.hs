@@ -3,11 +3,11 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
 
-import Data.Aeson
-import GHC.Generics
+import Data.Aeson (ToJSON, encode)
+import GHC.Generics (Generic)
 
 newtype Age = Age {age :: Int}
-  --  deriving (Show, Generic, Num, ToJSON)
+  -- deriving (Show, Generic, Num, ToJSON)
   deriving stock (Show, Generic)
   deriving newtype (Num)
   deriving anyclass (ToJSON)

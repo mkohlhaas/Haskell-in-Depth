@@ -3,11 +3,11 @@
 
 module RpcCommon where
 
-import Control.Monad.Catch
-import Control.Monad.Reader
-import Control.Monad.State
+import Control.Monad.Catch (Exception, MonadCatch, MonadThrow)
+import Control.Monad.Reader (MonadIO, MonadReader, ReaderT)
+import Control.Monad.State (MonadState, StateT (StateT))
 import Data.ByteString (ByteString)
-import Network.Connection
+import Network.Connection (Connection)
 
 msgSizeField :: Int
 msgSizeField = 8 -- in bytes

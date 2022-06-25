@@ -1,3 +1,13 @@
 https://github.com/lovasko/tablize
 https://serokell.io/blog/type-families-haskell
 https://serokell.io/blog/haskell-type-level-witness
+https://serokell.io/blog/typed-template-haskell-overview
+https://serokell.io/blog/introduction-to-template-haskell
+https://markkarpov.com/tutorial/th.html
+https://serokell.io/blog/compile-time-evaluation-haskell
+https://gist.github.com/chrisdone/bda0708a3b605d6c0008975e2a6e2803
+https://blog.ocharles.org.uk/guest-posts/2014-12-22-template-haskell.html
+https://holmusk.dev/blog/2021-08-20-Exploring-Template-Haskell.html
+https://github.com/jhrcek/hs-playground/blob/main/template-haskell-intro/presentation.odp
+https://www.reddit.com/r/haskell/comments/s33jnu/typed_template_haskell_in_ghc_9/
+Ch. 12.3.2: RPC

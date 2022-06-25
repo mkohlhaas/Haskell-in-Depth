@@ -39,11 +39,11 @@ type instance Id t = t
 
 data Student3 ageType = Student3 String (Id ageType)
 
+{-
 -- Can't coerce:
--- {-
--- check3 :: Student3 Int -> Student3 Age
--- check3 = coerce
--- -}
+check3 :: Student3 Int -> Student3 Age
+check3 = coerce
+-}
 
 check3' :: Student3 Int -> Student3 Age
 check3' = unsafeCoerce

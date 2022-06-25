@@ -1,8 +1,8 @@
 {-# LANGUAGE TemplateHaskell #-}
 
-import Control.Monad.State
-import PingCommon
-import ServerUtils
+import Control.Monad.State (MonadIO (liftIO), MonadState (get), modify)
+import PingCommon (PingAnswer (..), RemotePing)
+import ServerUtils (genServer, runSerialized, serveRPC)
 
 ping :: RemotePing PingAnswer
 ping = do
