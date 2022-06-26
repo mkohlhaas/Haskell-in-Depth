@@ -1,12 +1,11 @@
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 
 data DoorState = Opened | Closed
-  deriving Show
+  deriving (Show)
 
 data SDoorState (s :: DoorState) where
   SClosed :: SDoorState Closed
@@ -62,8 +61,8 @@ test :: String -> IO ()
 test d =
   case parseDoor d of
     Just door -> do
-        putStrLn $ "Given: " <> show door
-        putStrLn $ "Switched: " <> show (switchSome door)
+      putStrLn $ "Given: " <> show door
+      putStrLn $ "Switched: " <> show (switchSome door)
     Nothing -> putStrLn "Incorrect argument"
 
 main :: IO ()

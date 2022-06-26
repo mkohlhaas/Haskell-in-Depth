@@ -1,0 +1,89 @@
+cabal-version: 2.4
+name:          ch13
+version:       0.1.0.0
+
+executable api-servant
+    main-is:          api/ApiServant.hs
+    default-language: Haskell2010
+    build-depends:
+        aeson >=1.2 && <1.6,
+        base >=4.14.3.0 && <4.15,
+        blaze-html ==0.9.*,
+        servant-blaze >=0.7 && <0.10,
+        servant-server >=0.14 && <0.19,
+        warp >=3.2 && <3.4
+
+executable api-stage0
+    main-is:          api/Api0.hs
+    default-language: Haskell2010
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable api-stage1
+    main-is:          api/Api1.hs
+    default-language: Haskell2010
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable api-stage2
+    main-is:          api/Api2.hs
+    default-language: Haskell2010
+    other-extensions:
+        KindSignatures TypeOperators PolyKinds DataKinds TypeFamilies
+
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable api-stage3
+    main-is:          api/Api3.hs
+    default-language: Haskell2010
+    other-extensions:
+        KindSignatures TypeOperators PolyKinds DataKinds TypeFamilies
+        FlexibleInstances InstanceSigs ScopedTypeVariables
+
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable door
+    main-is:          doors/SingManual.hs
+    default-language: Haskell2010
+    other-extensions:
+        DataKinds GADTs TypeOperators KindSignatures StandaloneDeriving
+
+    build-depends:    base >=4.14.3.0 && <4.15
+
+executable door-gen
+    main-is:          doors/SingGen.hs
+    default-language: Haskell2010
+    other-extensions:
+        DataKinds GADTs TypeOperators KindSignatures StandaloneDeriving
+
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        singletons >=2.5 && <2.8
+
+executable elevator
+    main-is:          UseSafe.hs
+    hs-source-dirs:   elevator
+    other-modules:
+        Elevator.LowLevel
+        Elevator.Safe
+        Elevator.Safe.Floor
+        Elevator.Safe.Operations
+        Elevator.Safe.Moves
+
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        dec >=0.0.3 && <0.1,
+        fin >=0.1 && <0.3,
+        mtl >=2.0 && <2.3,
+        singletons >=2.5 && <2.8
+
+executable unsafe-elevator
+    main-is:          UseUnsafe.hs
+    hs-source-dirs:   elevator
+    other-modules:
+        Elevator.LowLevel
+        Elevator.Unsafe
+
+    default-language: Haskell2010
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        mtl >=2.0 && <2.3

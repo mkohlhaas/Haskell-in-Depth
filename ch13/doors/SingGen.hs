@@ -1,26 +1,27 @@
 {-# LANGUAGE CPP #-}
 {-# LANGUAGE DataKinds #-}
-{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE GADTs #-}
-{-# LANGUAGE TypeOperators #-}
-{-# LANGUAGE KindSignatures #-}
+{-# LANGUAGE InstanceSigs #-}
+{-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
-{-# LANGUAGE InstanceSigs #-}
+
 #if __GLASGOW_HASKELL__ >= 810
 {-# LANGUAGE StandaloneKindSignatures #-}
 #endif
 
-
 import Data.Singletons.TH
 
-$(singletons [d|
- data DoorState = Opened | Closed
-  deriving Show
- |])
+$( singletons
+     [d|
+       data DoorState = Opened | Closed
+         deriving (Show)
+       |]
+ )
 
 data Door (s :: DoorState) where
   MkDoor :: SingI s => Door s
@@ -60,8 +61,8 @@ test :: String -> IO ()
 test d =
   case parseDoor d of
     Just door -> do
-        putStrLn $ "Given: " <> show door
-        putStrLn $ "Switched: " <> show (switchSome door)
+      putStrLn $ "Given: " <> show door
+      putStrLn $ "Switched: " <> show (switchSome door)
     Nothing -> putStrLn "Incorrect argument"
 
 main :: IO ()
