@@ -43,7 +43,7 @@ down :: MonadIO m => Elevator -> m Elevator
 down el@(Elevator fl@(Floor n) Closed)
   | aboveGround fl = do
     liftIO LL.down
-    pure $ el {current = Floor (n - 1)}
+    pure $ el {current = Floor $ n - 1}
   | otherwise = error "Elevator is on the ground floor"
 down (Elevator _ Opened) = error "Door must be closed before move"
 
@@ -51,7 +51,7 @@ up :: MonadIO m => Elevator -> m Elevator
 up el@(Elevator fl@(Floor n) Closed)
   | belowTop fl = do
     liftIO LL.up
-    pure $ el {current = Floor (n + 1)}
+    pure $ el {current = Floor $ n + 1}
   | otherwise = error "Elevator on the top floor"
 up (Elevator _ Opened) = error "Door must be closed before move"
 

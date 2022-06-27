@@ -3,6 +3,7 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 data DoorState = Opened | Closed
   deriving (Show)
@@ -23,7 +24,7 @@ instance SDoorStateI Closed where
 data Door (s :: DoorState) where
   MkDoor :: SDoorStateI s => Door s
 
-doorState :: forall s. Door s -> DoorState
+doorState :: ∀ s. Door s -> DoorState
 doorState MkDoor =
   case sDoorState :: SDoorState s of
     SOpened -> Opened
@@ -48,11 +49,11 @@ parseDoor "Opened" = Just $ SomeDoor (MkDoor :: Door Opened)
 parseDoor "Closed" = Just $ SomeDoor (MkDoor :: Door Closed)
 parseDoor _ = Nothing
 
-switchState :: forall s. Door s -> SomeDoor
+switchState :: ∀ s. Door s -> SomeDoor
 switchState door@MkDoor =
   case sDoorState :: SDoorState s of
-    SOpened -> SomeDoor (close door)
-    SClosed -> SomeDoor (open door)
+    SOpened -> SomeDoor $ close door
+    SClosed -> SomeDoor $ open door
 
 switchSome :: SomeDoor -> SomeDoor
 switchSome (SomeDoor d) = switchState d

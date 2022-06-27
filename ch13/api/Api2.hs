@@ -13,17 +13,19 @@ data Rating = Bad | Good | Great
 data ServiceStatus = Ok | Down
   deriving (Show)
 
-data Get (a :: Type)
+-- description of the web interface
+data Get (a :: Type)  -- describes the result
 
-data Capture (a :: Type)
+data Capture (a :: Type) -- captures request parameter
 
-data a :<|> b = a :<|> b
+data a :<|> b = a :<|> b -- lists alternative request operations
 
 infixr 8 :<|>
 
-data (a :: k) :> (b :: Type)
+data (a :: k) :> (b :: Type) -- adds a request component
 
 infixr 9 :>
+-- end of description of the web interface
 
 type BookID = Int
 
@@ -36,7 +38,7 @@ type BookInfoAPI =
 type HandlerAction a = IO a
 
 -- This type is not used anywhere
--- BookInfoAPIImpl is the same as Server BookInfoAPI
+-- BookInfoAPIImpl is the same as 'Server BookInfoAPI'
 type BookInfoAPIImpl =
   HandlerAction ServiceStatus
     :<|> (BookID -> HandlerAction String)

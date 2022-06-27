@@ -9,6 +9,7 @@
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 #if __GLASGOW_HASKELL__ >= 810
 {-# LANGUAGE StandaloneKindSignatures #-}
@@ -16,17 +17,12 @@
 
 import Data.Singletons.TH
 
-$( singletons
-     [d|
-       data DoorState = Opened | Closed
-         deriving (Show)
-       |]
- )
+$(singletons [d| data DoorState = Opened | Closed deriving (Show)|])
 
 data Door (s :: DoorState) where
   MkDoor :: SingI s => Door s
 
-doorState :: forall s. Door s -> DoorState
+doorState :: ∀ s. Door s -> DoorState
 doorState MkDoor = fromSing (sing :: SDoorState s)
 
 instance Show (Door s) where
@@ -48,7 +44,7 @@ parseDoor "Opened" = Just $ SomeDoor (MkDoor :: Door Opened)
 parseDoor "Closed" = Just $ SomeDoor (MkDoor :: Door Closed)
 parseDoor _ = Nothing
 
-switchState :: forall s. Door s -> SomeDoor
+switchState :: ∀ s. Door s -> SomeDoor
 switchState door@MkDoor =
   case sing :: SDoorState s of
     SOpened -> SomeDoor (close door)
