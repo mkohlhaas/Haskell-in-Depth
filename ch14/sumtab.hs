@@ -1,14 +1,14 @@
 {-# LANGUAGE BangPatterns #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-import Streaming as S
-import qualified Streaming.Prelude as S
-import qualified Data.List.Extra as LE
-import System.Environment
 import Control.Monad (foldM)
+import qualified Data.List.Extra as LE
 import Data.Text (Text)
-import Data.Text.IO as TIO
-import TextShow
+import Data.Text.IO as TIO (putStrLn)
+import Streaming as S (Of, Stream, chunksOf, mapsM)
+import qualified Streaming.Prelude as S
+import System.Environment (getArgs)
+import TextShow (TextShow (showt))
 
 withTab :: Int -> Text
 withTab num = showt num <> "\t"
@@ -32,14 +32,13 @@ tabulateS :: Int -> Stream (Of Int) IO r -> Stream (Of Text) IO r
 tabulateS cols str = mapsM S.mconcat $ S.chunksOf cols $ S.map withTab str
 
 sumAndTabS :: Int -> Stream (Of Int) IO r -> IO Int
-sumAndTabS cols =
-  fmap S.fst' . S.mapM_ TIO.putStrLn . tabulateS cols . S.store S.sum
+sumAndTabS cols = fmap S.fst' . S.mapM_ TIO.putStrLn . tabulateS cols . S.store S.sum
 
 main :: IO ()
 main = do
   args <- getArgs
   case args of
-    ["-l"] -> sumAndTabL 3 [1..10] >>= print
-    ["-l1"] -> sumAndTabL1 5 [1..300000] >>= print
-    ["-s"] -> sumAndTabS 5 (S.each [1..300000]) >>= print
+    ["-l"] -> sumAndTabL 3 [1 .. 10] >>= print
+    ["-l1"] -> sumAndTabL1 5 [1 .. 300000] >>= print
+    ["-s"] -> sumAndTabS 5 (S.each [1 .. 300000]) >>= print
     _ -> TIO.putStrLn "Unsupported args"
