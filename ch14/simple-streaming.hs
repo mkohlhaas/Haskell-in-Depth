@@ -1,4 +1,3 @@
-{-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE RankNTypes #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -51,26 +50,22 @@ printStream (Step (e :> str)) = do
   printStream str
 
 instance (Functor f, Monad m) => Functor (Stream f m) where
-  fmap :: forall a b. (a -> b) -> Stream f m a -> Stream f m b
+  fmap :: ∀ a b. (a -> b) -> Stream f m a -> Stream f m b
   fmap fun = loop
     where
       loop :: Stream f m a -> Stream f m b
-      loop (Return r) = Return (fun r)
-      loop (Effect m) = Effect (fmap loop m)
-      loop (Step f) = Step (fmap loop f)
+      loop (Return r) = Return $ fun r
+      loop (Effect m) = Effect $ loop <$> m
+      loop (Step f) = Step $ loop <$> f
 
 instance (Functor f, Monad m) => Monad (Stream f m) where
-  (>>=) ::
-    forall r r1.
-    Stream f m r ->
-    (r -> Stream f m r1) ->
-    Stream f m r1
+  (>>=) :: ∀ r r1. Stream f m r -> (r -> Stream f m r1) -> Stream f m r1
   stream >>= fun = loop stream
     where
       loop :: Stream f m r -> Stream f m r1
       loop (Return r) = fun r
-      loop (Effect m) = Effect (fmap loop m)
-      loop (Step f) = Step (fmap loop f)
+      loop (Effect m) = Effect $ loop <$> m
+      loop (Step f) = Step $ loop <$> f
 
 instance (Functor f, Monad m) => Applicative (Stream f m) where
   pure = Return
@@ -84,17 +79,17 @@ stream1 = do
   effect (putStrLn "action 2")
   yield 3
 
-maps :: (Functor f, Monad m) => (forall x. f x -> g x) -> Stream f m r -> Stream g m r
+maps :: (Functor f, Monad m) => (∀ x. f x -> g x) -> Stream f m r -> Stream g m r
 maps fun = loop
   where
     loop (Return r) = Return r
-    loop (Effect m) = Effect (fmap loop m)
-    loop (Step f) = Step (fun (fmap loop f))
+    loop (Effect m) = Effect $ loop <$> m
+    loop (Step f) = Step $ fun $ loop <$> f
 
 mapOf :: Monad m => (a -> b) -> Stream (Of a) m r -> Stream (Of b) m r
-mapOf fun = maps (first fun)
+mapOf fun = maps $ first fun
 
-zipsWith :: Monad m => (forall x y p. (x -> y -> p) -> f x -> g y -> h p) -> Stream f m r -> Stream g m r -> Stream h m r
+zipsWith :: Monad m => (∀ x y p. (x -> y -> p) -> f x -> g y -> h p) -> Stream f m r -> Stream g m r -> Stream h m r
 zipsWith fun = loop
   where
     loop (Return r) _ = Return r
@@ -120,7 +115,7 @@ decompose = loop
     loop (Effect m) = Effect (fmap loop m)
     loop (Step (Compose mstr)) = Effect $ do Step . fmap loop <$> mstr
 
-mapsM :: (Monad m, Functor f, Functor g) => (forall x. f x -> m (g x)) -> Stream f m r -> Stream g m r
+mapsM :: (Monad m, Functor f, Functor g) => (∀ x. f x -> m (g x)) -> Stream f m r -> Stream g m r
 mapsM fun = decompose . maps (Compose . fun)
 
 withEffect :: Monad m => (a -> m ()) -> Stream (Of a) m r -> Stream (Of a) m r
@@ -142,7 +137,7 @@ splitsAt = loop
           Step f -> Step (fmap (loop (n -1)) f)
       | otherwise = Return stream
 
-chunksOf :: forall f m r. (Monad m, Functor f) => Int -> Stream f m r -> Stream (Stream f m) m r
+chunksOf :: ∀ f m r. (Monad m, Functor f) => Int -> Stream f m r -> Stream (Stream f m) m r
 chunksOf n = loop
   where
     cutChunk :: Stream f m r -> Stream f m (Stream (Stream f m) m r)
