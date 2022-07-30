@@ -1,11 +1,14 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Person where
 
 import Data.String
 
 type Age = Int
+
 type Name = String
+
 data Person = Person Name (Maybe Age)
 
 -- https://hackage.haskell.org/package/base-4.16.3.0/docs/Data-String.html#t:IsString
@@ -13,8 +16,8 @@ data Person = Person Name (Maybe Age)
 instance IsString Person where
   fromString name = Person name Nothing
 
-homer :: Person
+homer ∷ Person
 homer = Person "Homer Simpson" (Just 39)
 
-spj :: Person
+spj ∷ Person
 spj = "Simon Peyton Jones"
