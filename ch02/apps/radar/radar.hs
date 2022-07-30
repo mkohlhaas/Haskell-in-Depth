@@ -2,8 +2,8 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
-import Fmt
-import Radar
+import Fmt (Buildable (..), fmt, fmtLn, nameF, unwordsF, (+||), (||+))
+import Radar (Direction (..), Turn (..), orientMany, rotateMany, rotateManySteps)
 import System.Environment (getArgs, getProgName)
 
 deriving instance Read Direction
