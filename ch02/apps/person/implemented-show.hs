@@ -1,6 +1,6 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
-import Person
+import Person (Person (..), homer, spj)
 
 instance Show Person where
   show (Person name Nothing) = name

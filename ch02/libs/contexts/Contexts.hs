@@ -5,7 +5,7 @@
 
 module Contexts where
 
-import Control.Monad.Writer
+import Control.Monad.Writer (MonadWriter (tell, writer), Writer)
 
 readNumber ∷ IO Int
 readNumber = do

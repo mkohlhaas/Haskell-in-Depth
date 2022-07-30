@@ -1,8 +1,8 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
-import Person
-import TextShow
+import Person (Person (..), homer, spj)
+import TextShow (TextShow (showb), fromString, printT)
 
 instance TextShow Person where
   showb (Person name Nothing) = fromString name

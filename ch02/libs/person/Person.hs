@@ -3,7 +3,7 @@
 
 module Person where
 
-import Data.String
+import Data.String (IsString (..))
 
 type Age = Int
 

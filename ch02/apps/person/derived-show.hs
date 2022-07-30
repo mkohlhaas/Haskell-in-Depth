@@ -1,7 +1,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
-import Person
+import Person (Person (..), homer, spj)
 
 deriving instance Show Person
 
