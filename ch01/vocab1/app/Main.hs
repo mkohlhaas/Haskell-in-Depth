@@ -1,11 +1,11 @@
 {-# LANGUAGE UnicodeSyntax #-}
 
-import Data.Char ( isLetter )
-import Data.Function ( (&) )
+import Data.Char (isLetter)
+import Data.Function ((&))
 import Data.List (group, sort)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
-import System.Environment ( getArgs )
+import System.Environment (getArgs)
 
 main ∷ IO ()
 main = do
