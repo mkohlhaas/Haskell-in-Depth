@@ -1,3 +1,5 @@
+{-# LANGUAGE UnicodeSyntax #-}
+
 import Data.Char (isLetter)
 import Data.Function ((&))
 import Data.List (group, sort)
@@ -9,7 +11,7 @@ type Entry = (T.Text, Int)
 
 type Vocabulary = [Entry]
 
-extractVocab :: T.Text -> Vocabulary
+extractVocab ∷ T.Text → Vocabulary
 extractVocab text = ws & sort & group & map buildEntry
   where
     ws = text & T.words & map cleanWord & filter (not . T.null) & map T.toCaseFold
@@ -17,22 +19,22 @@ extractVocab text = ws & sort & group & map buildEntry
     buildEntry xs@(x : _) = (x, length xs)
     cleanWord = T.dropAround (not . isLetter)
 
-printAllWords :: Vocabulary -> IO ()
+printAllWords ∷ Vocabulary → IO ()
 printAllWords vocab = do
   putStrLn "All words: "
   vocab & map fst & T.unlines & TIO.putStrLn
 
-processTextFile :: FilePath -> IO ()
+processTextFile ∷ FilePath → IO ()
 processTextFile fname = do
-  text <- TIO.readFile fname
+  text ← TIO.readFile fname
   let vocab = extractVocab text
   printAllWords vocab
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  args <- getArgs
+  args ← getArgs
   case args of
-    [fname] -> processTextFile fname
-    _ -> do
-      progName <- getProgName
+    [fname] → processTextFile fname
+    _ → do
+      progName ← getProgName
       putStrLn $ "Usage: " ++ progName ++ " filename"
