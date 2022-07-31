@@ -9,7 +9,7 @@
   - Enable the `OverloadedStrings` extension to make it more convenient to use string literals as `Text` values.
     - [Overloaded string literals](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/overloaded_strings.html)
     - Uses `IsString` type class to convert a `String` to target type (in this caes `Text`).
-  - Choose your own favorite package for representing data in text: `formatting` and `fmt` are good candidates.
+  - Use favorite package for representing data in text: `formatting` and `fmt` are good candidates.
 
 - Page 19:
   - _"An experienced Haskeller often looks for a type class first and then starts coding."_
@@ -57,4 +57,3 @@
   - The best advice on `Show` and `Read` is to avoid implementing them manually.
   - Derived `Show` and `Read` instances may still be used for simple cases when debugging or exploring code in `GHCi`.
   - It's always better to use some formatting (for `Show`) or a parsing library (for `Read`) instead.
-
