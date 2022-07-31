@@ -1,0 +1,10 @@
+- List of imported functions in chapter 1:
+  - Control.Monad: `when`
+  - Data.Char: `isLetter`
+  - Data.Function: `&`
+  - Data.List: `group`, `sort`, `sortOn`
+  - Data.Ord: `Down`
+  - Fmt: `blockListF'`, `fmt`, `nameF`, `unlinesF`, `+|`, `|+`
+  - System.Environment: `getArgs`, `getProgName`
+  - Data.Text: `words` `dropAround` `null` `toCaseFold` `unwords`
+  - Data.Text.IO: `putStrLn`

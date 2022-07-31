@@ -3,15 +3,16 @@
 import Data.Char (isLetter)
 import Data.Function ((&))
 import Data.List (group, sort)
+import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import System.Environment (getArgs, getProgName)
 
-type Entry = (T.Text, Int)
+type Entry = (Text, Int)
 
 type Vocabulary = [Entry]
 
-extractVocab ∷ T.Text → Vocabulary
+extractVocab ∷ Text → Vocabulary
 extractVocab text = ws & sort & group & map buildEntry
   where
     ws = text & T.words & map cleanWord & filter (not . T.null) & map T.toCaseFold
