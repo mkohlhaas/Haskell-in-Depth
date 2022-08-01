@@ -32,10 +32,16 @@ randomTurns = uniformsIO
 randomDirections ∷ Int → IO [Direction]
 randomDirections = uniformsIO
 
-writeRandomFile ∷ (Uniform a, Show a) ⇒ Int → (Int → IO [a]) → FilePath → IO ()
-writeRandomFile n gen fname = do
+writeRandomFile ∷ (Uniform a, Show a) ⇒ (Int → IO [a]) → FilePath → Int → IO ()
+writeRandomFile gen fname n = do
   xs ← gen n
   writeFile fname $ unlines $ map show xs
+
+writeRandomTurns ∷ Int → IO ()
+writeRandomTurns = writeRandomFile randomTurns "turns.txt"
+
+writeRandomDirections ∷ Int → IO ()
+writeRandomDirections = writeRandomFile randomDirections "dirs.txt"
 
 deriving instance Ord Turn
 
