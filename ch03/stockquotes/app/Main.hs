@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Main where
 
@@ -14,7 +15,7 @@ import Params (Params (..), cmdLineParser)
 import QuoteData (QuoteData)
 import StatReport (statInfo, textReport)
 
-generateReports :: (Functor t, Foldable t) => Params -> t QuoteData -> IO ()
+generateReports ∷ (Functor t, Foldable t) ⇒ Params → t QuoteData → IO ()
 generateReports Params {..} quotes = do
   unless silent $ putStr textRpt
   when chart $ plotChart title quotes chartFname
@@ -32,20 +33,20 @@ generateReports Params {..} quotes = do
     saveHtml (Just f) html = BL.writeFile f html
 
 -- TODO: Params probably should be ReaderT
-work :: Params -> IO ()
+work ∷ Params → IO ()
 work params = do
-  csvData <- BL.readFile $ fname params
+  csvData ← BL.readFile $ fname params
   case decodeByName csvData of
-    Left err -> putStrLn err
-    Right (_, quotes) -> generateReports params quotes
+    Left err → putStrLn err
+    Right (_, quotes) → generateReports params quotes
 
 -- for use in the repl
-readQuotes :: FilePath -> IO [QuoteData]
+readQuotes ∷ FilePath → IO [QuoteData]
 readQuotes fpath = do
-  csvData <- BL.readFile fpath
+  csvData ← BL.readFile fpath
   case decodeByName csvData of
-    Left err -> error err
-    Right (_, quotes) -> pure (toList quotes)
+    Left err → error err
+    Right (_, quotes) → pure $ toList quotes
 
-main :: IO ()
+main ∷ IO ()
 main = cmdLineParser >>= work

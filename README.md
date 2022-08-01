@@ -135,7 +135,7 @@
     xs = [1,2,3,4,5]
     ```
     ``` shell
-    ghci> fromIntegral (sum xs) / fromIntegral (length xs)
+    ghci> sum xs / fromIntegral (length xs)
     3.0
     ```
 

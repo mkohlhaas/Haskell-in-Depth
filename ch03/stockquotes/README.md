@@ -1,23 +1,23 @@
 #### Files
 
 ```
-Main.hs
-Params.hs (process command-line arguments)
-QuoteData.hs (read quote data from a CSV file)
-StatReport.hs (compute statistics)
-Charts.hs (plot SVG charts)
-HtmlReport.hs (generate HTML reports)
+app/Main.hs
+app/Params.hs (process command-line arguments)
+app/QuoteData.hs (read quote data from a CSV file)
+app/StatReport.hs (compute statistics)
+app/Charts.hs (plot SVG charts)
+app/HtmlReport.hs (generate HTML reports)
 ```
 
 #### Generate module structure
-```
+``` shell
 graphmod > modules.dot
 xdot modules.dot
 dot -Tsvg modules.dot > modules.svg
 ```
 
 #### Run examples
-```
+``` shell
 cabal run stockquotes -- -h
 cabal run stockquotes -- ../../data/quotes.csv
 cabal run stockquotes -- ../../data/quotes.csv -n Example -c --html Example.html
@@ -26,7 +26,7 @@ xdg-open Example.html
 ```
 
 #### Test in REPL
-```
+``` shell
 cabal repl stockquotes
 ghci> quotes <- readQuotes "../../data/quotes.csv
 ghci> day $ head quotes

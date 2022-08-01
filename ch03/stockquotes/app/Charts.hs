@@ -1,4 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module Charts (plotChart) where
 
@@ -7,9 +8,10 @@ import Graphics.Rendering.Chart.Backend.Diagrams
 import Graphics.Rendering.Chart.Easy hiding (bars, close, label)
 import QuoteData
 
-plotChart :: Foldable t => String -> t QuoteData -> FilePath -> IO ()
+{- ORMOLU_DISABLE -}
+plotChart ∷ Foldable t ⇒ String → t QuoteData → FilePath → IO ()
 plotChart title quotes fname = do
-    _ <- renderableToFile fileOptions fname $ toRenderable chart
+    _ ← renderableToFile fileOptions fname $ toRenderable chart
     pure ()
   where
     fileOptions = FileOptions (800, 600) SVG loadSansSerifFonts
@@ -17,7 +19,7 @@ plotChart title quotes fname = do
     (candles, closings, volumes) = unzip3 $
       [ (Candle day low open 0 close high,
         (day, close),
-        (day, [volume])) | QuoteData {..} <- toList quotes ]
+        (day, [volume])) | QuoteData {..} ← toList quotes ]
 
     chart = slayouts_layouts .~
         [ StackedLayout candlesLayout,

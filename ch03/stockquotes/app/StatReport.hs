@@ -1,5 +1,6 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module StatReport where
 
@@ -7,39 +8,30 @@ import Colonnade (ascii, headed)
 import Data.Foldable (maximumBy, minimumBy)
 import Data.Ord (comparing)
 import Data.Time (diffDays)
-import Fmt
-  ( Buildable (..),
-    Builder,
-    fixedF,
-    pretty,
-    (+|),
-    (+||),
-    (|+),
-    (||+),
-  )
+import Fmt (Buildable (..), Builder, fixedF, pretty, (+|), (+||), (|+), (||+))
 import QuoteData (QField (Volume), QuoteData (day), field2fun)
 
-decimalPlacesFloating :: Int
+decimalPlacesFloating ∷ Int
 decimalPlacesFloating = 2
 
 data StatValue = StatValue
-  { decimalPlaces :: Int,
-    value :: Double
+  { decimalPlaces ∷ Int,
+    value ∷ Double
   }
 
 -- statistics for one field
 data StatEntry = StatEntry
-  { qfield :: QField,
-    meanVal :: StatValue,
-    minVal :: StatValue,
-    maxVal :: StatValue,
-    daysBetweenMinMax :: Int
+  { qfield ∷ QField,
+    meanVal ∷ StatValue,
+    minVal ∷ StatValue,
+    maxVal ∷ StatValue,
+    daysBetweenMinMax ∷ Int
   }
 
-mean :: (Fractional a, Foldable t) => t a -> a
+mean ∷ (Fractional a, Foldable t) ⇒ t a → a
 mean xs = sum xs / fromIntegral (length xs)
 
-computeMinMaxDays :: (Ord a, Foldable t) => (QuoteData -> a) -> t QuoteData -> (a, a, Int)
+computeMinMaxDays ∷ (Ord a, Foldable t) ⇒ (QuoteData → a) → t QuoteData → (a, a, Int)
 computeMinMaxDays get quotes = (get minQ, get maxQ, days)
   where
     cmp = comparing get
@@ -47,7 +39,7 @@ computeMinMaxDays get quotes = (get minQ, get maxQ, days)
     maxQ = maximumBy cmp quotes
     days = fromIntegral $ abs $ diffDays (day minQ) (day maxQ)
 
-statInfo :: (Functor t, Foldable t) => t QuoteData -> [StatEntry]
+statInfo ∷ (Functor t, Foldable t) ⇒ t QuoteData → [StatEntry]
 statInfo quotes = fmap qFieldStatInfo [minBound .. maxBound]
   where
     decimalPlacesByQField Volume = 0
@@ -74,7 +66,7 @@ instance Buildable StatEntry where
       +| maxVal |+ " (max), "
       +| daysBetweenMinMax |+ " (days)"
 
-textReport :: [StatEntry] -> String
+textReport ∷ [StatEntry] → String
 textReport = ascii colStats
   where
     colStats =
@@ -86,5 +78,5 @@ textReport = ascii colStats
           headed "Days btw. Min/Max" (pretty . daysBetweenMinMax)
         ]
 
-showPrice :: Double -> Builder
+showPrice ∷ Double → Builder
 showPrice = fixedF decimalPlacesFloating

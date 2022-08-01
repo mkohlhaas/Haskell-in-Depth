@@ -1,4 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE UnicodeSyntax #-}
 
 module HtmlReport where
 
@@ -8,33 +9,16 @@ import Data.ByteString.Lazy (ByteString)
 import Data.Foldable (traverse_)
 import Fmt (Buildable, pretty)
 import QuoteData (QuoteData (close, day, high, low, open, volume))
-import StatReport
-  ( StatEntry (daysBetweenMinMax, maxVal, meanVal, minVal, qfield),
-    showPrice,
-  )
+import StatReport (StatEntry (daysBetweenMinMax, maxVal, meanVal, minVal, qfield), showPrice)
 import Text.Blaze.Colonnade (encodeHtmlTable)
 import Text.Blaze.Html.Renderer.Utf8 (renderHtml)
-import Text.Blaze.Html5 as H
-  ( Html,
-    ToValue (toValue),
-    body,
-    docTypeHtml,
-    h1,
-    head,
-    i,
-    img,
-    string,
-    style,
-    text,
-    title,
-    (!),
-  )
+import Text.Blaze.Html5 as H (Html, ToValue (toValue), body, docTypeHtml, h1, head, i, img, string, style, text, title, (!))
 import Text.Blaze.Html5.Attributes (src)
 
-viaFmt :: Buildable a => a -> Html
+viaFmt ∷ Buildable a ⇒ a → Html
 viaFmt = text . pretty
 
-colStats :: Colonnade Headed StatEntry Html
+colStats ∷ Colonnade Headed StatEntry Html
 colStats =
   mconcat
     [ headed "Quote Field" (i . string . show . qfield),
@@ -44,7 +28,7 @@ colStats =
       headed "Days between Min/Max" (viaFmt . daysBetweenMinMax)
     ]
 
-colData :: Colonnade Headed QuoteData Html
+colData ∷ Colonnade Headed QuoteData Html
 colData =
   mconcat
     [ headed "Day" (viaFmt . day),
@@ -55,7 +39,7 @@ colData =
       headed "Volume" (viaFmt . volume)
     ]
 
-htmlReport :: (Functor t, Foldable t) => String -> t QuoteData -> [StatEntry] -> [FilePath] -> ByteString
+htmlReport ∷ (Functor t, Foldable t) ⇒ String → t QuoteData → [StatEntry] → [FilePath] → ByteString
 htmlReport docTitle quotes statEntries images = renderHtml $
   docTypeHtml $ do
     H.head $ do
@@ -72,6 +56,4 @@ htmlReport docTitle quotes statEntries images = renderHtml $
       h1 "Stock Quotes Data"
       encodeHtmlTable mempty colData quotes
   where
-    tableStyle =
-      "table {border-collapse: collapse}"
-        <> "td, th {border: 1px solid black; padding: 5px}"
+    tableStyle = "table {border-collapse: collapse}" <> "td, th {border: 1px solid black; padding: 5px}"
