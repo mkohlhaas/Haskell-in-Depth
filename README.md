@@ -53,15 +53,15 @@
   ```
   - We don't use `putStr` or a similar function: the `fmt` function is clever enough to print the given value in the context, where `IO ()` is expected.
   - This is also implemented with type classes and instances.
-  - The `fmt` result has the type `FromBuilder b => b`.
+  - The `fmt` result has the type `FromBuilder b ⇒ b`.
   - The `IO ()` instance of `FromBuilder` prints the given value.
   - The `FromBuilder` type class also has an instance for `Text`, so it can be used to return a `Text` value as well.
 
 - Page 32: **Polymorphic Values**
-  - The values of the `C a => a` type are called polymorphic, because they can be used in many forms, depending on the required type.
-  - For example, we can use numeric values polymorphically without specifying a type, such as `Num a => a`.
-  - `String` literals become polymorphic `IsString s => s` if we enable the `OverloadedStrings` GHC extension.
-  - The `FromBuilder b => b` type follows the same idea.
+  - The values of the `C a ⇒ a` type are called polymorphic, because they can be used in many forms, depending on the required type.
+  - For example, we can use numeric values polymorphically without specifying a type, such as `Num a ⇒ a`.
+  - `String` literals become polymorphic `IsString s ⇒ s` if we enable the `OverloadedStrings` GHC extension.
+  - The `FromBuilder b ⇒ b` type follows the same idea.
 
 - [List of all Extensions](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts.html)
 - Used extensions in Chapter 2:
@@ -74,7 +74,7 @@
 
 - `error` can be used anywhere as the output is any type:
   ``` haskell
-  error :: ∀ a. HasCallStack => [Char] -> a
+  error ∷ ∀ a. HasCallStack ⇒ [Char] → a
   ```
 
 - Trick: Import type explicitly so you don't need to qualify it in signatures.
@@ -92,7 +92,7 @@
     randomA ∷ Uniform a ⇒ IO a
     randomA = getStdRandom uniform
     -- many as:
-    randomAs :: Uniform a => Int -> IO [a]
+    randomAs ∷ Uniform a ⇒ Int → IO [a]
     randomAs n = replicateM n randomA
     -- fix a type to generate specific random values, e.g. `Turns`:
     randomTurns ∷ Int → IO [Turn]
@@ -107,11 +107,75 @@
       uniformM rng = uniformRM (minBound, maxBound) rng
     ```
 
-- numeric types and most important functions
-- fixed precision (2.2.3)
-  - error function from Ch. 1
+- Page 39:
+  - Hierarchy of numeric type classes:
+  - ![Hierarchy of numeric type classes](ch02/numeric-classes.png)
+  - `Word`s are strictly positive!
+  - `Int`s are positive and negative.
+    ``` shell
+    ghci> (minBound, maxBound) ∷ (Word, Word)
+    (0,18446744073709551615)
+    ghci> (minBound, maxBound) ∷ (Int, Int)
+    (-9223372036854775808,9223372036854775807)
+    ```
+  - One problem with this type is that the argument now can be Complex a, but the radius cannot be a complex number - it must be real.
+    ``` haskell
+    circleArea ∷ Floating a ⇒ a → a
+    circleArea r = pi * r * r
+    ```
+  - realToFrac ∷ (Real a, Fractional b) ⇒ a → b
+    - `Floating` extends `Fractional` ⇒ we can use it to get a value of any type `b` with the `Floating` instance
+      ``` haskell
+      circleArea ∷ (Real a, Floating b) ⇒ a → b
+      circleArea r = pi * realToFrac (r * r)
+      ```
+  - fromIntegral ∷ (Integral a, Num b) ⇒ a → b
+    ``` haskell
+    xs ∷ [Int]
+    xs = [1,2,3,4,5]
+    ```
+    ``` shell
+    ghci> fromIntegral (sum xs) / fromIntegral (length xs)
+    3.0
+    ```
+
+- Page 42:
+  - Fixed Precision
+    ``` shell
+    ghci> import Data.Fixed
+    ghci> 3.141592653589793 :: Deci
+    3.1
+    ghci> 3.141592653589793 :: Centi
+    3.14
+    ghci> 3.141592653589793 :: Milli
+    3.141
+    ghci> 3.141592653589793 :: Micro
+    3.141592
+    ghci> 3.141592653589793 :: Nano
+    3.141592653
+    ghci> 3.141592653589793 :: Pico
+    3.141592653589
+    ```
+  - Define own resolution:
+    ``` haskell
+    instance HasResolution E4 where
+      resolution _ = 10000
+    type Fixed4 = Fixed E4
+    ```
+    ``` shell
+    ghci> 3.141592653589793 :: Fixed4
+    3.1415
+    ```
 
 - Page 46:
   - The best advice on `Show` and `Read` is to avoid implementing them manually.
   - Derived `Show` and `Read` instances may still be used for simple cases when debugging or exploring code in `GHCi`.
-  - It's always better to use some formatting (for `Show`) or a parsing library (for `Read`) instead.
+    - `show` and `read` are inverse operations: read (show a) == a; show (read a) == a
+  - But it is always better to use some formatting (for `Show`) or a parsing library (for `Read`) instead.
+  - `String` is very inefficient and should never be used in production code. Use `Text` instead!
+
+- Page 47:
+  - `TextShow` supports converting recursive data types to `Text` with parentheses, depending on precedence!
+
+- Page 51:
+  - ![Abstract Computations](ch02/monad_traversable.png)

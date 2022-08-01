@@ -12,7 +12,7 @@ readNumber = do
   s ← getLine
   pure $ read s
 
--- more idiomatic way
+-- the same:
 -- readNumber ∷ IO Int
 -- readNumber = read <$> getLine
 
@@ -32,6 +32,6 @@ cartesianProduct xs ys = do
 addNumber ∷ Int → IO String
 addNumber n = pure (++) <*> pure (show n ++ " ") <*> getLine
 
--- more idiomatic way
+-- the same:
 -- addNumber ∷ Int → IO String
 -- addNumber n = (++) (show n ++ " ") <$> getLine
