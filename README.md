@@ -9,10 +9,25 @@
   - Enable the `OverloadedStrings` extension to make it more convenient to use string literals as `Text` values.
     - [Overloaded string literals](https://ghc.gitlab.haskell.org/ghc/doc/users_guide/exts/overloaded_strings.html)
     - Uses `IsString` type class to convert a `String` to target type (in this caes `Text`).
+    - The extension `OverloadedStrings` replaces every string literal in the source code with a call `fromString`.
   - Use favorite package for representing data in text: `formatting` and `fmt` are good candidates.
 
 - Page 19:
   - _"An experienced Haskeller often looks for a type class first and then starts coding."_
+
+- Page 22:
+  - Get info from `GHCi`:
+    ``` shell
+    ghci> :info Eq
+    ghci> :doc Eq
+    ```
+- Page 27:
+  - When encountering a new data type, it is always a good idea to look for provided instances.
+  ``` shell
+  ghci> :info Text
+  instance Monoid Text -- Defined in 'Data.Text'
+  instance Semigroup Text -- Defined in 'Data.Text'
+  ```
 
 - Page 28:
   - Enabling and disabling GHC extensions in GHCi
@@ -25,6 +40,29 @@
       ghci> :set -XOverloadedStrings
       ghci> :set -XNoOverloadedStrings
       ```
+- Page 32:
+  ``` haskell
+  rotateFromFile ∷ Direction → FilePath → IO ()
+  rotateFromFile dir fname = do
+    f ← readFile fname
+    let turns = map read $ lines f
+        finalDir = rotateMany dir turns
+        dirs = rotateManySteps dir turns
+    fmtLn $ "Final direction: " +|| finalDir ||+ "" -- using Show instance of Direction (for 'finalDir') !!!
+    fmt $ nameF "Intermediate directions" (unwordsF dirs) -- using Buildable instance of Direction (for 'dirs') !!!
+  ```
+  - We don't use `putStr` or a similar function: the `fmt` function is clever enough to print the given value in the context, where `IO ()` is expected.
+  - This is also implemented with type classes and instances.
+  - The `fmt` result has the type `FromBuilder b => b`.
+  - The `IO ()` instance of `FromBuilder` prints the given value.
+  - The `FromBuilder` type class also has an instance for `Text`, so it can be used to return a `Text` value as well.
+
+- Page 32: **Polymorphic Values**
+  - The values of the `C a => a` type are called polymorphic, because they can be used in many forms, depending on the required type.
+  - For example, we can use numeric values polymorphically without specifying a type, such as `Num a => a`.
+  - `String` literals become polymorphic `IsString s => s` if we enable the `OverloadedStrings` GHC extension.
+  - The `FromBuilder b => b` type follows the same idea.
+
 - [List of all Extensions](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts.html)
 - Used extensions in Chapter 2:
   - [DeriveAnyClass](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/derive_any_class.html)

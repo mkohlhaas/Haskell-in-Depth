@@ -28,8 +28,8 @@ rotateFromFile dir fname = do
   let turns = map read $ lines f
       finalDir = rotateMany dir turns
       dirs = rotateManySteps dir turns
-  fmtLn $ "Final direction: " +|| finalDir ||+ ""
-  fmt $ nameF "Intermediate directions" (unwordsF dirs)
+  fmtLn $ "Final direction: " +|| finalDir ||+ "" -- using Show instance of Direction (for 'finalDir')
+  fmt $ nameF "Intermediate directions" (unwordsF dirs) -- using Buildable instance of Direction (for 'dirs')
 
 orientFromFile ∷ FilePath → IO ()
 orientFromFile fname = do
