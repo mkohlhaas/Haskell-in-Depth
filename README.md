@@ -86,7 +86,27 @@
   extractVocab ∷ T.Text → Vocabulary
   ```
 
-- random lib
+- Page 35: **Random Generators & Testing**
+  - Creating a random `a` in a monadic context with `getStdRandom uniform`, e.g. in IO:
+    ``` haskell
+    randomA ∷ Uniform a ⇒ IO a
+    randomA = getStdRandom uniform
+    -- many as:
+    randomAs :: Uniform a => Int -> IO [a]
+    randomAs n = replicateM n randomA
+    -- fix a type to generate specific random values, e.g. `Turns`:
+    randomTurns ∷ Int → IO [Turn]
+    randomTurns = uniformsIO
+    ```
+  - One also needs to implement a `Uniform` instance which is easy to implement with a `UniformRange` instance.
+  - Just leverage existing instances for `Int`.
+    ``` haskell
+    instance UniformRange Turn where
+      uniformRM (lo, hi) rng = toEnum <$> uniformRM (fromEnum lo, fromEnum hi) rng
+    instance Uniform Turn where
+      uniformM rng = uniformRM (minBound, maxBound) rng
+    ```
+
 - numeric types and most important functions
 - fixed precision (2.2.3)
   - error function from Ch. 1

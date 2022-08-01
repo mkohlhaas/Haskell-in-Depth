@@ -1,7 +1,7 @@
 {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
-import Control.Monad (replicateM, unless, when)
+import Control.Monad (replicateM, unless)
 import Data.List (nub, sort)
 import Radar (Direction, Turn (..), every, orient, orientMany, rotateMany, rotateMany', rotateManySteps)
 import System.Exit (exitFailure)
@@ -9,17 +9,13 @@ import System.Random (Uniform, UniformRange, getStdRandom, uniform)
 import System.Random.Stateful (uniformM, uniformRM)
 
 instance UniformRange Turn where
-  uniformRM (lo, hi) rng = do
-    res ← uniformRM (fromEnum lo ∷ Int, fromEnum hi) rng
-    pure $ toEnum res
+  uniformRM (lo, hi) rng = toEnum <$> uniformRM (fromEnum lo, fromEnum hi) rng
+
+instance UniformRange Direction where
+  uniformRM (lo, hi) rng = toEnum <$> uniformRM (fromEnum lo, fromEnum hi) rng
 
 instance Uniform Turn where
   uniformM rng = uniformRM (minBound, maxBound) rng
-
-instance UniformRange Direction where
-  uniformRM (lo, hi) rng = do
-    res ← uniformRM (fromEnum lo ∷ Int, fromEnum hi) rng
-    pure $ toEnum res
 
 instance Uniform Direction where
   uniformM rng = uniformRM (minBound, maxBound) rng
