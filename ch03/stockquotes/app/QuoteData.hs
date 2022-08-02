@@ -1,5 +1,7 @@
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE UnicodeSyntax #-}
 
 module QuoteData where
@@ -7,6 +9,7 @@ module QuoteData where
 import Data.ByteString.Char8 (unpack)
 import Data.Csv (FromField (..), FromNamedRecord)
 import Data.Time (Day, defaultTimeLocale, parseTimeM)
+import Fmt (Buildable (..), Builder, fixedF, pretty, (+|), (+||), (|+), (||+))
 import GHC.Generics (Generic)
 
 data QuoteData = QuoteData
@@ -18,6 +21,9 @@ data QuoteData = QuoteData
     low ∷ Double
   }
   deriving (Generic, FromNamedRecord, Show)
+
+instance Buildable QuoteData where
+  build QuoteData {..} = "Day: " +| day |+ " Volume: " +| volume |+ " Open: " +| open |+ " Close: " +| close |+ " High: " +| high |+ ""
 
 instance FromField Day where
   parseField = parseTimeM True defaultTimeLocale "%Y-%m-%d" . unpack

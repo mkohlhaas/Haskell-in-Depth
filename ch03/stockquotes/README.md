@@ -38,7 +38,8 @@ ghci> si = statInfo quotes
 ghci> import Fmt
 ghci> pretty $ unlinesF si
 ghci> putStr $ textReport $ statInfo quotes
-ghci> readQuotes "data/quotes.csv" >>= putStr . textReport . statInfo
+ghci> readQuotes "../../data/quotes.csv" >>= putStr . textReport . statInfo
+ghci> readQuotes "../../data/quotes.csv" >>= fmt . jsonListF
 ghci> import Text.Blaze.Colonnade
 ghci> printCompactHtml (encodeHtmlTable mempty colStats si)
 ```
