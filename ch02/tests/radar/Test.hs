@@ -39,9 +39,11 @@ writeRandomFile gen fname n = do
 
 -- writeRandomFile gen fname n = gen n >>= \xs → writeFile fname $ unlines $ map show xs
 
+-- >>> writeRandomDirections 17
 writeRandomTurns ∷ Int → IO ()
 writeRandomTurns = writeRandomFile randomTurns "turns.txt"
 
+-- >>> writeRandomTurns 17
 writeRandomDirections ∷ Int → IO ()
 writeRandomDirections = writeRandomFile randomDirections "dirs.txt"
 

@@ -28,7 +28,8 @@ xdg-open Example.html
 #### Test in REPL
 ``` shell
 cabal repl stockquotes
-ghci> quotes <- readQuotes "../../data/quotes.csv
+ghci> quotes <- readQuotes "../../data/quotes.csv"
+ghci> import QuoteData
 ghci> day $ head quotes
 ghci> field2fun High $ last quotes
 ghci> field2fun Volume $ last quotes

@@ -40,7 +40,9 @@ work params = do
     Left err → putStrLn err
     Right (_, quotes) → generateReports params quotes
 
--- for use in the repl
+-- >>> take 1 <$> readQuotes "../../data/quotes.csv"
+-- [QuoteData {day = 2019-05-01, volume = 64827300, open = 209.880005, close = 210.520004, high = 215.309998, low = 209.229996}]
+
 readQuotes ∷ FilePath → IO [QuoteData]
 readQuotes fpath = do
   csvData ← BL.readFile fpath
