@@ -102,9 +102,9 @@
   - Just leverage existing instances for `Int`.
     ``` haskell
     instance UniformRange Turn where
-      uniformRM (lo, hi) rng = toEnum <$> uniformRM (fromEnum lo, fromEnum hi) rng
+      uniformRM (lo, hi) = toEnum <$> uniformRM (fromEnum lo, fromEnum hi)
     instance Uniform Turn where
-      uniformM rng = uniformRM (minBound, maxBound) rng
+      uniformM = uniformRM (minBound, maxBound)
     ```
 
 - Page 39:
@@ -118,7 +118,7 @@
     ghci> (minBound, maxBound) ∷ (Int, Int)
     (-9223372036854775808,9223372036854775807)
     ```
-  - One problem with this type is that the argument now can be Complex a, but the radius cannot be a complex number - it must be real.
+  - One problem with this type is that the argument now can be `Complex a`, but the radius cannot be a complex number - it must be real.
     ``` haskell
     circleArea ∷ Floating a ⇒ a → a
     circleArea r = pi * r * r

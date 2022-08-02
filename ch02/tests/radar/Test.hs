@@ -15,16 +15,16 @@ instance UniformRange Direction where
   uniformRM (lo, hi) rng = toEnum <$> uniformRM (fromEnum lo, fromEnum hi) rng
 
 instance Uniform Turn where
-  uniformM rng = uniformRM (minBound, maxBound) rng
+  uniformM = uniformRM (minBound, maxBound)
 
 instance Uniform Direction where
-  uniformM rng = uniformRM (minBound, maxBound) rng
+  uniformM = uniformRM (minBound, maxBound)
 
 uniformIO ∷ Uniform a ⇒ IO a
 uniformIO = getStdRandom uniform
 
 uniformsIO ∷ Uniform a ⇒ Int → IO [a]
-uniformsIO n = replicateM n uniformIO
+uniformsIO = flip replicateM uniformIO
 
 randomTurns ∷ Int → IO [Turn]
 randomTurns = uniformsIO
@@ -36,6 +36,8 @@ writeRandomFile ∷ (Uniform a, Show a) ⇒ (Int → IO [a]) → FilePath → In
 writeRandomFile gen fname n = do
   xs ← gen n
   writeFile fname $ unlines $ map show xs
+
+-- writeRandomFile gen fname n = gen n >>= \xs → writeFile fname $ unlines $ map show xs
 
 writeRandomTurns ∷ Int → IO ()
 writeRandomTurns = writeRandomFile randomTurns "turns.txt"
