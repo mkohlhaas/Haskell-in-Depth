@@ -33,11 +33,11 @@ randomDirections ∷ Int → IO [Direction]
 randomDirections = uniformsIO
 
 writeRandomFile ∷ (Uniform a, Show a) ⇒ (Int → IO [a]) → FilePath → Int → IO ()
-writeRandomFile gen fname n = do
-  xs ← gen n
-  writeFile fname $ unlines $ map show xs
+writeRandomFile gen fname n = gen n >>= writeFile fname . unlines . map show
 
--- writeRandomFile gen fname n = gen n >>= \xs → writeFile fname $ unlines $ map show xs
+-- writeRandomFile gen fname n = do
+--   xs ← gen n
+--   writeFile fname $ unlines $ map show xs
 
 -- >>> writeRandomDirections 17
 writeRandomTurns ∷ Int → IO ()
