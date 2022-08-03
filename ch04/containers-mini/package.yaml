@@ -1,7 +1,5 @@
 name:       containers-mini
 version:    0.1.0.0
-maintainer: michael.kohlhaas@chammy.info
-author:     Michael Kohlhaas
 
 dependencies:
   - base >=4.14.3.0 && <4.15,
