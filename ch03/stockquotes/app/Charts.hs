@@ -37,6 +37,12 @@ plotChart title quotes fname =
        layout_plots .~ [ plotBars $ bars "Volume" volumes gray ]
      $ def
 
+    qline label values color =
+       plot_lines_style .~ lineStyle 1 color
+     $ plot_lines_values .~ [values]
+     $ plot_lines_title  .~ label
+     $ def
+
     candle label values color =
        plot_candle_line_style  .~ lineStyle 1 gray
      $ plot_candle_fill .~ True
@@ -46,12 +52,6 @@ plotChart title quotes fname =
      $ plot_candle_width .~ 3
      $ plot_candle_values .~ values
      $ plot_candle_title .~ label
-     $ def
-
-    qline label values color =
-       plot_lines_style .~ lineStyle 1 color
-     $ plot_lines_values .~ [values]
-     $ plot_lines_title  .~ label
      $ def
 
     bars label values color =

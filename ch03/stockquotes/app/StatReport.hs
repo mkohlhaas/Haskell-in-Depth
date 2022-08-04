@@ -32,14 +32,16 @@ mean ∷ (Fractional a, Foldable t) ⇒ t a → a
 mean xs = sum xs / fromIntegral (length xs)
 
 computeMinMaxDays ∷ (Ord a, Foldable t) ⇒ (QuoteData → a) → t QuoteData → (a, a, Int)
-computeMinMaxDays get quotes = (get minQ, get maxQ, days)
+computeMinMaxDays get quotes = (minVal, maxVal, days)
   where
     cmp = comparing get
     minQ = minimumBy cmp quotes
     maxQ = maximumBy cmp quotes
+    minVal = get minQ
+    maxVal = get maxQ
     days = fromIntegral $ abs $ diffDays (day minQ) (day maxQ)
 
-statInfo ∷ (Functor t, Foldable t) ⇒ t QuoteData → [StatEntry]
+statInfo ∷ (Foldable t, Functor t) ⇒ t QuoteData → [StatEntry]
 statInfo quotes = fmap qFieldStatInfo [minBound .. maxBound]
   where
     decimalPlacesByQField Volume = 0
@@ -60,7 +62,7 @@ instance Buildable StatValue where
 -- for use in the REPL
 instance Buildable StatEntry where
   build StatEntry {..} =
-    "" +|| qfield ||+ ": "
+    qfield ||+ ": "
       +| meanVal |+ " (mean), "
       +| minVal |+ " (min), "
       +| maxVal |+ " (max), "
