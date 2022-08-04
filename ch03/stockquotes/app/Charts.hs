@@ -3,6 +3,7 @@
 
 module Charts (plotChart) where
 
+import Control.Monad (void)
 import Data.Foldable (toList)
 import Graphics.Rendering.Chart.Backend.Diagrams
 import Graphics.Rendering.Chart.Easy hiding (bars, close, label)
@@ -10,9 +11,8 @@ import QuoteData
 
 {- ORMOLU_DISABLE -}
 plotChart ∷ Foldable t ⇒ String → t QuoteData → FilePath → IO ()
-plotChart title quotes fname = do
-    _ ← renderableToFile fileOptions fname $ toRenderable chart
-    pure ()
+plotChart title quotes fname =
+  void <$> renderableToFile fileOptions fname $ toRenderable chart
   where
     fileOptions = FileOptions (800, 600) SVG loadSansSerifFonts
 
@@ -60,9 +60,9 @@ plotChart title quotes fname = do
      $ plot_bars_item_styles .~ [(fillStyle color, Nothing)]
      $ def
 
-    fillStyle color = solidFillStyle $ opaque color
-
     lineStyle n color =
        line_width .~ n
      $ line_color .~ opaque color
      $ def
+
+    fillStyle color = solidFillStyle $ opaque color

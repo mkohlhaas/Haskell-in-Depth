@@ -19,7 +19,7 @@ data StatValue = StatValue
     value ∷ Double
   }
 
--- statistics for one field
+-- statistics for one field (Open, Close, ...)
 data StatEntry = StatEntry
   { qfield ∷ QField,
     meanVal ∷ StatValue,

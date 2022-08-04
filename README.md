@@ -179,3 +179,18 @@
 
 - Page 51:
   - ![Abstract Computations](ch02/monad_traversable.png)
+
+- Page 77:
+  - `FromField (..)` in the import list for the `Data.Csv` module refers to the `FromField` type class and **every method** of this type class.
+    ``` haskell
+    import Data.Csv (FromField (..), FromNamedRecord)
+    ```
+
+- Page 82:
+  - Nice application of [unzip3](https://hackage.haskell.org/package/base-4.16.3.0/docs/Prelude.html#v:unzip3):
+    ``` haskell
+    (candles, closings, volumes) = unzip3 $
+      [ (Candle day low open 0 close high,
+        (day, close),
+        (day, [volume])) | QuoteData {..} ← toList quotes ]
+    ```
