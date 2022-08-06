@@ -196,23 +196,39 @@
     ```
 
 - Page 99: Chapter 4
-
+  - Special package, `base`, contains the definitions from the standard library (as defined by the Haskell 2010 Language Report) together with GHC-specific additions.
   - Import the whole module, `import Data.List`
   - Import only specific names from the module by listing them in parentheses after the module name, `import Data.Char (toLower, toUpper)`
   - Import no names at all with an empty list of names (note that this IMPORTS ALL THE INSTANCES because they have no names in Haskell), `import Data.Char ()`
   - Import names with optional or mandatory qualification with an alias (`as`) or a full module name to avoid name clashes, `import qualified MyModuleWithAVeryLongModuleName as Shorty`,  `import qualified MyModule`
   - Import all names except those listed after the hiding keyword. `import Data.Char hiding (toLower, toUpper)`
 
+  - Exports:
+    ``` haskell
+    module ModuleName (
+      module X,                 -- reexports everything from module X
+      DataType1,                -- only the type constructor is exported.
+      DataType2 (..),           -- exports the type constructor with all data constructors
+      DataType3 (Cons1, Cons2), -- exports the type constructor with the two mentioned data constructors
+      TypeClass1,
+      TypeClass2 (..),
+      TypeClass3 (method1, method2),
+      fun1, fun2, fun3
+    ) where
+    ...
+    ```
   - Remember also that instances of type classes are always exported.
   - The module name can be hierarchical, with components separated by dots (e.g., Graphics.Rendering.Chart.Backend.Cairo). The Haskell Report does not set out a meaning for this hierarchy, ALTHOUGH EXISTING IMPLEMENTATIONS normally use it as an instruction for finding module source code files in subdirectories.
   - Note that a module is always imported by its full name, regardless of whether we import it from the same subdirectory (as in S.A) or a neighboring subdirectory (as in T.B ).
+    ![Module Hierarchy](data/pics/module_hierarchy.png)
   - Whenever we write import in a program, we import a particular module but not the whole module subhierarchy. Hierarchical module names are about naming only, and we shouldn’t expect anything else.
 
-  - Provide include/module path with -i(path no spaces after flag):
+  - Provide include/module root path with -i`path` (no spaces after flag):
     ```shell
     $ ghci B.hs -i..
     ```
 
+  - Do not import standard `Prelude`:
     ```haskell
     -- do not import Prelude
     {-# LANGUAGE NoImplicitPrelude #-}
@@ -221,11 +237,23 @@
   - Custom preludes:
     - https://hackage.haskell.org/packages/#cat:Prelude
     - https://hackage.haskell.org/packages/search?terms=prelude
-    - relude (most stars on Github and very active; from kowainik)
+    - relude (most stars on Github and very active; from kowainik); integration with [Summoner](https://kowainik.github.io/projects/summoner).
     - foundation
     - protolude
     - classy-prelude
     - universum
+
+  - The role of `Setup.hs`:
+    ```shell
+    # download and unpack package
+    $ curl http://hackage.haskell.org/package/timeit-2.0/timeit-2.0.tar.gz \ --output timeit-2.0.tar.gz
+    $ tar -xf timeit-2.0.tar.gz
+    $ cd timeit-2.0
+    # configure, build and install package
+    $ runhaskell Setup.hs configure
+    $ runhaskell Setup.hs build
+    $ runhaskell Setup.hs install
+    ```
 
   - GHC operates two package databases by default: the global one and a user-specific one, arranged in a stack with the user-specific database on top.
   - It starts searching for packages at the top of the stack and continues all the way to the bottom.
@@ -261,7 +289,7 @@
 
   - Tip: Use hpack: https://github.com/sol/hpack
 
-  - Cabal hell is history.
+  - Cabal hell is history! But version of `base` package linked to GHC version!
 
   - Three approaches:
     - Curated sets of packages -> `Stack`
