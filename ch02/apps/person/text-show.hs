@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE UnicodeSyntax #-}
 
 import Person (Person (..), homer, spj)
 import TextShow (TextShow (showb), fromString, printT)

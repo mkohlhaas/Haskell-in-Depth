@@ -1,5 +1,4 @@
 {-# LANGUAGE OverloadedStrings #-}
-{-# LANGUAGE UnicodeSyntax #-}
 
 import Control.Monad (when)
 import Data.Char (isLetter)

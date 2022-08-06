@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 module Params (Params (..), cmdLineParser) where
 
 import Data.Text (Text, strip)

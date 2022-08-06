@@ -8,40 +8,44 @@ library
         Data.Deque
         Data.Queue
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         containers ==0.6.*
 
 test-suite stack
-    type:             exitcode-stdio-1.0
-    main-is:          TestStack.hs
-    other-modules:    Data.Stack
-    default-language: Haskell2010
+    type:               exitcode-stdio-1.0
+    main-is:            TestStack.hs
+    other-modules:      Data.Stack
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         containers ==0.6.*
 
 test-suite queue
-    type:             exitcode-stdio-1.0
-    main-is:          TestQueue.hs
+    type:               exitcode-stdio-1.0
+    main-is:            TestQueue.hs
     other-modules:
         Data.Queue
         Data.Deque
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         containers ==0.6.*
 
 benchmark bench
-    type:             exitcode-stdio-1.0
-    main-is:          Bench.hs
+    type:               exitcode-stdio-1.0
+    main-is:            Bench.hs
     other-modules:
         Data.Stack
         Data.Deque
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         containers ==0.6.*,

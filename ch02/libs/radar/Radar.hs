@@ -1,5 +1,4 @@
 {-# LANGUAGE DeriveAnyClass #-}
-{-# LANGUAGE UnicodeSyntax #-}
 
 module Radar where
 

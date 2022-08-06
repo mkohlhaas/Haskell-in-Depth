@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 import Data.Stack (empty, isEmpty, pop, push, top)
 import System.Exit (exitFailure)
 

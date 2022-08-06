@@ -1,6 +1,5 @@
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE UnicodeSyntax #-}
 
 import Fmt (Buildable (..), fmt, fmtLn, nameF, unwordsF, (+||), (||+))
 import Radar (Direction (..), Turn (..), orientMany, rotateMany, rotateManySteps)

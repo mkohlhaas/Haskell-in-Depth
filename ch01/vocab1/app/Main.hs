@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 import Data.Char (isLetter)
 import Data.Function ((&))
 import Data.List (group, sort)

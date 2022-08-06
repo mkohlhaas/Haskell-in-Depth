@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 import Data.Queue (dequeue, empty, enqueue, front, isEmpty)
 import System.Exit (exitFailure)
 

@@ -1,4 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
 {-# LANGUAGE NoImplicitPrelude #-}
 
 module Data.Deque (Deque, empty, isEmpty, front, back, pushBack, pushFront, popBack, popFront) where

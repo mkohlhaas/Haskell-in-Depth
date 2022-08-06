@@ -1,5 +1,4 @@
 {-# LANGUAGE RecordWildCards #-}
-{-# LANGUAGE UnicodeSyntax #-}
 
 module Charts (plotChart) where
 

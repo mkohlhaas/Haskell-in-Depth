@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 module Data.Queue (Queue, empty, isEmpty, front, enqueue, dequeue) where
 
 import Data.Bool (Bool)

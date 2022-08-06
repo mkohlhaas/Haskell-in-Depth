@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 module Data.Stack (Stack, empty, isEmpty, push, pop, top) where
 
 newtype Stack a = Stack [a]

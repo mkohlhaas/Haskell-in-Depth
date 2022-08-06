@@ -1,56 +1,63 @@
-cabal-version:      2.4
-name:               ch02
-version:            0.1.0.0
+cabal-version: 2.4
+name:          ch02
+version:       0.1.0.0
 
 library radar-lib
-  exposed-modules:  Contexts
-                    Radar
-  hs-source-dirs:   libs/contexts
-                    libs/radar
-  build-depends:    base ^>=4.14.3.0,
-                    mtl
-  default-language: Haskell2010
+    exposed-modules:
+        Contexts
+        Radar
+
+    hs-source-dirs:     libs/contexts libs/radar
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:
+        base ^>=4.14.3.0,
+        mtl -any
 
 executable person-derived
-  main-is:          derived-show.hs
-  other-modules:    Person
-  hs-source-dirs:   apps/person
-                    libs/person
-  build-depends:    base ^>=4.14.3.0
-  default-language: Haskell2010
+    main-is:            derived-show.hs
+    hs-source-dirs:     apps/person libs/person
+    other-modules:      Person
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base ^>=4.14.3.0
 
 executable person-implemented
-  main-is:          implemented-show.hs
-  other-modules:    Person
-  hs-source-dirs:   apps/person
-                    libs/person
-  build-depends:    base ^>=4.14.3.0
-  default-language: Haskell2010
+    main-is:            implemented-show.hs
+    hs-source-dirs:     apps/person libs/person
+    other-modules:      Person
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base ^>=4.14.3.0
 
 executable person-text
-  main-is:          text-show.hs
-  other-modules:    Person
-  hs-source-dirs:   apps/person,
-                    libs/person
-  build-depends:    base ^>=4.14.3.0,
-                    text-show
-  default-language: Haskell2010
+    main-is:            text-show.hs
+    hs-source-dirs:     apps/person libs/person
+    other-modules:      Person
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:
+        base ^>=4.14.3.0,
+        text-show -any
 
 executable radar
-  main-is:          radar.hs
-  other-modules:    Radar
-  hs-source-dirs:   apps/radar
-                    libs/radar
-  other-extensions: DeriveAnyClass
-  build-depends:    base ^>=4.14.3.0,
-                    fmt
-  default-language: Haskell2010
+    main-is:            radar.hs
+    hs-source-dirs:     apps/radar libs/radar
+    other-modules:      Radar
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    other-extensions:   DeriveAnyClass
+    build-depends:
+        base ^>=4.14.3.0,
+        fmt -any
 
 test-suite radar-test
-  type:             exitcode-stdio-1.0
-  main-is:          Test.hs
-  hs-source-dirs:   tests/radar
-  build-depends:    base ^>=4.14.3.0,
-                    radar-lib,
-                    random
-  default-language: Haskell2010
+    type:               exitcode-stdio-1.0
+    main-is:            Test.hs
+    hs-source-dirs:     tests/radar
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:
+        base ^>=4.14.3.0,
+        radar-lib -any,
+        random -any

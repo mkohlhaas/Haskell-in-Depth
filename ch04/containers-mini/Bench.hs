@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 import Data.Deque as D (empty, front, popFront, pushFront)
 import Data.List (foldl', unfoldr)
 import Data.Stack as S (empty, pop, push, top)

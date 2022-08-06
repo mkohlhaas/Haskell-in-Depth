@@ -1,5 +1,3 @@
-{-# LANGUAGE UnicodeSyntax #-}
-
 import Person (Person (..), homer, spj)
 
 instance Show Person where

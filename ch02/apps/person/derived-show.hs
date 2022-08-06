@@ -1,5 +1,4 @@
 {-# LANGUAGE StandaloneDeriving #-}
-{-# LANGUAGE UnicodeSyntax #-}
 
 import Person (Person (..), homer, spj)
 
