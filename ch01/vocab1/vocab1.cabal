@@ -9,4 +9,4 @@ executable vocab
     default-extensions: UnicodeSyntax
     build-depends:
         base ^>=4.14.3.0,
-        text -any
+        text >=1.2.4 && <1.3

@@ -11,9 +11,9 @@ library expr-lib
     hs-source-dirs:   libs rpn
     default-language: Haskell2010
     build-depends:
-        base -any,
-        mtl -any,
-        text-show -any
+        base >=4.14.3 && <4.15,
+        mtl >=2.2.2 && <2.3,
+        text-show >=3.9.7 && <3.10
 
 executable prefix-postfix
     main-is:          prefix-postfix.hs
@@ -31,8 +31,8 @@ executable evalrpn1
     other-modules:    EvalRPN
     default-language: Haskell2010
     build-depends:
-        base >=4.12 && <4.15,
-        mtl >=2.0 && <2.3
+        base >=4.14.3 && <4.15,
+        mtl >=2.2.2 && <2.3
 
 executable evalrpn2
     main-is:          evalrpn2.hs
@@ -40,8 +40,8 @@ executable evalrpn2
     other-modules:    EvalRPNTrans
     default-language: Haskell2010
     build-depends:
-        base >=4.12 && <4.15,
-        mtl >=2.0 && <2.3
+        base >=4.14.3 && <4.15,
+        mtl >=2.2.2 && <2.3
 
 executable evalrpn3
     main-is:          evalrpn3.hs
@@ -56,8 +56,8 @@ executable evalrpn3
         InstanceSigs LambdaCase
 
     build-depends:
-        base >=4.12 && <4.15,
-        mtl >=2.0 && <2.3,
+        base >=4.14.3 && <4.15,
+        mtl >=2.2.2 && <2.3,
         transformers ==0.5.*
 
 executable rpnexpr
@@ -66,8 +66,8 @@ executable rpnexpr
     other-modules:    EvalRPNExcept
     default-language: Haskell2010
     build-depends:
-        base >=4.12 && <4.15,
-        mtl >=2.0 && <2.3,
+        base >=4.14.3 && <4.15,
+        mtl >=2.2.2 && <2.3,
         text ==1.2.*,
         text-show >=3.0 && <4,
         transformers ==0.5.*
@@ -76,4 +76,4 @@ executable expr-gadt
     main-is:          gadts/Main.hs
     default-language: Haskell2010
     other-extensions: GADTSyntax GADTs
-    build-depends:    base >=4.12 && <4.15
+    build-depends:    base >=4.14.3 && <4.15

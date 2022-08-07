@@ -243,13 +243,13 @@
     - classy-prelude
     - universum
 
-  - The role of `Setup.hs`:
+  - `Setup.hs` is used for package distribution:
     ```shell
     # download and unpack package
     $ curl http://hackage.haskell.org/package/timeit-2.0/timeit-2.0.tar.gz \ --output timeit-2.0.tar.gz
     $ tar -xf timeit-2.0.tar.gz
     $ cd timeit-2.0
-    # configure, build and install package
+    # configure, build and install package manually (in real-world we'd use Cabal)
     $ runhaskell Setup.hs configure
     $ runhaskell Setup.hs build
     $ runhaskell Setup.hs install
@@ -289,7 +289,10 @@
 
   - Tip: Use hpack: https://github.com/sol/hpack
 
-  - Cabal hell is history! But version of `base` package linked to GHC version!
+  - Cabal hell is history! But note: version of `base` package is linked to GHC version!
+    ```shell
+    ghcup tui  # see version of base package linked to ghc version!
+    ```
 
   - Three approaches:
     - Curated sets of packages -> `Stack`
@@ -299,12 +302,16 @@
   - Cabal keeps every once-required version of every package built against every once-required set of dependencies in a shared environment, at the cost of greater storage requirements.
   - Cabal always tries to get the newest versions available. If not wanted use `cabal freeze`.
 
-  - Check for outdated packages:
+  - Check of package would be accepted by Hackage:
     ```shell
-    cabal outdated
+    cabal check
+    cabal sdist  # create package archive for Hackage
     ```
-
+  - Check for outdated packages:
   - Use Hackage Dependency Monitor: https://packdeps.haskellers.com/
+    ```shell
+    cabal outdated  # but does not take current ghc version into consideration!
+    ```
 
   - A package consisting of several packages is called a project and uses a `cabal.project` file, e.g. https://github.com/timbod7/haskell-chart/
 
