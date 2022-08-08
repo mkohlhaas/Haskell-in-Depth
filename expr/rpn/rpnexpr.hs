@@ -4,7 +4,7 @@ import Data.Text (Text)
 import Data.Text.IO as TIO (putStr)
 import EvalRPNExcept (evalRPNMany)
 
-rpns :: [Text]
+rpns ∷ [Text]
 rpns =
   [ "answer",
     "12 13 + 1",
@@ -15,5 +15,5 @@ rpns =
     "10 1 2 + 2 2 1 2 * + * * * 1 x 2 + + +"
   ]
 
-main :: IO ()
+main ∷ IO ()
 main = TIO.putStr $ evalRPNMany rpns [("answer", 42), ("x", 1)]

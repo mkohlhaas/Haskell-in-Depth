@@ -34,7 +34,7 @@ doubleDice = (,) <$> dice <*> dice
 dices ∷ Int → DiceGame [Dice]
 dices n = replicateM n dice
 
--- creates 24 dices in writer's log: 1 + 5 + (2 * 3) + 10 + 2
+-- 24 dices in log: 1 + 5 + (2 * 3) + 10 + 2
 diceGame ∷ DiceGame (Dice, Dice)
 diceGame = dice >> dices 5 >> replicateM 2 (dices 3) >> dices 10 >> doubleDice
 

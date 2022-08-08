@@ -1,51 +1,43 @@
 module EvalRPNTrans2 where
 
 import Control.Applicative (Alternative (empty))
-import Control.Monad.State
-  ( MonadState (get, put),
-    State,
-    evalState,
-    guard,
-    modify,
-  )
+import Control.Monad.State (MonadState (get, put), State, evalState, guard, modify, gets)
 import MyMaybeT (MaybeT (runMaybeT))
 import Text.Read (readMaybe)
+import Data.Foldable (traverse_)
 
 type Stack = [Integer]
 
 type EvalM = MaybeT (State Stack)
 
-push :: Integer -> EvalM ()
+push ∷ Integer → EvalM ()
 push x = modify (x :)
 
-pop'' :: EvalM Integer
+pop'' ∷ EvalM Integer
 pop'' = do
-  xs <- get
+  xs ← get
   guard (not $ null xs)
   put (tail xs)
   pure (head xs)
 
-pop :: EvalM Integer
+pop ∷ EvalM Integer
 pop = do
-  (x : xs) <- get
+  (x : xs) ← get
   put xs
   pure x
 
-oneElementOnStack :: EvalM ()
+oneElementOnStack ∷ EvalM ()
 oneElementOnStack = do
-  l <- length <$> get
+  l ← gets length
   guard (l == 1)
 
-readSafe :: (Read a, Alternative m) => String -> m a
-readSafe str =
-  case readMaybe str of
-    Nothing -> empty
-    Just n -> pure n
+readSafe ∷ (Read a, Alternative m) ⇒ String → m a
+readSafe str = maybe empty pure (readMaybe str)
 
-evalRPN :: String -> Maybe Integer
+evalRPN ∷ String → Maybe Integer
 evalRPN str = evalState (runMaybeT evalRPN') []
   where
-    evalRPN' = traverse step (words str) >> oneElementOnStack >> pop
+    evalRPN' = traverse_ step (words str) >> oneElementOnStack >> pop
     step "+" = processTops (+)
     step "*" = processTops (*)
     step "-" = processTops (-)

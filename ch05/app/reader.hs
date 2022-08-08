@@ -2,10 +2,7 @@
 
 import Control.Monad.Reader (MonadReader (local), Reader, asks, runReader, when)
 
-newtype Config = Config
-  { verbose ∷ Bool
-  {- other parameters -}
-  }
+newtype Config = Config {verbose ∷ Bool {- other parameters -}}
 
 type ConfigM = Reader Config
 
@@ -17,25 +14,17 @@ work = do
   -- ...
   doSomething
 
--- ...
-
 doSomething ∷ ConfigM ()
 doSomething = do
   -- ...
   doSomethingSpecial
   doSomethingSpecialSilently
 
--- ...
-
 doSomethingSpecial ∷ ConfigM ()
 doSomethingSpecial = do
   -- ...
-  -- Config {verbose} ← ask
-  -- when verbose beVerbose
-  vrb ← asks verbose
-  when vrb beVerbose
-
--- ...
+  verbose ← asks verbose
+  when verbose beVerbose
 
 beVerbose ∷ ConfigM ()
 beVerbose = pure ()

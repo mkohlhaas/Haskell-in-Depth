@@ -1,4 +1,3 @@
--- Tip: Extra package by Neil Mitchell: https://hackage.haskell.org/package/extra
 import Control.Monad.Extra (ifM, whenM, zipWithM_)
 import Data.Foldable (traverse_)
 import Data.IORef (modifyIORef', newIORef, readIORef)

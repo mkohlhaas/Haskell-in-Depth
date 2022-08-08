@@ -17,10 +17,10 @@ doubleStrNumber1 str =
     Nothing → Nothing
 
 doubleStrNumber2 ∷ (Num a, Read a) ⇒ String → Maybe a
-doubleStrNumber2 s = (2 *) <$> readMaybe s
+doubleStrNumber2 str = (2 *) <$> readMaybe str
 
 plusStrNumbers ∷ (Num a, Read a) ⇒ String → String → Maybe a
-plusStrNumbers s1 s2 = (+) <$> readMaybe s1 <*> readMaybe s2
+plusStrNumbers str1 str2 = (+) <$> readMaybe str1 <*> readMaybe str2
 
 locateByName ∷ PhoneNumbers → Locations → Name → Maybe Location
 locateByName pnumbers locs name =
@@ -56,34 +56,34 @@ phoneNumbers =
 
 locations ∷ Locations
 locations =
-  [ ("030", "Berlin"),
-    ("0521", "Nordrhein-Westfalen"),
-    ("0234", "Nordrhein-Westfalen"),
-    ("0421", "Bremen"),
-    ("0231", "Nordrhein-Westfalen"),
-    ("0351", "Sachsen"),
+  [ ("0201", "Nordrhein-Westfalen"),
+    ("0202", "Nordrhein-Westfalen"),
     ("0203", "Nordrhein-Westfalen"),
     ("0211", "Nordrhein-Westfalen"),
-    ("0201", "Nordrhein-Westfalen"),
-    ("069", "Hessen"),
-    ("040", "Hamburg"),
-    ("0511", "Niedersachsen"),
     ("0221", "Nordrhein-Westfalen"),
+    ("0231", "Nordrhein-Westfalen"),
+    ("0234", "Nordrhein-Westfalen"),
+    ("030", "Berlin"),
     ("0341", "Sachsen"),
-    ("089", "Bayern"),
-    ("0911", "Bayern"),
+    ("0351", "Sachsen"),
+    ("040", "Hamburg"),
+    ("0421", "Bremen"),
+    ("0511", "Niedersachsen"),
+    ("0521", "Nordrhein-Westfalen"),
+    ("069", "Hessen"),
     ("0711", "Baden-Württemberg"),
-    ("0202", "Nordrhein-Westfalen")
+    ("089", "Bayern"),
+    ("0911", "Bayern")
   ]
 
 main ∷ IO ()
 main = do
-  print (doubleStrNumber1 "21" ∷ Maybe Int)
-  print (doubleStrNumber1 "x" ∷ Maybe Int)
-  print (doubleStrNumber2 "21" ∷ Maybe Int)
-  print (plusStrNumbers "20" "22" ∷ Maybe Int)
-  print (plusStrNumbers "10" "x" ∷ Maybe Int)
-  print $ locateByName phoneNumbers locations "Wuppertal"
-  print $ locateByName phoneNumbers locations "Koblenz"
-  print $ locateByName' phoneNumbers locations "Wuppertal"
-  print $ locateByName' phoneNumbers locations "Koblenz"
+  print (doubleStrNumber1 "21" ∷ Maybe Int) --------------------- Just 42
+  print (doubleStrNumber1 "x" ∷ Maybe Int) ---------------------- Nothing
+  print (doubleStrNumber2 "21" ∷ Maybe Int) --------------------- Just 42
+  print (plusStrNumbers "20" "22" ∷ Maybe Int) ------------------ Just 42
+  print (plusStrNumbers "10" "x" ∷ Maybe Int) ------------------- Nothing
+  print $ locateByName phoneNumbers locations "Wuppertal" ------- Just "Nordrhein-Westfalen"
+  print $ locateByName phoneNumbers locations "Koblenz" --------- Nothing
+  print $ locateByName' phoneNumbers locations "Wuppertal" ------ Just "Nordrhein-Westfalen"
+  print $ locateByName' phoneNumbers locations "Koblenz" -------- Nothing

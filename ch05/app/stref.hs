@@ -1,4 +1,3 @@
--- ST = Strict State Threads
 import Control.Monad.ST (ST, runST)
 import Data.STRef (STRef, newSTRef, readSTRef)
 

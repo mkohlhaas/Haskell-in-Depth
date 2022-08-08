@@ -24,8 +24,6 @@ processLine (i, s) = tell [WrongFormat i s] >> pure ""
 genSQL ∷ Text → SQL
 genSQL txt = txt & T.lines & zip [1 ..] & traverse processLine <&> T.concat
 
--- genSQL txt = T.concat <$> traverse processLine (zip [1 ..] $ T.lines txt)
-
 testData ∷ Text
 testData = "Pen:Bob\nGlass:Mary:10\nPencil:Alice\nBook:Bob\nBottle"
 
