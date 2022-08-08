@@ -339,3 +339,5 @@
   take 10 (iterate (*2) 1)
   --> [1,2,4,8,16,32,64,128,256,512]
   ```
+- [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
+- [Pointfree.io](http://pointfree.io/)

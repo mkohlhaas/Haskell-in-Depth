@@ -1,9 +1,9 @@
 import Data.IORef (modifyIORef', newIORef, readIORef)
 import Text.Read (readMaybe)
 
-sumNumbers :: IO Int
+sumNumbers ∷ IO Int
 sumNumbers = do
-  acc <- newIORef 0 -- we store our acc in an IORef
+  acc ← newIORef 0 -- we store our acc in an IORef
   go acc
   where
     go acc = readNumber >>= processNumber acc
@@ -15,8 +15,8 @@ sumNumbers = do
     processNumber acc Nothing = readIORef acc
     processNumber acc (Just n) = modifyIORef' acc (+ n) >> go acc
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  s <- sumNumbers
+  s ← sumNumbers
   putStr "Your sum is: "
   print s

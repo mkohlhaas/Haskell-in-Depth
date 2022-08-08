@@ -9,7 +9,7 @@ data Weapon = Rock | Paper | Scissors
 data Winner = First | Second | Draw
   deriving (Show, Eq, Ord)
 
-winner :: (Weapon, Weapon) -> Winner
+winner ∷ (Weapon, Weapon) → Winner
 winner (Paper, Rock) = First
 winner (Scissors, Paper) = First
 winner (Rock, Scissors) = First
@@ -19,7 +19,7 @@ winner (w1, w2)
 
 instance UniformRange Weapon where
   uniformRM (lo, hi) rng = do
-    res <- uniformRM (fromEnum lo :: Int, fromEnum hi) rng
+    res ← uniformRM (fromEnum lo, fromEnum hi) rng
     pure $ toEnum res
 
 instance Uniform Weapon where
@@ -27,21 +27,21 @@ instance Uniform Weapon where
 
 type StdGenS = State StdGen
 
-randomWeapon :: StdGenS Weapon
+randomWeapon ∷ StdGenS Weapon
 randomWeapon = state uniform
 
-gameRound :: StdGenS (Weapon, Weapon)
+gameRound ∷ StdGenS (Weapon, Weapon)
 gameRound = (,) <$> randomWeapon <*> randomWeapon
 
-game :: Int -> StdGenS [(Winner, Int)]
+game ∷ Int → StdGenS [(Winner, Int)]
 game n = counts <$> replicateM n (winner <$> gameRound)
   where
     counts xs = map headLength $ group $ sort xs
     headLength xs@(x : _) = (x, length xs)
     headLength [] = error "unexpected"
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  g <- newStdGen
+  g ← newStdGen
   let r = evalState (game 10) g
   print r
