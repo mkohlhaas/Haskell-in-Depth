@@ -341,3 +341,13 @@
   ```
 - [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
 - [Pointfree.io](http://pointfree.io/)
+- Page 200: Most Common Monad Transformers
+  Name | Functionality provided
+  --- | ---
+  AccumT   | Accumulates data with the ability to read the current value at any time during the computation (something between WriterT and ReaderT, or a limited StateT).
+  ExceptT  | Exits a computation by generating exceptions with the full information about the current context. We’ll use this monad transformer in the next chapter extensively.
+  MaybeT   | Exits computations without producing a result.
+  ReaderT  | Implements access to a read-only environment.
+  StateT   | Implements read/write access to a state value.
+  WriterT  | Logs data in the form of appending an element to a monoid.
+  RWST     | Combines the functionalities of the ReaderT, WriterT, and StateT monad transformers.

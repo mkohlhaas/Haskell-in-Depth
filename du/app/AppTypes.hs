@@ -6,21 +6,21 @@ import System.PosixCompat.Files (FileStatus, getFileStatus, getSymbolicLinkStatu
 
 -- read-only (defined by command line params provided by the user)
 data AppConfig = AppConfig
-  { basePath :: FilePath,
-    maxDepth :: Int,
-    extension :: Maybe String,
-    followSymlinks :: Bool
+  { basePath ∷ FilePath,
+    maxDepth ∷ Int,
+    extension ∷ Maybe String,
+    followSymlinks ∷ Bool
   }
 
 -- read-write (run-time info)
 data AppEnv = AppEnv
-  { cfg :: AppConfig,
-    path :: FilePath, -- current path
-    depth :: Int, -- current depth
-    fileStatus :: FilePath -> IO FileStatus
+  { cfg ∷ AppConfig,
+    path ∷ FilePath, -- current path
+    depth ∷ Int, -- current depth
+    fileStatus ∷ FilePath → IO FileStatus
   }
 
-initialEnv :: AppConfig -> AppEnv
+initialEnv ∷ AppConfig → AppEnv
 initialEnv config@AppConfig {..} =
   AppEnv
     { cfg = config,

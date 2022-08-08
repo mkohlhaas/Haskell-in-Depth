@@ -1,4 +1,6 @@
 - Order of Code Examples
+  - `../expr/rpn/EvalRPN.hs`
+  - `../expr/rpn/EvalRPNTrans.hs`
   - `../du/app/AppTypes.hs`
   - `../du/app/AppRWST.hs`
   - `../du/app/Utils.hs`
@@ -8,12 +10,5 @@
   - `../du/app/DiskUsage.hs`
   - `../du/app/Main.hs`
   - `../du/app/AppRTWTST.hs`
-
-#### Disk Usage
-```
-$ cabal run du
-$ cabal run du -- --help
-$ cabal run du -- ~/Temp/
-$ cabal -v0 run du -- ../data -e ".txt" -d1
-$ cabal -v0 run du -- ../data/ -d1
-```
+  - `../expr/rpn/MyMaybeT.hs`
+  - `../expr/rpn/EvalRPNTrans2.hs`
