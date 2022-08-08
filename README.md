@@ -1,5 +1,5 @@
 - Format `CSV` files on the command line:
-  ``` shell
+  ```shell
   $ cabal install tablize
   $ tablize tt.csv
   ```
@@ -17,13 +17,13 @@
 
 - Page 22:
   - Get info from `GHCi`:
-    ``` shell
+    ```shell
     ghci> :info Eq
     ghci> :doc Eq
     ```
 - Page 27:
   - When encountering a new data type, it is always a good idea to look for provided instances.
-  ``` shell
+  ```shell
   ghci> :info Text
   instance Monoid Text -- Defined in 'Data.Text'
   instance Semigroup Text -- Defined in 'Data.Text'
@@ -32,16 +32,16 @@
 - Page 28:
   - Enabling and disabling GHC extensions in GHCi
     - Source Code:
-      ``` haskell
+      ```haskell
       {-# LANGUAGE OverloadedStrings #-}
       ````
     - GHCi:
-      ``` haskell
+      ```haskell
       ghci> :set -XOverloadedStrings
       ghci> :set -XNoOverloadedStrings
       ```
 - Page 32:
-  ``` haskell
+  ```haskell
   rotateFromFile ∷ Direction → FilePath → IO ()
   rotateFromFile dir fname = do
     f ← readFile fname
@@ -73,12 +73,12 @@
 - [Ormolu Magic Comments](https://github.com/tweag/ormolu#magic-comments): `{- ORMOLU_ENABLE -}`, `{- ORMOLU_DISABLE -}`
 
 - `error` can be used anywhere as the output is any type:
-  ``` haskell
+  ```haskell
   error ∷ ∀ a. HasCallStack ⇒ [Char] → a
   ```
 
 - Trick: Import type explicitly so you don't need to qualify it in signatures.
-  ``` haskell
+  ```haskell
   import Data.Text (Text)             -- little trick
   import qualified Data.Text as T
 
@@ -88,7 +88,7 @@
 
 - Page 35: **Random Generators & Testing**
   - Creating a random `a` in a monadic context with `getStdRandom uniform`, e.g. in IO:
-    ``` haskell
+    ```haskell
     randomA ∷ Uniform a ⇒ IO a
     randomA = getStdRandom uniform
     -- many as:
@@ -100,7 +100,7 @@
     ```
   - One also needs to implement a `Uniform` instance which is easy to implement with a `UniformRange` instance.
   - Just leverage existing instances for `Int`.
-    ``` haskell
+    ```haskell
     instance UniformRange Turn where
       uniformRM (lo, hi) = toEnum <$> uniformRM (fromEnum lo, fromEnum hi)
     instance Uniform Turn where
@@ -112,36 +112,36 @@
   - ![Hierarchy of numeric type classes](ch02/numeric-classes.png)
   - `Word`s are strictly positive!
   - `Int`s are positive and negative.
-    ``` shell
+    ```shell
     ghci> (minBound, maxBound) ∷ (Word, Word)
     (0,18446744073709551615)
     ghci> (minBound, maxBound) ∷ (Int, Int)
     (-9223372036854775808,9223372036854775807)
     ```
   - One problem with this type is that the argument now can be `Complex a`, but the radius cannot be a complex number - it must be real.
-    ``` haskell
+    ```haskell
     circleArea ∷ Floating a ⇒ a → a
     circleArea r = pi * r * r
     ```
   - realToFrac ∷ (Real a, Fractional b) ⇒ a → b
     - `Floating` extends `Fractional` ⇒ we can use it to get a value of any type `b` with the `Floating` instance
-      ``` haskell
+      ```haskell
       circleArea ∷ (Real a, Floating b) ⇒ a → b
       circleArea r = pi * realToFrac (r * r)
       ```
   - fromIntegral ∷ (Integral a, Num b) ⇒ a → b
-    ``` haskell
+    ```haskell
     xs ∷ [Int]
     xs = [1,2,3,4,5]
     ```
-    ``` shell
+    ```shell
     ghci> sum xs / fromIntegral (length xs)
     3.0
     ```
 
 - Page 42:
   - Fixed Precision
-    ``` shell
+    ```shell
     ghci> import Data.Fixed
     ghci> 3.141592653589793 :: Deci
     3.1
@@ -157,12 +157,12 @@
     3.141592653589
     ```
   - Define own resolution:
-    ``` haskell
+    ```haskell
     instance HasResolution E4 where
       resolution _ = 10000
     type Fixed4 = Fixed E4
     ```
-    ``` shell
+    ```shell
     ghci> 3.141592653589793 :: Fixed4
     3.1415
     ```
@@ -182,13 +182,13 @@
 
 - Page 77:
   - `FromField (..)` in the import list for the `Data.Csv` module refers to the `FromField` type class and **every method** of this type class.
-    ``` haskell
+    ```haskell
     import Data.Csv (FromField (..), FromNamedRecord)
     ```
 
 - Page 82:
   - Nice application of [unzip3](https://hackage.haskell.org/package/base-4.16.3.0/docs/Prelude.html#v:unzip3):
-    ``` haskell
+    ```haskell
     (candles, closings, volumes) = unzip3 $
       [ (Candle day low open 0 close high,
         (day, close),
@@ -204,7 +204,7 @@
   - Import all names except those listed after the hiding keyword. `import Data.Char hiding (toLower, toUpper)`
 
   - Exports:
-    ``` haskell
+    ```haskell
     module ModuleName (
       module X,                 -- reexports everything from module X
       DataType1,                -- only the type constructor is exported.
@@ -326,3 +326,16 @@
   - Use `cabal gen-bounds` to generate and test for version boundaries.
 
   - For starting a new project you can use the Summoner, https://kowainik.github.io/projects/summoner
+
+- Page 107: `Unfold`
+  - Beautiful example for usage of Unfolds: [ch04/containers-mini/Bench.hs](https://github.com/mkohlhaas/Haskell-in-Depth/blob/main/ch04/containers-mini/Bench.hs)
+  - [Anamorphisms aka Unfolds Explained](https://functional.works-hub.com/learn/number-anamorphisms-aka-unfolds-explained-50e1a)
+  - Unfolds take an initial input, apply it to a function that returns a pair, and repeat the process to the second of the pair while joining the outputs in a list.
+  ```haskell
+  unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
+  unfoldr (\x -> if x > 9 then Nothing else Just (x, x + 1)) 0
+  --> [0,1,2,3,4,5,6,7,8,9]
+  iterate f == unfoldr (\x -> Just (x, f x))
+  take 10 (iterate (*2) 1)
+  --> [1,2,4,8,16,32,64,128,256,512]
+  ```
