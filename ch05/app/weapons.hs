@@ -1,4 +1,5 @@
 import Control.Monad.State (MonadState (state), State, evalState, replicateM)
+import Data.Function ((&))
 import Data.List (group, sort)
 import System.Random (StdGen, Uniform, UniformRange, newStdGen, uniform)
 import System.Random.Stateful (uniformM, uniformRM)
@@ -18,12 +19,10 @@ winner (w1, w2)
   | otherwise = Second
 
 instance UniformRange Weapon where
-  uniformRM (lo, hi) rng = do
-    res ← uniformRM (fromEnum lo, fromEnum hi) rng
-    pure $ toEnum res
+  uniformRM (lo, hi) rng = toEnum <$> uniformRM (fromEnum lo, fromEnum hi) rng
 
 instance Uniform Weapon where
-  uniformM rng = uniformRM (minBound, maxBound) rng
+  uniformM = uniformRM (minBound, maxBound)
 
 type StdGenS = State StdGen
 
@@ -36,7 +35,7 @@ gameRound = (,) <$> randomWeapon <*> randomWeapon
 game ∷ Int → StdGenS [(Winner, Int)]
 game n = counts <$> replicateM n (winner <$> gameRound)
   where
-    counts xs = map headLength $ group $ sort xs
+    counts xs = xs & sort & group & map headLength
     headLength xs@(x : _) = (x, length xs)
     headLength [] = error "unexpected"
 
