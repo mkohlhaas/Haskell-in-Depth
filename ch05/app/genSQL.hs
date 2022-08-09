@@ -9,7 +9,9 @@ import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 
-data ErrorMsg = WrongFormat Int Text
+type LineNumber = Int
+
+data ErrorMsg = WrongFormat LineNumber Text
   deriving (Show)
 
 type SQL = Writer [ErrorMsg] Text
@@ -17,7 +19,7 @@ type SQL = Writer [ErrorMsg] Text
 genInsert ∷ Text → Text → Text
 genInsert s1 s2 = "INSERT INTO items VALUES ('" <> s1 <> "','" <> s2 <> "');\n"
 
-processLine ∷ (Int, Text) → SQL
+processLine ∷ (LineNumber, Text) → SQL
 processLine (_, T.splitOn ":" → [s1, s2]) = pure $ genInsert s1 s2
 processLine (i, s) = tell [WrongFormat i s] >> pure ""
 
@@ -37,3 +39,12 @@ testGenSQL = do
 
 main ∷ IO ()
 main = testGenSQL
+
+-- Generated SQL:
+-- INSERT INTO items VALUES ('Pen','Bob');
+-- INSERT INTO items VALUES ('Pencil','Alice');
+-- INSERT INTO items VALUES ('Book','Bob');
+--
+-- Errors:
+-- WrongFormat 2 "Glass:Mary:10"
+-- WrongFormat 5 "Bottle"

@@ -16,10 +16,10 @@ Writer Monad
 ```
 $ cabal repl gcd
 ghci> import Control.Monad.Writer
-ghci> gcdPrint 27 36
-ghci> execWriter $ gcdLogSteps 27 36
-ghci> runWriter $ gcdLogSteps 27 36
-ghci> getSum $ execWriter $ gcdCountSteps 27 36
+ghci> gcdPrint 27 36                              -- (27,36) (36,27) (27,9) (9,0) 9
+ghci> execWriter $ gcdLogSteps 27 36              -- [(27,36),(36,27),(27,9),(9,0)]
+ghci> runWriter $ gcdLogSteps 27 36               -- (9,[(27,36),(36,27),(27,9),(9,0)])
+ghci> getSum $ execWriter $ gcdCountSteps 27 36   -- 4
 ```
 
 IORef

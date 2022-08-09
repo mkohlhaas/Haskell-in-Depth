@@ -1,3 +1,4 @@
+import Data.Functor ((<&>))
 import Text.Read (readMaybe)
 
 type Name = String
@@ -10,14 +11,8 @@ type PhoneNumbers = [(Name, Phone)]
 
 type Locations = [(Phone, Location)]
 
-doubleStrNumber1 ∷ (Num a, Read a) ⇒ String → Maybe a
-doubleStrNumber1 str =
-  case readMaybe str of
-    Just x → Just (2 * x)
-    Nothing → Nothing
-
-doubleStrNumber2 ∷ (Num a, Read a) ⇒ String → Maybe a
-doubleStrNumber2 str = (2 *) <$> readMaybe str
+doubleStrNumber ∷ (Num a, Read a) ⇒ String → Maybe a
+doubleStrNumber str = readMaybe str <&> (2 *)
 
 plusStrNumbers ∷ (Num a, Read a) ⇒ String → String → Maybe a
 plusStrNumbers str1 str2 = (+) <$> readMaybe str1 <*> readMaybe str2
@@ -25,12 +20,6 @@ plusStrNumbers str1 str2 = (+) <$> readMaybe str1 <*> readMaybe str2
 locateByName ∷ PhoneNumbers → Locations → Name → Maybe Location
 locateByName pnumbers locs name =
   lookup name pnumbers >>= flip lookup locs
-
-locateByName' ∷ PhoneNumbers → Locations → Name → Maybe Location
-locateByName' pnumbers locs name =
-  case lookup name pnumbers of
-    Just number → lookup number locs
-    Nothing → Nothing
 
 phoneNumbers ∷ PhoneNumbers
 phoneNumbers =
@@ -78,12 +67,9 @@ locations =
 
 main ∷ IO ()
 main = do
-  print (doubleStrNumber1 "21" ∷ Maybe Int) --------------------- Just 42
-  print (doubleStrNumber1 "x" ∷ Maybe Int) ---------------------- Nothing
-  print (doubleStrNumber2 "21" ∷ Maybe Int) --------------------- Just 42
-  print (plusStrNumbers "20" "22" ∷ Maybe Int) ------------------ Just 42
-  print (plusStrNumbers "10" "x" ∷ Maybe Int) ------------------- Nothing
-  print $ locateByName phoneNumbers locations "Wuppertal" ------- Just "Nordrhein-Westfalen"
-  print $ locateByName phoneNumbers locations "Koblenz" --------- Nothing
-  print $ locateByName' phoneNumbers locations "Wuppertal" ------ Just "Nordrhein-Westfalen"
-  print $ locateByName' phoneNumbers locations "Koblenz" -------- Nothing
+  print (doubleStrNumber "21" ∷ Maybe Int) --------------------- Just 42
+  print (doubleStrNumber "x" ∷ Maybe Int) ---------------------- Nothing
+  print (plusStrNumbers "20" "22" ∷ Maybe Int) ----------------- Just 42
+  print (plusStrNumbers "10" "x" ∷ Maybe Int) ------------------ Nothing
+  print $ locateByName phoneNumbers locations "Wuppertal" ------ Just "Nordrhein-Westfalen"
+  print $ locateByName phoneNumbers locations "Koblenz" -------- Nothing

@@ -143,17 +143,17 @@
   - Fixed Precision
     ```shell
     ghci> import Data.Fixed
-    ghci> 3.141592653589793 :: Deci
+    ghci> 3.141592653589793 ∷ Deci
     3.1
-    ghci> 3.141592653589793 :: Centi
+    ghci> 3.141592653589793 ∷ Centi
     3.14
-    ghci> 3.141592653589793 :: Milli
+    ghci> 3.141592653589793 ∷ Milli
     3.141
-    ghci> 3.141592653589793 :: Micro
+    ghci> 3.141592653589793 ∷ Micro
     3.141592
-    ghci> 3.141592653589793 :: Nano
+    ghci> 3.141592653589793 ∷ Nano
     3.141592653
-    ghci> 3.141592653589793 :: Pico
+    ghci> 3.141592653589793 ∷ Pico
     3.141592653589
     ```
   - Define own resolution:
@@ -163,7 +163,7 @@
     type Fixed4 = Fixed E4
     ```
     ```shell
-    ghci> 3.141592653589793 :: Fixed4
+    ghci> 3.141592653589793 ∷ Fixed4
     3.1415
     ```
 
@@ -283,7 +283,7 @@
 
   - Haskell Package Versioning Policy - PVP - https://pvp.haskell.org/
   - Version numbers: https://pvp.haskell.org/#version-numbers
-  - base-4.11.0.1 -> 4.11 is `major` version number, 0.1 is `minor` version number
+  - base-4.11.0.1 → 4.11 is `major` version number, 0.1 is `minor` version number
   - Some people use semantic versioning: https://semver.org/
   - Author supports PVP.
 
@@ -295,9 +295,9 @@
     ```
 
   - Three approaches:
-    - Curated sets of packages -> `Stack`
-    - Sandboxing -> `old Cabal`
-    - Persistent storage of uniquely identified package builds -> `Nix`, `new Cabal` (>=1.24, default since 3.0)
+    - Curated sets of packages → `Stack`
+    - Sandboxing → `old Cabal`
+    - Persistent storage of uniquely identified package builds → `Nix`, `new Cabal` (>=1.24, default since 3.0)
 
   - Cabal keeps every once-required version of every package built against every once-required set of dependencies in a shared environment, at the cost of greater storage requirements.
   - Cabal always tries to get the newest versions available. If not wanted use `cabal freeze`.
@@ -332,16 +332,103 @@
   - [Anamorphisms aka Unfolds Explained](https://functional.works-hub.com/learn/number-anamorphisms-aka-unfolds-explained-50e1a)
   - Unfolds take an initial input, apply it to a function that returns a pair, and repeat the process to the second of the pair while joining the outputs in a list.
   ```haskell
-  unfoldr :: (b -> Maybe (a, b)) -> b -> [a]
-  unfoldr (\x -> if x > 9 then Nothing else Just (x, x + 1)) 0
-  --> [0,1,2,3,4,5,6,7,8,9]
-  iterate f == unfoldr (\x -> Just (x, f x))
+  unfoldr ∷ (b → Maybe (a, b)) → b → [a]
+  unfoldr (\x → if x > 9 then Nothing else Just (x, x + 1)) 0
+  -→ [0,1,2,3,4,5,6,7,8,9]
+  iterate f == unfoldr (\x → Just (x, f x))
   take 10 (iterate (*2) 1)
-  --> [1,2,4,8,16,32,64,128,256,512]
+  -→ [1,2,4,8,16,32,64,128,256,512]
   ```
+- Page 138: **Reader Monad**
+
+    ```haskell
+    class Monad m ⇒ MonadReader r m | m → r where
+      ask ∷ m r
+      local ∷ (r → r) → m a → m a
+      reader ∷ (r → a) → m a
+    ```
+  - `Reader` is not a monad, but `Reader r` is.
+  - So the type of configuration should be uniquely determined by the type of a monad.
+  - Captured by the `| m → r` part of the type class.
+  - Given `m`, `r` must be unique.
+  - If you have a multi-parameter type-class with arguments `a, b, c`, and `x`, this extension lets you express that the type `x` can be uniquely identified from `a`, `b`, and `c`:
+    ```haskell
+    class SomeClass a b c x | a b c → x where ...
+    ```
+  - When declaring an instance of such class, it will be checked against all other instances to make sure that the functional dependency holds, i.e. no other instance with same `a b c` but different `x` exists.
+  - The `SomeClass` class can be thought of as a function of the arguments `a` `b` `c` that results in `x`. Such classes can be used to do computations in the typesystem.
+  - You can specify multiple dependencies in a comma-separated list:
+    ```haskell
+    class OtherClass a b c d | a b → c d, a d → b where ...
+    ```
+  - Unlike the `RecordWildCards` GHC extension, `NamedFieldPuns` allows bringing into scope only the fields we are interested in.
+    ```haskell
+    {-# LANGUAGE NamedFieldPuns #-}
+
+    doSomethingSpecial ∷ ConfigM ()
+    doSomethingSpecial = do
+      Config {verbose} ← ask -- uses `NamedFieldPuns` extension
+      when verbose beVerbose
+      ...
+    ```
+  - Helper functions:
+    ```haskell
+    -- runs a Reader
+    runReader ∷ Reader r a → r → a
+    -- modifies configuration but not its type, does not modify result
+    local ∷ ∀ r (m ∷ * → *) a. MonadReader r m ⇒ (r → r) → m a → m a
+    -- modifies result and its type but not configuration
+    mapReader ∷ (a → b) → Reader r a → Reader r b
+    -- modifies configuration and its type but not result
+    withReader ∷ (r' → r) → Reader r a → Reader r' a
+    ```
+  - E.g. `local`:
+    ```haskell
+    silent ∷ Config → Config
+    silent config = config {verbose = False}
+
+    doSomethingSpecialSilently ∷ ConfigM ()
+    doSomethingSpecialSilently = local silent doSomethingSpecial
+    ```
+
+- Page 140: **Writer Monad**
+  ```haskell
+  class (Monoid w, Monad m) ⇒ MonadWriter w m | m → w where
+    writer ∷ (a, w) → m a      -- create a (Monad)Writer
+    tell ∷ w → m ()            -- append value to log
+    listen ∷ m a → m (a, w)    -- result will include log; extract log
+    pass ∷ m (a, w → w) → m a  -- modify log; leave result alone
+  ```
+
+  - Helper functions:
+  ```haskell
+  listens ∷ MonadWriter w m ⇒ (w → b) → m a → m (a, b) -- uses `listen` and apply function (1st argument)
+  censor ∷ MonadWriter w m ⇒ (w → w) → m a → m a       -- modify log; leave result alone (just uses `pass`)
+  ```
+
+  - Helper functions for running a Writer:
+  ```haskell
+  -- run a Writer; returns result and log
+  runWriter ∷ Monoid w ⇒ Writer w a → (a, w)
+  -- just return log; result is not interesting or trivial, e.g. ()
+  execWriter ∷ Monoid w ⇒ Writer w a → w
+  -- modify log and result and their types
+  mapWriter ∷ (Monoid w1, Monoid w2) ⇒ ((a, w1) → (b, w2)) → Writer w1 a → Writer w2 b
+  ```
+
+- Page 143: **ViewPatterns GHC extension**
+  - The ViewPatterns GHC extension allows calling a function on the argument first and then matching a result.
+  ```haskell
+  processLine ∷ (LineNumber, Text) → SQL
+  processLine (_, T.splitOn ":" → [s1, s2]) = pure $ genInsert s1 s2  -- uses ViewPatterns extension
+  processLine (i, s) = tell [WrongFormat i s] >> pure ""
+  ```
+
 - [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
+
 - [Pointfree.io](http://pointfree.io/)
-- Page 200: Most Common Monad Transformers
+
+- Page 200: **Most Common Monad Transformers**
   Name | Functionality provided
   --- | ---
   AccumT   | Accumulates data with the ability to read the current value at any time during the computation (something between WriterT and ReaderT, or a limited StateT).

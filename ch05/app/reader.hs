@@ -1,13 +1,13 @@
--- {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE NamedFieldPuns #-}
 
-import Control.Monad.Reader (MonadReader (local), Reader, asks, runReader, when)
+import Control.Monad.Reader (MonadReader (local), Reader, ask, asks, runReader, when)
 
-newtype Config = Config {verbose ∷ Bool {- other parameters -}}
+data Config = Config {verbose ∷ Bool, debug ∷ Bool {- more config params -}}
 
 type ConfigM = Reader Config
 
 getConfiguration ∷ IO Config
-getConfiguration = pure Config {verbose = True {- ... -}}
+getConfiguration = pure Config {verbose = True, debug = False {- more config params -}}
 
 work ∷ ConfigM ()
 work = do
@@ -24,6 +24,7 @@ doSomethingSpecial ∷ ConfigM ()
 doSomethingSpecial = do
   -- ...
   verbose ← asks verbose
+  Config {verbose} ← ask -- the same
   when verbose beVerbose
 
 beVerbose ∷ ConfigM ()
@@ -36,7 +37,4 @@ doSomethingSpecialSilently ∷ ConfigM ()
 doSomethingSpecialSilently = local silent doSomethingSpecial
 
 main ∷ IO ()
-main = do
-  config ← getConfiguration
-  let result = runReader work config
-  print result
+main = runReader work <$> getConfiguration
