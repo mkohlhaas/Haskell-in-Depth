@@ -1,4 +1,4 @@
-import Control.Monad.Writer (MonadWriter (tell), Sum (Sum), Writer, mapWriter)
+import Control.Monad.Writer (MonadWriter (tell), Sum (Sum, getSum), Writer, mapWriter, void, execWriter, runWriter)
 
 gcd' ∷ Integral a ⇒ a → a → a
 gcd' x 0 = x
@@ -10,29 +10,33 @@ gcdM step x 0 = step x 0 >> pure x
 gcdM step x y = step x y >> gcdM step y (x `mod` y)
 
 gcdPrint ∷ (Show a, Integral a) ⇒ a → a → IO a
-gcdPrint = gcdM (curry print)
-
--- gcdPrint = gcdM (\a b → print (a, b))
--- `print` prints a tuple
-
-gcdCountSteps ∷ Integral a ⇒ a → a → Writer (Sum Int) a
-gcdCountSteps = gcdM (\_ _ → tell $ Sum 1)
+gcdPrint = gcdM (curry print) -- `print` prints a tuple!
 
 gcdLogSteps ∷ Integral a ⇒ a → a → Writer [(a, a)] a
 gcdLogSteps = gcdM (\a b → tell [(a, b)])
+
+gcdCountSteps ∷ Integral a ⇒ a → a → Writer (Sum Int) a
+gcdCountSteps = gcdM (\_ _ → tell $ Sum 1)
 
 gcdCountSteps' ∷ Integral a ⇒ a → a → Writer (Sum Int) a
 gcdCountSteps' a b = mapWriter mapper $ gcdLogSteps a b
   where
     mapper (v, w) = (v, Sum $ length w)
 
--- https://wiki.haskell.org/Pointfree
--- f = (g.) . h ⇔ f x x0 = g (h x x0)
-gcdCountSteps'' ∷ Integral a ⇒ a → a → Writer (Sum Int) a
-gcdCountSteps'' = (mapWriter (Sum . length <$>) .) . gcdLogSteps
+gcdCountSteps'' ∷ Integral a ⇒ a → a → Writer Int a
+gcdCountSteps'' x y = mapWriter (length <$>) (gcdLogSteps x y)
+
+-- pointfree
+gcdCountSteps''' ∷ Integral a ⇒ a → a → Writer Int a
+gcdCountSteps''' = (mapWriter (length <$>) .) . gcdLogSteps
 
 main ∷ IO ()
-main = print "OK"
-
--- in GHCi
--- ghci> gcdPrint 6 18
+main = do
+  void $ gcdPrint 27 36                              -- (27,36) (36,27) (27,9) (9,0)
+  print $ execWriter (gcdLogSteps 27 36)             -- [(27,36),(36,27),(27,9),(9,0)]
+  print $ runWriter (gcdLogSteps 27 36)              -- (9,[(27,36),(36,27),(27,9),(9,0)])
+  print $ runWriter (gcdCountSteps 27 36)            -- (9,Sum {getSum = 4})
+  print $ runWriter (gcdCountSteps' 27 36)           -- (9,Sum {getSum = 4})
+  print $ runWriter (gcdCountSteps'' 27 36)          -- (9,Sum {getSum = 4})
+  print $ getSum (execWriter $ gcdCountSteps 27 36)  -- 4
+  print $ execWriter $ gcdCountSteps'' 27 36         -- 4
