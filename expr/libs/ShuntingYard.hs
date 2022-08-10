@@ -1,9 +1,15 @@
+{--
+  apps/prefix-postfix.hs uses ShuntingYard
+  cabal run prefix-postfix
+--}
+
 module ShuntingYard (convertToExpr) where
 
 import Control.Monad.State (MonadState (get, put), State, execState, gets, modify, when)
 import Data.Bifunctor (first)
 import Data.Char (isDigit, isSpace)
 import Data.Foldable (traverse_)
+import Data.Function ((&))
 import Data.List (groupBy)
 import Expr (Expr (..))
 
@@ -16,26 +22,29 @@ type Output = [Expr Integer]
 type SYState = State (Stack, Output)
 
 isEmpty ∷ SYState Bool
-isEmpty = gets $ null . fst
+isEmpty = gets (null . fst)
 
 notEmpty ∷ SYState Bool
 notEmpty = not <$> isEmpty
 
 top ∷ SYState Token
-top = gets $ head . fst -- let it crash on empty stack
+top = gets (head . fst) -- let it crash on empty stack
 
 pop ∷ SYState Token
 pop = do
-  (s, es) ← get
-  put (tail s, es) -- let it crash on empty stack
-  pure $ head s
+  (tokens, es) ← get
+  put (tail tokens, es) -- let it crash on empty stack
+  pure $ head tokens
 
-pop_ ∷ SYState () -- let it crash on empty stack
-pop_ = modify $ first tail
+-- let it crash on empty stack
+pop_ ∷ SYState ()
+pop_ = modify (first tail)
 
 push ∷ Token → SYState ()
-push t = modify $ first (t :)
+push = modify . first . (:)
 
+-- m is a computation in the State monad
+-- whileNotEmptyAnd a certain condition holds, do `m`
 whileNotEmptyAnd ∷ (Token → Bool) → SYState () → SYState ()
 whileNotEmptyAnd predicate m = go
   where
@@ -43,14 +52,15 @@ whileNotEmptyAnd predicate m = go
       b1 ← notEmpty
       when b1 $ do
         b2 ← predicate <$> top
-        when b2 (m >> go) -- TODO
+        when b2 (m >> go) -- execute monadic action (transfer token to output as defined later)
 
+-- while moving tokens from Stack to Output transform Token's into Expr's
 output ∷ Token → SYState ()
-output t = modify (builder t <$>) -- TODO: exploiting the Functor instance for pairs, which processes the second component of a pair (an Output in this case)
+output t = modify (builder t <$>) -- exploiting the Functor instance for pairs, which processes the second component of a pair (an Output in this case)
   where
     builder "+" (e1 : e2 : es) = Add e1 e2 : es
     builder "*" (e1 : e2 : es) = Mult e1 e2 : es
-    builder n es = Lit (read n) : es -- let it crash on not a number
+    builder n es = Lit (read n) : es -- let it crash on not-a-number
 
 isOp ∷ String → Bool
 isOp "+" = True
@@ -62,26 +72,26 @@ precedence "*" = 2
 precedence "+" = 1
 precedence _ = 0
 
+-- precedence greater than or equal
 precGTE ∷ String → String → Bool
 t1 `precGTE` t2 = precedence t1 >= precedence t2
 
 convertToExpr ∷ String → Expr Integer
-convertToExpr str = head $ snd $ execState shuntingYard ([], [])
+convertToExpr str = execState shuntingYard ([], []) & snd & head
   where
-    tokenize = groupBy (\a b → isDigit a && isDigit b) . filter (not . isSpace)
-
-    tokens = reverse $ tokenize str
+    tokenize = groupBy (\a b → isDigit a && isDigit b) . filter (not . isSpace) -- find numbers
+    tokens = tokenize str & reverse
 
     shuntingYard = traverse_ processToken tokens >> transferRest
 
-    transfer = pop >>= output
+    transferToOutput = pop >>= output
 
-    transferWhile predicate = whileNotEmptyAnd predicate transfer
+    transferWhile predicate = whileNotEmptyAnd predicate transferToOutput
 
-    transferRest = transferWhile $ const True
+    transferRest = transferWhile (const True)
 
-    processToken ")" = push ")"
+    processToken ")" = push ")" -- we reversed the original list: '(' and ')' come in reverse order (see Fig. 5.2, page 153)
     processToken "(" = transferWhile (/= ")") >> pop_
     processToken t
-      | isOp t = transferWhile (`precGTE` t) >> push t
-      | otherwise = output t -- number
+      | isOp t = transferWhile (\t' -> (t' `precGTE` t) && (t' /= ")")) >> push t
+      | otherwise = output t -- token t is a number and goes straight to Output
