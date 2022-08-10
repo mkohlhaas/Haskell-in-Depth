@@ -475,16 +475,45 @@
       withState ∷ (s → s) → State s a → State s a           -- changes state (= local from Reader - not withReader as type is not changed)
       ```
 
+- Page 148: **Traverse**
+  ```haskell
+  addItem ∷ Integer → IntS () ⇒ traverse_ addItem ⇒ [Integer] → IntS ()
+  ```
+
 - Page 151:
   - Helpful GHCi command:
     ```shell
     :main [<arguments> ...]     # run the main function with the given arguments
     ```
 
-- Page 148: **Traverse**
-  ```haskell
-  addItem ∷ Integer → IntS () ⇒ traverse_ addItem ⇒ [Integer] → IntS ()
-  ```
+- Page 151:
+  - *"Haskell is the best imperative programming language in this part of the galaxy."*
+
+
+- Page 157:
+  - How to read this function:
+    - m is a computation in the State monad
+    - `whileNotEmptyAnd` a certain `predicate` holds, do `m`
+    - Argument `m` can do whatever it wants with the `SYState`, and thanks to the monadic machinery, everything will be taken into account on the next iteration.
+    ```haskell
+    whileNotEmptyAnd ∷ (Token → Bool) → SYState () → SYState ()
+    whileNotEmptyAnd predicate m = go
+      where
+        go = do
+          b ← predicate <$> top
+          when b (m >> go) -- execute monadic action
+    ```
+
+- `mapM` and `traverse` are basically the same; `mapM` is for `Monads`, `traverse` for `Applicatives`:
+   ```haskell
+   mapM ∷ (Traversable t, Monad m) ⇒ (a → m b) → t a → m (t b)
+   traverse ∷ (Traversable t, Applicative f) ⇒ (a → f b) → t a → f (t b)
+   ```
+
+- Page 159:
+  - *"We don't need to stop in fear, facing an imperative algorithm that exploits mutability."*
+  - *"We are now equipped with the State monad. It helps us to represent any mutable state in our programs."*
+  - *"We don't have to invent our own purely functional stateless algorithms because this can be quite hard to accomplish sometimes."*
 
 - [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
 
