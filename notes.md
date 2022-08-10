@@ -343,9 +343,9 @@
 
     ```haskell
     class Monad m ⇒ MonadReader r m | m → r where
-      ask ∷ m r
-      local ∷ (r → r) → m a → m a
-      reader ∷ (r → a) → m a
+      reader ∷ (r → a) → m a        -- create reader
+      ask ∷ m r                     -- get config
+      local ∷ (r → r) → m a → m a   -- change config
     ```
   - `Reader` is not a monad, but `Reader r` is.
   - So the type of configuration should be uniquely determined by the type of a monad.
@@ -423,10 +423,71 @@
   processLine (_, T.splitOn ":" → [s1, s2]) = pure $ genInsert s1 s2  -- uses ViewPatterns extension
   processLine (i, s) = tell [WrongFormat i s] >> pure ""
   ```
+- Page 146: **Curry**
+  - Nice `curry` example:
+  ```haskell
+  gcdPrint ∷ (Show a, Integral a) ⇒ a → a → IO a
+  gcdPrint = gcdM (curry print) -- `print` prints a tuple!
+  ```
+
+- Page 147: **Pointfree & Pointful**
+- [Pointfree.io](http://pointfree.io/)
+  ```shell
+  cabal install pointfree pointful
+  pointfree "gcdCountSteps x y = mapWriter (length <$>) (gcdLogSteps x y)"
+  ⇒ gcdCountSteps = (mapWriter (length <$>) .) . gcdLogSteps
+  pointful "gcdCountSteps = (mapWriter (length <$>) .) . gcdLogSteps"
+  ⇒ gcdCountSteps e h = mapWriter (\ a → length <$> a) (gcdLogSteps e h)
+  ```
+
+- Page 147: **State Monad**
+  -- Combines Reader and Writer functionalities.
+  ```haskell
+  class Monad m ⇒ MonadState s m | m → s where
+    state ∷ (s → (a, s)) → m a  -- create a (Monad)State
+    get ∷ m s                   -- get state (= ask from Reader)
+    put ∷ s → m ()              -- put (new) state (= tell from Writer)
+  ```
+
+  - Helper functions:
+  ```haskell
+  modify ∷ MonadState s m ⇒ (s → s) → m ()  -- modify state
+  gets ∷ MonadState s m ⇒ (s → a) → m a     -- get state and apply function (typically a record function) (= asks from Reader)
+  ```
+- Page 148:
+  - Comparison of Reader, Writer and State monad:
+  - All of them construct a computation in the corresponding Monad from its internal representation (a function, a pair, and a function returning a pair, respectively).
+    ```haskell
+    reader ∷ MonadReader r m ⇒ (r → a) → m a
+    writer ∷ MonadWriter w m ⇒ (a, w) → m a
+    state ∷ MonadState s m ⇒ (s → (a, s)) → m a
+    ```
+  - Helper functions:
+    - Runners:
+      ```haskell
+      runState ∷ State s a → s → (a, s)                     -- returns result and state
+      execState ∷ State s a → s → s                         -- returns only state
+      evalState ∷ State s a → s → a                         -- returns only result
+      ```
+    - Modifiers:
+      ```haskell
+      mapState ∷ ((a, s) → (b, s)) → State s a → State s b  -- maps result and state
+      withState ∷ (s → s) → State s a → State s a           -- changes state (= local from Reader - not withReader as type is not changed)
+      ```
+
+- Page 151:
+  - Helpful GHCi command:
+    ```shell
+    :main [<arguments> ...]     # run the main function with the given arguments
+    ```
+
+- Page 148: **Traverse**
+  ```haskell
+  addItem ∷ Integer → IntS () ⇒ traverse_ addItem ⇒ [Integer] → IntS ()
+  ```
 
 - [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
 
-- [Pointfree.io](http://pointfree.io/)
 
 - Page 200: **Most Common Monad Transformers**
   Name | Functionality provided
