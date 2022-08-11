@@ -20,57 +20,57 @@ import Types (GeoCoords (display_name), SunTimes (..), When (..))
 import Control.Monad.Logger (logInfoN)
 
 -- [<date>@]<address/location>
-parseRequestLine :: Text -> Either RequestError (Text, When)
+parseRequestLine ∷ Text → Either RequestError (Text, When)
 parseRequestLine txt = parse $ split txt
   where
     split t = case T.breakOn "@" t of
-      (addr, "") -> ("", addr)
-      (day, addr) -> (T.strip day, T.strip $ T.tail addr)
+      (addr, "") → ("", addr)
+      (day, addr) → (T.strip day, T.strip $ T.tail addr)
     parse (_, "") = Left EmptyRequest
     parse ("", addr) = Right (addr, Now)
     parse (d, addr) =
       case parseTimeM False defaultTimeLocale "%Y-%-m-%-d" (T.unpack d) of
-        Nothing -> Left (WrongDay d)
-        Just d' -> Right (addr, On d')
+        Nothing → Left (WrongDay d)
+        Just d' → Right (addr, On d')
 
-formatResult :: Text -> SunTimes ZonedTime -> TimeLocale -> Text
+formatResult ∷ Text → SunTimes ZonedTime → TimeLocale → Text
 formatResult req SunTimes {..} loc =
   mconcat [day, " @ ", req, ":\n  Sunrise: ", fmt sunrise, "\n  Sunset: ", fmt sunset]
   where
     day = T.pack $ formatTime loc "%x" sunrise
     fmt t = T.pack $ formatTime loc "%X %Z" t
 
-processRequest :: Text -> MyApp Text
+processRequest ∷ Text → MyApp Text
 processRequest t = processR $ parseRequestLine $ T.strip t
   where
     processR (Left e) = throwM (FormatError e)
     processR (Right (addr, day)) = do
-      coords <- getCoords addr
+      coords ← getCoords addr
       logInfoN $ T.pack $ "Coordinates: " <> show coords
-      st <- getSunTimes coords day
+      st ← getSunTimes coords day
       pure $ formatResult (display_name coords) st defaultTimeLocale
 
-processMany :: [Text] -> MyApp ()
+processMany ∷ [Text] → MyApp ()
 processMany = mapM_ processRequestWrapper
   where
     processRequestWrapper r =
       unless ("#" `T.isPrefixOf` r) $ -- every request that starts with '#' is a comment
         (processRequest r >>= liftIO . TIO.putStrLn) `catch` handler r `finally` delaySec 1
     delaySec sec = liftIO $ threadDelay (sec * 1000000)
-    handler :: Text -> SunInfoException -> MyApp ()
+    handler ∷ Text → SunInfoException → MyApp ()
     handler r e = liftIO $ TIO.putStrLn $ "Error in request '" <> r <> "': " <> T.pack (show e)
 
-processInteractively :: MyApp ()
+processInteractively ∷ MyApp ()
 processInteractively = action `catch` handler
   where
     action = do
       liftIO $ TIO.putStrLn "Enter your request:"
-      req <- liftIO TIO.getLine
-      res <- processRequest req
+      req ← liftIO TIO.getLine
+      res ← processRequest req
       liftIO $ TIO.putStrLn res
 
     -- `handler` only catches SunInfoException's
-    handler :: SunInfoException -> MyApp ()
+    handler ∷ SunInfoException → MyApp ()
     handler e@(ServiceAPIError _) = liftIO $ print e
     handler e@(NetworkError _) = liftIO $ print e
     handler e = do
@@ -79,5 +79,5 @@ processInteractively = action `catch` handler
           "There was an error while processing your request: "
             <> T.pack (show e)
             <> "\nDo you want to try again (Y/N)?"
-      yesno <- liftIO TIO.getLine
+      yesno ← liftIO TIO.getLine
       when (yesno `elem` ["y", "Y", "yes"]) processInteractively

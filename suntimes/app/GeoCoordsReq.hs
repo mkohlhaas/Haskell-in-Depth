@@ -17,21 +17,21 @@ import Debug.Trace (trace)
 -- ing is hidden inside the responseBody function. The decoding itself is possible via the
 -- FromJSON instance we defined earlier. Note that req was able to figure out that the
 -- JSON array should be decoded to the Haskell list.
-getCoords :: Address -> MyApp GeoCoords
+getCoords ∷ Address → MyApp GeoCoords
 getCoords addr = handle rethrowReqException $ do
-  wauth <- ask
+  wauth ← ask
   let ep = https "nominatim.openstreetmap.org" /: "search" -- ep = end-point
       reqParams =
         mconcat
           [ "q" =: addr,
-            "format" =: ("json" :: T.Text),
-            "limit" =: (1 :: Int),
+            "format" =: ("json" ∷ T.Text),
+            "limit" =: (1 ∷ Int),
             "email" =: email wauth,
             header "User-Agent" (encodeUtf8 $ agent wauth)
           ]
       request = req GET ep NoReqBody jsonResponse reqParams
-  res <- liftIO $ responseBody <$> runReq defaultHttpConfig request
+  res ← liftIO $ responseBody <$> runReq defaultHttpConfig request
   case res of
-    [] -> throwM $ UnknownLocation addr -- TODO: won't `handle` in line 14 catch this and call rethrowReqException? No! rethrowReqException only covers HttpException's. It's in its signature!
-    (coords : _) -> pure coords
-    -- (coords : _) -> pure (trace ("Coordinates: " <> show coords) coords)
+    [] → throwM $ UnknownLocation addr -- TODO: won't `handle` in line 14 catch this and call rethrowReqException? No! rethrowReqException only covers HttpException's. It's in its signature!
+    (coords : _) → pure coords
+    -- (coords : _) → pure (trace ("Coordinates: " <> show coords) coords)

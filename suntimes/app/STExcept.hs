@@ -29,7 +29,7 @@ instance Show SunInfoException where
   show ConfigError = "Error parsing configuration file"
 
 -- HttpException is from the Network.HTTP.Client which is used by the `req` package
-rethrowReqException :: MonadThrow m => HttpException -> m a
+rethrowReqException ∷ MonadThrow m ⇒ HttpException → m a
 rethrowReqException (JsonHttpException s) = throwM (ServiceAPIError s)
 rethrowReqException (VanillaHttpException (NC.HttpExceptionRequest _ (NC.StatusCodeException resp _))) = throwM (ServiceAPIError $ show $ NC.responseStatus resp)
 rethrowReqException (VanillaHttpException e) = throwM (NetworkError $ toException e)

@@ -20,24 +20,24 @@ data Params
       AppMode -- mode
       FilePath -- config file
 
-mkParams :: Opt.Parser Params
+mkParams ∷ Opt.Parser Params
 mkParams = Params <$> (fileInput <|> interactive) <*> configFile
   where
     fileInput = FileInput <$> strOption (long "file" <> short 'f' <> metavar "FILENAME" <> help "Input file")
     interactive = flag Interactive Interactive (long "interactive" <> short 'i' <> help "Interactive mode")
     configFile = strOption (long "conf" <> short 'c' <> value "config.json" <> showDefault <> metavar "CONFIGNAME" <> help "Configuration file")
 
-withConfig :: Params -> IO ()
+withConfig ∷ Params → IO ()
 withConfig (Params appMode config) = do
-  wauth <- eitherDecodeStrict <$> B.readFile config
+  wauth ← eitherDecodeStrict <$> B.readFile config
   case wauth of
-    Right wauth' -> runMyApp (run appMode) wauth'
-    Left _ -> throwM ConfigError
+    Right wauth' → runMyApp (run appMode) wauth'
+    Left _ → throwM ConfigError
   where
     run (FileInput fname) = liftIO (TIO.readFile fname) >>= processMany . T.lines
     run Interactive = processInteractively
 
-main :: IO ()
+main ∷ IO ()
 main =
   (execParser opts >>= withConfig)
     `catches` [ Handler parserExit, -- handling is done based on the handler's type signature
@@ -46,13 +46,13 @@ main =
               ]
   where
     opts = info (mkParams <**> helper) (fullDesc <> progDesc "Reports sunrise/sunset times for the specified location")
-    parserExit :: ExitCode -> IO ()
+    parserExit ∷ ExitCode → IO ()
     parserExit _ = pure ()
-    printIOError :: IOException -> IO ()
+    printIOError ∷ IOException → IO ()
     printIOError e
       | isDoesNotExistError e = do
         let mbfn = ioeGetFileName e
         putStrLn $ "File " ++ fromMaybe "" mbfn ++ " not found"
       | otherwise = putStrLn $ "I/O error: " ++ show e
-    printOtherErrors :: SomeException -> IO () -- print any other exception that hasn't been handled before
+    printOtherErrors ∷ SomeException → IO () -- print any other exception that hasn't been handled before
     printOtherErrors = print
