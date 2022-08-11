@@ -1,3 +1,8 @@
+-- The monadic ST type provides support for strict state threads.
+--
+-- ST s a -- returns a value of type `a` executing in thread `s`
+--
+
 import Control.Monad.ST (ST, runST)
 import Data.STRef (STRef, newSTRef, readSTRef)
 
@@ -8,4 +13,4 @@ comp2 ∷ STRef s Int → ST s Int
 comp2 = readSTRef
 
 main ∷ IO ()
-main = print $ runST (comp1 >>= comp2)
+main = print $ runST (comp1 >>= comp2) -- 42

@@ -1,6 +1,6 @@
 module EvalRPN where
 
-import Control.Monad.State (MonadState (get, put), State, evalState, modify)
+import Control.Monad.State (MonadState (get, put, state), State, evalState, modify)
 import Data.Foldable (traverse_)
 
 type Stack = [Integer]
@@ -16,8 +16,8 @@ pop = do
   put $ tail xs
   pure $ head xs
 
--- pop' ∷ EvalM Integer
--- pop' = state $ \(x:xs) → (x, xs)
+pop' ∷ EvalM Integer
+pop' = state $ \(x:xs) → (x, xs)
 
 evalRPN ∷ String → Integer
 evalRPN expr = evalState evalRPN' []

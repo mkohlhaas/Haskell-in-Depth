@@ -10,9 +10,9 @@ fileCount fpath = do
   whenM (doesDirectoryExist fpath) $ go counter fpath
   readIORef counter
   where
-    go cnt fp = listContents fp >>= traverse_ (processEntry cnt)
-    processEntry cnt fp = ifM (doesDirectoryExist fp) (go cnt fp) (inc cnt)
-    inc cnt = modifyIORef' cnt (+ 1)
+    go counter fp = listContents fp >>= traverse_ (processEntry counter)
+    processEntry counter fp = ifM (doesDirectoryExist fp) (go counter fp) (inc counter)
+    inc counter = modifyIORef' counter (+ 1)
 
 fileCount' ∷ FilePath → IO Int
 fileCount' fp = length <$> listFilesRecursive fp
