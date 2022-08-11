@@ -2,6 +2,7 @@ module EvalRPN where
 
 import Control.Monad.State (MonadState (get, put, state), State, evalState, modify)
 import Data.Foldable (traverse_)
+import Data.Function ((&))
 
 type Stack = [Integer]
 
@@ -26,5 +27,5 @@ evalRPN expr = evalState evalRPN' []
     step "+" = processTops (+)
     step "*" = processTops (*)
     step "-" = processTops (-)
-    step t = push $ read t
+    step t = read t & push
     processTops op = flip op <$> pop <*> pop >>= push

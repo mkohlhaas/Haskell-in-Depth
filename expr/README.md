@@ -11,13 +11,35 @@ ghci> convertToExpr "2+3"
 ghci> convertToExpr "(2+3) * (3+2)"
 ```
 
-#### EvalRPNTrans
+```shell
+$ cabal run prefix-postfix
+```
+
+#### EvalRPNs
 
 ```
 $ cabal repl
 ghci > import EvalRPNTrans
 ghci > evalRPN "2 3 +"
 ghci > evalRPN "2 3"
+```
+
+```shell
+$ cabal run evalrpn1 -- 2 3 + 4 \*
+⇒ 2 3 + 4 * = 20
+$ cabal run evalrpn2 -- 2 3 + 4 \*
+⇒ 2 3 + 4 * = Just 20
+$ cabal run evalrpn3 -- 2 3 + 4 \*
+⇒ 2 3 + 4 * = Just 20
+```
+
+```shell
+$ cabal run evalrpn1 -- 2 3 + 4 \* 5
+⇒ 2 3 + 4 * 5 = 5
+$ cabal run evalrpn2 -- 2 3 + 4 \* 5
+⇒ 2 3 + 4 * 5 = Nothing
+$ cabal run evalrpn3 -- 2 3 + 4 \* 5
+⇒ 2 3 + 4 * 5 = Nothing
 ```
 
 #### Exception Handling

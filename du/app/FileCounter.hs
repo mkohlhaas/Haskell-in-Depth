@@ -4,11 +4,7 @@ module FileCounter (fileCount) where
 
 import App (AppConfig (maxDepth), AppEnv (AppEnv, cfg, depth, fileStatus, path), MonadIO (liftIO), MonadReader (ask), MonadWriter (tell), MyApp, isDirectory, when)
 import System.Directory.Extra (listFiles)
-import Utils
-  ( checkExtension,
-    currentPathStatus,
-    traverseDirectoryWith,
-  )
+import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
 
 type NumberOfFiles = Int
 

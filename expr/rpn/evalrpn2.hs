@@ -7,4 +7,4 @@ evalPrintExpr str = do
   putStrLn $ str ++ " = " ++ show r
 
 main ∷ IO ()
-main = getArgs >>= mapM_ evalPrintExpr
+main = getArgs >>= evalPrintExpr . unwords
