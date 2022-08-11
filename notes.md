@@ -515,8 +515,21 @@
   - *"We are now equipped with the State monad. It helps us to represent any mutable state in our programs."*
   - *"We don't have to invent our own purely functional stateless algorithms because this can be quite hard to accomplish sometimes."*
 
-- [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
+- Page 164:
+  -  Whenever we traverse some module documentation, struggling to find the function we need, and find something that is almost suitable, chances are we could get precisely what we need in the extra package.
+  - [Extra package by Neil Mitchell](https://hackage.haskell.org/package/extra)
 
+- Page 168:
+  - The ST monad allows hiding mutability inside pure functions.
+    ```haskell
+    countZerosST ∷ [Int] → Int
+    countZerosST xs = runST $ do
+      c ← newSTRef 0
+      traverse_ (\x → when (x == 0) (inc c)) xs
+      readSTRef c
+      where
+        inc c = modifySTRef' c (+ 1)
+    ```
 
 - Page 200: **Most Common Monad Transformers**
   Name | Functionality provided
