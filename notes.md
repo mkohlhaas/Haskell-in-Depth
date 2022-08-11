@@ -511,9 +511,9 @@
    ```
 
 - Page 159:
-  - *"We don't need to stop in fear, facing an imperative algorithm that exploits mutability."*
-  - *"We are now equipped with the State monad. It helps us to represent any mutable state in our programs."*
-  - *"We don't have to invent our own purely functional stateless algorithms because this can be quite hard to accomplish sometimes."*
+  - "We don't need to stop in fear, facing an imperative algorithm that exploits mutability."
+  - "We are now equipped with the State monad. It helps us to represent any mutable state in our programs."
+  - "We don't have to invent our own purely functional stateless algorithms because this can be quite hard to accomplish sometimes."
 
 - Page 164:
   -  Whenever we traverse some module documentation, struggling to find the function we need, and find something that is almost suitable, chances are we could get precisely what we need in the extra package.
@@ -529,6 +529,19 @@
       readSTRef c
       where
         inc c = modifySTRef' c (+ 1)
+    ```
+
+- Page 170:
+  - Compare `expr/rpn/EvalRPN.hs` and `expr/rpn/EvalRPNTrans.hs` to see how to "promote" a monad to a monad stack.
+
+- Page 175: **Three ways to convey errors in `StateT Stack Maybe`**
+  - `lift`
+  - `guard`
+  - `MonadFail`: When GHC compiles this code, it inserts the call to the `fail` function from the `MonadFail` type class for failed pattern matching.
+    ```haskell
+    main = do
+      [str] <- getArgs
+      putStrLn str
     ```
 
 - Page 200: **Most Common Monad Transformers**
