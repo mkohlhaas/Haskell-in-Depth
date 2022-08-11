@@ -1,3 +1,9 @@
+- Order of Code Examples
+  - `../expr/rpn/EvalRPNExcept.hs`
+  - `app/div.hs`
+  - `../suntimes/`
+  - `app/logging.hs`
+
 #### Exception handling in IO & GHC runtime
 
 - The GHC runtime system implements an exception-throwing and -handling mechanism.
