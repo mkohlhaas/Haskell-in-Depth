@@ -544,6 +544,26 @@
       putStrLn str
     ```
 
+- Page 184
+  - `liftIO` lifts result `a` in `IO` into the current monad.
+  - "`liftIO` lifts a computation from the `IO` monad." (From official documentation.)
+    ```haskell
+    traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()
+    traverseDirectoryWith app = do
+      curPath ← asks path
+      content ← liftIO $ listDirectory curPath
+      ...
+    ```
+    - We are in our custom `MyApp` monad: `traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()`
+    - `listDirectory` is in the `IO` monad: `listDirectory :: FilePath -> IO [FilePath]`
+
+- Example for using `liftM2`:
+  - `liftM2` is monadic.
+  - Monadic versus Applicative code:
+    ```haskell
+    liftM2 decide ask currentPathStatus ≅ decide <$> ask <*> currentPathStatus
+    ```
+
 - Page 200: **Most Common Monad Transformers**
   Name | Functionality provided
   --- | ---
