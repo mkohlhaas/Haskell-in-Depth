@@ -26,8 +26,5 @@ initialEnv config@AppConfig {..} =
     { cfg = config,
       path = basePath,
       depth = 0,
-      fileStatusFn =
-        if followSymlinks
-          then getFileStatus
-          else getSymbolicLinkStatus
+      fileStatusFn = if followSymlinks then getFileStatus else getSymbolicLinkStatus
     }

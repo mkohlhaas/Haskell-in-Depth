@@ -1,6 +1,6 @@
 module App (module E, MyApp, runMyApp) where
 
--- you switch between two implementations
+-- you can switch between two implementations
 -- import AppRWST
 import AppRTWTST
 import AppTypes as E

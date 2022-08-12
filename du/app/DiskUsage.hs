@@ -3,7 +3,7 @@
 
 module DiskUsage (diskUsage) where
 
-import App (AppConfig (maxDepth), AppEnv (AppEnv, cfg, depth, fileStatusFn, path), FileOffset, MonadReader (ask), MonadState (get), MonadWriter (tell), MyApp, fileSize, isDirectory, isRegularFile, liftM2, modify, when)
+import App
 import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
 
 -- To compute the total space used by some directory, we have to find the difference between the total space
@@ -22,11 +22,11 @@ type TotalSize = FileOffset
 diskUsage ∷ MyApp (FilePath, FileSize) TotalSize ()
 diskUsage = liftM2 decide ask currentPathStatus >>= processEntry
   where
-    decide AppEnv {..} fs
-      | isDirectory fs =
+    decide AppEnv {..} fileStatus
+      | isDirectory fileStatus =
         TraverseDir path (depth <= maxDepth cfg)
-      | isRegularFile fs && checkExtension cfg path =
-        RecordFileSize (fileSize fs)
+      | isRegularFile fileStatus && checkExtension cfg path =
+        RecordFileSize (fileSize fileStatus)
       | otherwise = None
 
     processEntry None = pure ()

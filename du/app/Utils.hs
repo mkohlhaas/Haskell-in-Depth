@@ -2,15 +2,13 @@
 
 module Utils where
 
-import App (AppConfig (extension), AppEnv (AppEnv, depth, fileStatusFn, path), FileStatus, MonadIO (liftIO), MonadReader (ask, local), MyApp, asks, isExtensionOf, (</>))
+import App
 import Data.Foldable (traverse_)
 import System.Directory (listDirectory)
 
 traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()
-traverseDirectoryWith app = do
-  curPath ← asks path
-  fPaths ← liftIO $ listDirectory curPath
-  traverse_ go fPaths
+traverseDirectoryWith app =
+  asks path >>= liftIO . listDirectory >>= traverse_ go
   where
     go fpath = flip local app $
       \env →
@@ -20,8 +18,10 @@ traverseDirectoryWith app = do
           }
 
 traverseDirectoryWith' ∷ MyApp le s () → MyApp le s ()
-traverseDirectoryWith' app =
-  asks path >>= liftIO . listDirectory >>= traverse_ go
+traverseDirectoryWith' app = do
+  curPath ← asks path
+  fPaths ← liftIO $ listDirectory curPath
+  traverse_ go fPaths
   where
     go fpath = flip local app $
       \env →

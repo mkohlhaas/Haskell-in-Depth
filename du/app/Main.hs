@@ -2,12 +2,12 @@
 
 module Main where
 
-import App (AppConfig (AppConfig), FileOffset, runMyApp)
+import App
 import Data.Text.IO as TIO (putStr)
 import DirTree (dirTree)
 import DiskUsage (diskUsage)
 import FileCounter (fileCount)
-import Options.Applicative as Opt (Parser, auto, execParser, fullDesc, help, helper, info, long, metavar, option, optional, progDesc, short, showDefault, strArgument, strOption, switch, value, (<**>))
+import Options.Applicative as Opt
 import TextShow (Builder, TextShow (showb), fromString, toText, unlinesB)
 
 buildEntries ∷ Builder → (e → Builder) → [e] → Builder
@@ -16,7 +16,9 @@ buildEntries title entryBuilder entries = unlinesB $ title : map entryBuilder en
 tabEntryBuilder ∷ TextShow s ⇒ (FilePath, s) → Builder
 tabEntryBuilder (fp, s) = showb s <> "\t" <> fromString fp
 
-treeEntryBuilder ∷ (FilePath, Int) → Builder
+type Depth = Int
+
+treeEntryBuilder ∷ (FilePath, Depth) → Builder
 treeEntryBuilder (fp, n) = fromString indent <> fromString fp
   where
     indent = replicate (2 * n) ' '
