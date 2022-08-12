@@ -63,7 +63,7 @@
   - `String` literals become polymorphic `IsString s ⇒ s` if we enable the `OverloadedStrings` GHC extension.
   - The `FromBuilder b ⇒ b` type follows the same idea.
 
-- [List of all Extensions](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts.html)
+- [List of all Extensions](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/table.html)
 - Used extensions in Chapter 2:
   - [DeriveAnyClass](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/derive_any_class.html)
   - [OverloadedStrings](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/overloaded_strings.html)
@@ -544,9 +544,16 @@
       putStrLn str
     ```
 
+- Page 180:
+  - `IO` must be the base monad if we need its functionality. There is no monad transformer to add `IO` functionality.
+    ```haskell
+    newtype MyApp logEntry state a = MyApp {runApp ∷ ReaderT AppEnv (WriterT [logEntry] (StateT state IO)) a}
+    ```
+
 - Page 184
   - `liftIO` lifts result `a` in `IO` into the current monad.
   - "`liftIO` lifts a computation from the `IO` monad." (From official documentation.)
+  - `liftIO` runs an IO action in any monad stack based on the IO monad. This function works no matter the depth of a monad stack!
     ```haskell
     traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()
     traverseDirectoryWith app = do
@@ -557,11 +564,75 @@
     - We are in our custom `MyApp` monad: `traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()`
     - `listDirectory` is in the `IO` monad: `listDirectory :: FilePath -> IO [FilePath]`
 
-- Example for using `liftM2`:
+- Page 188: **Example for using `liftM2`**
   - `liftM2` is monadic.
   - Monadic versus Applicative code:
     ```haskell
     liftM2 decide ask currentPathStatus ≅ decide <$> ask <*> currentPathStatus
+    ```
+
+- Page 190:
+  - The idea of the `GeneralizedNewtypeDeriving` GHC extension is rather simple.
+  - For example, to provide the `tell` method for the `MyApp s` monad, the deriving `WriterT` machinery generates a method body with something like `lift . tell` (one level down along the monad stack to get to the `Writer StateT` monad. The method body for get becomes `lift . lift . get` to reach the `State IO` monad.
+
+- Page 190:
+  - Both monad stacks are identical. Note the derived instances for the generic monad stack!
+    ```haskell
+    {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+
+    type MyApp logEntry state = RWST AppEnv [logEntry] state IO
+
+    newtype MyApp logEntry state a = MyApp {runApp ∷ ReaderT AppEnv (WriterT [logEntry] (StateT state IO)) a}
+      deriving (Functor, Applicative, Monad, MonadIO, MonadReader AppEnv, MonadWriter [logEntry], MonadState state)
+    ```
+
+- Page 193: GHC Extensions
+  - [CPP](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/phases.html#extension-CPP)
+    ```haskell
+    #if !MIN_VERSION_base(4,13,0)
+    import Control.Monad.Fail
+    #endif
+    ```
+  - [LambdaCase](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/lambda_case.html#extension-LambdaCase)
+    ```haskell
+    instance Monad m ⇒ Monad (MaybeT m) where
+    (>>=) ∷ MaybeT m a → (a → MaybeT m b) → MaybeT m b
+    (MaybeT ma) >>= f =
+      MaybeT $ ma >>= \case
+                 Nothing → pure Nothing
+                 Just a → runMaybeT (f a)
+    ```
+  - [FlexibleInstances](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/instances.html#extension-FlexibleInstances)
+    ```haskell
+    instance C (Maybe Int) where ...  -- allows the head of the instance declaration to mention arbitrary nested types
+    ```
+  - [InstanceSigs](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/instances.html#extension-InstanceSigs)
+    ```haskell
+    instance Applicative m ⇒ Applicative (MaybeT m) where
+    pure ∷ a → MaybeT m a             -- Allow type signatures for members in instance definitions.
+    pure a = MaybeT (pure $ Just a)
+    ```
+  - [MultiParamTypeClasses](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/multi_param_type_classes.html#extension-MultiParamTypeClasses)
+    ```haskell
+    class Collection c a where
+      union :: c a -> c a -> c a      -- Allow the definition of typeclasses with more than one parameter.
+      ...
+    ```
+  - [UndecidableInstances](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/instances.html#extension-UndecidableInstances)
+    - "Why on earth would we want to introduce undecidability into our program? The reason for it is hidden in the way monad transformer libraries are implemented."
+
+- Page 199:
+  - "The main monad transformer functionality is split over the two Haskell packages: `transformers` and `mtl`."
+  - "This separation is due to historical reasons and is an attempt to distinguish portable and nonportable parts of the library. Although Haskell portability is almost never an  issue nowadays, these two libraries still exist and **befuddle** developers."
+
+- Page 200:
+  -  GHC provides the coerce function, which represents this triviality. Basically, coerce means leave it without doing anything.
+  - It's like a verbose newtype derivation in PureScript:
+    ```haskell
+    newtype Identity a = Identity { runIdentity :: a }
+
+    instance Functor Identity where
+      fmap = coerce
     ```
 
 - Page 200: **Most Common Monad Transformers**
@@ -574,3 +645,5 @@
   StateT   | Implements read/write access to a state value.
   WriterT  | Logs data in the form of appending an element to a monoid.
   RWST     | Combines the functionalities of the ReaderT, WriterT, and StateT monad transformers.
+  SelectT  | Useful for implementing search algorithms
+  ContT    | [The Continuation Monad](https://www.haskellforall.com/2012/12/the-continuation-monad.html) for stopping and resuming computations.
