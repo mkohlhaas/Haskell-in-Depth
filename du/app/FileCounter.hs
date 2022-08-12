@@ -2,7 +2,7 @@
 
 module FileCounter (fileCount) where
 
-import App (AppConfig (maxDepth), AppEnv (AppEnv, cfg, depth, fileStatus, path), MonadIO (liftIO), MonadReader (ask), MonadWriter (tell), MyApp, isDirectory, when)
+import App (AppConfig (maxDepth), AppEnv (AppEnv, cfg, depth, fileStatusFn, path), MonadIO (liftIO), MonadReader (ask), MonadWriter (tell), MyApp, isDirectory, when)
 import System.Directory.Extra (listFiles)
 import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
 

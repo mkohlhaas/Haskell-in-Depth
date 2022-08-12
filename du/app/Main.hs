@@ -11,8 +11,7 @@ import Options.Applicative as Opt (Parser, auto, execParser, fullDesc, help, hel
 import TextShow (Builder, TextShow (showb), fromString, toText, unlinesB)
 
 buildEntries ∷ Builder → (e → Builder) → [e] → Builder
-buildEntries title entryBuilder entries =
-  unlinesB $ title : map entryBuilder entries
+buildEntries title entryBuilder entries = unlinesB $ title : map entryBuilder entries
 
 tabEntryBuilder ∷ TextShow s ⇒ (FilePath, s) → Builder
 tabEntryBuilder (fp, s) = showb s <> "\t" <> fromString fp
@@ -26,9 +25,9 @@ type FileSize = FileOffset
 
 work ∷ AppConfig → IO ()
 work config = do
-  (_, dirs) ← runMyApp dirTree config ()
-  (_, counters) ← runMyApp fileCount config ()
-  (_, usages) ← runMyApp diskUsage config (0 ∷ FileSize)
+  dirs ← runMyApp dirTree config ()
+  counters ← runMyApp fileCount config ()
+  usages ← runMyApp diskUsage config (0 ∷ FileSize)
   let report =
         toText $
           buildEntries "Directory tree:" treeEntryBuilder dirs
@@ -36,7 +35,7 @@ work config = do
             <> buildEntries "\nFile space usage:" tabEntryBuilder usages
   TIO.putStr report
 
-mkConfig ∷ Opt.Parser AppConfig
+mkConfig ∷ Parser AppConfig
 mkConfig =
   AppConfig
     <$> strArgument (metavar "DIRECTORY" <> value "." <> showDefault)

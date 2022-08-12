@@ -15,9 +15,9 @@ data AppConfig = AppConfig
 -- read-write (run-time info)
 data AppEnv = AppEnv
   { cfg ∷ AppConfig,
-    path ∷ FilePath, -- current path
-    depth ∷ Int, -- current depth
-    fileStatus ∷ FilePath → IO FileStatus
+    path ∷ FilePath, -------------------------- current file path
+    depth ∷ Int, ------------------------------ current directory depth
+    fileStatusFn ∷ FilePath → IO FileStatus
   }
 
 initialEnv ∷ AppConfig → AppEnv
@@ -26,8 +26,8 @@ initialEnv config@AppConfig {..} =
     { cfg = config,
       path = basePath,
       depth = 0,
-      fileStatus =
+      fileStatusFn =
         if followSymlinks
-          then getFileStatus -- Querying the file status: https://hackage.haskell.org/package/unix-2.7.2.2/docs/System-Posix-Files.html#g:6
-          else getSymbolicLinkStatus -- FileStatus information of the symbolic link itself is returned instead of that of the file it points to.
+          then getFileStatus
+          else getSymbolicLinkStatus
     }

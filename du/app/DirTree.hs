@@ -2,7 +2,7 @@
 
 module DirTree where
 
-import App (AppConfig (maxDepth), AppEnv (AppEnv, cfg, depth, fileStatus, path), MonadReader (ask), MonadWriter (tell), MyApp, isDirectory, takeBaseName, when)
+import App (AppConfig (maxDepth), AppEnv (AppEnv, cfg, depth, fileStatusFn, path), MonadReader (ask), MonadWriter (tell), MyApp, isDirectory, takeBaseName, when)
 import Utils (currentPathStatus, traverseDirectoryWith)
 
 type Depth = Int

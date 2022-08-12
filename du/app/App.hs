@@ -1,6 +1,7 @@
 module App (module E, MyApp, runMyApp) where
 
---import AppRWST
+-- you switch between two implementations
+-- import AppRWST
 import AppRTWTST
 import AppTypes as E
 import Control.Monad as E
