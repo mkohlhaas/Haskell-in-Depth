@@ -623,7 +623,7 @@
 
 - Page 199:
   - "The main monad transformer functionality is split over the two Haskell packages: `transformers` and `mtl`."
-  - "This separation is due to historical reasons and is an attempt to distinguish portable and nonportable parts of the library. Although Haskell portability is almost never an  issue nowadays, these two libraries still exist and **befuddle** developers."
+  - "This separation is due to historical reasons and is an attempt to distinguish portable and nonportable parts of the library. Although Haskell portability is almost never an  issue nowadays, **these two libraries still exist and befuddle developers**."
 
 - Page 200:
   -  GHC provides the coerce function, which represents this triviality. Basically, coerce means leave it without doing anything.
@@ -670,3 +670,16 @@
 
 - Page 214: **GHC Extension**
   - [FlexibleContexts](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/flexible_contexts.html#extension-FlexibleContexts)
+    - Constraints with specific types are disallowed in standard Haskell. You can only use type variables!.
+    - GHC implements the `FlexibleContexts` extension to lift this restriction.
+
+- Page 216: **GHC Runtime Exceptions**
+  - The GHC runtime system implements an exception-throwing and exception-handling mechanism.
+  - The main rule is that an exception can be thrown anywhere - including pure code(!) - **but it can be caught only in an IO computation**.
+  - The corresponding API is provided by the [Control.Exception](https://hackage.haskell.org/package/base-4.17.0.0/docs/Control-Exception.html) module (please check it out!) from the `base` package.
+  - The `Control.Exception` API is heavily based on the `IO` monad. Most of the functions defined there are `IO` actions.
+  - To make using this API in monad stacks easier, we use the [Control.Monad.Catch](https://hackage.haskell.org/package/exceptions-0.10.5/docs/Control-Monad-Catch.html) module (please check it out!) from the `exceptions` package.
+  - This module reexports the `Control.Exception` API and adds several type classes that can be used in monad stacks that support throwing and catching `GHC` exceptions.
+  - The utility functions are also redefined in terms of monad stacks, as opposed to IO.
+
+- SomeException
