@@ -6,17 +6,17 @@ import Control.Monad.Trans (MonadTrans (lift))
 import Control.Monad.Trans.State (StateT (runStateT), get, put)
 import Data.Text (pack)
 
-popAndLog :: LoggingT (StateT [Int] IO) ()
+popAndLog ∷ LoggingT (StateT [Int] IO) ()
 popAndLog = do
-  _ : xs <- lift get
+  _ : xs ← lift get
   lift $ put xs
   $logDebug ("***" <> pack (show xs) <> "***")
 
-logStateEx :: LoggingT (StateT [Int] IO) Int
+logStateEx ∷ LoggingT (StateT [Int] IO) Int
 logStateEx = do
   popAndLog
   popAndLog
   pure 5
 
-main :: IO ()
+main ∷ IO ()
 main = runStateT (runStdoutLoggingT logStateEx) [1, 2, 3] >>= print
