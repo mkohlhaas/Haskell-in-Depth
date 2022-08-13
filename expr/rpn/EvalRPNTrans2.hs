@@ -13,8 +13,8 @@ type EvalM = MaybeT (State Stack)
 push ∷ Integer → EvalM ()
 push x = modify (x :)
 
-pop'' ∷ EvalM Integer
-pop'' = do
+pop' ∷ EvalM Integer
+pop' = do
   xs ← get
   guard (not $ null xs)
   put (tail xs)
