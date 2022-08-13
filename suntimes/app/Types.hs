@@ -33,7 +33,7 @@ data SunTimes dt = SunTimes
 
 data WebAPIAuth = WebAPIAuth
   { timeZoneDBkey ∷ Text, -- for api.timezonedb.com → given UTC and timezone get the local time
-    email ∷ Text, -- for nominatim.openstreetmap.org
-    agent ∷ Text -- for nominatim.openstreetmap.org
+    email ∷ Text, ---------- for nominatim.openstreetmap.org
+    agent ∷ Text ----------- for nominatim.openstreetmap.org
   }
   deriving (Show, Generic, FromJSON)

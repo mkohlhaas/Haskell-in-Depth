@@ -647,3 +647,26 @@
   RWST     | Combines the functionalities of the ReaderT, WriterT, and StateT monad transformers.
   SelectT  | Useful for implementing search algorithms
   ContT    | [The Continuation Monad](https://www.haskellforall.com/2012/12/the-continuation-monad.html) for stopping and resuming computations.
+
+- Page 208: **Exception Handling**
+  - Exception-handling mechanisms introduce significant complexity and potential performance drawbacks.
+  - Author suggests the following rule: if we can avoid using exceptions at all, we should avoid using them!
+  - Use GHC warnings, e.g. `-Wall` and `-Weverything` via `ghc-options` in `cabal` file.
+
+- Page 210: **Author's Guideline for Exception Handling**
+  - We strive to avoid dealing with exceptions by strict programming discipline (types, tests, compiler warnings, etc.).
+  - We use approaches with `programmable exceptions` (`Maybe`, `Either` , `ExceptT`, etc.) to implement pure algorithms if errors in input show themselves at later processing stages and are too hard to discover in advance.
+  - We use `GHC runtime exceptions` for communicating with the real world (IO computations) by throwing and handling them in judicious places.
+  - We use `GHC runtime exceptions` to log any exceptional situations that were not handled by other means (e.g., programmer mistakes that made their way into our program despite our best efforts).
+
+- Page 211: **ExceptT Monad Transformer**
+  ```haskell
+  class Monad m => MonadError e m | m -> e where
+    throwError :: e -> m a
+    catchError :: m a -> (e -> m a) -> m a
+
+  runExceptT :: ExceptT e m a -> m (Either e a)
+  ```
+
+- Page 214: **GHC Extension**
+  - [FlexibleContexts](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/flexible_contexts.html#extension-FlexibleContexts)

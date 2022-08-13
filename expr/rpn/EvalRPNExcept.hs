@@ -51,9 +51,7 @@ isOneElementOnStack = do
 readVar ∷ Text → EvalM Integer
 readVar name = do
   var ← asks $ lookup name
-  case var of
-    Just n → pure n
-    Nothing → throwError $ UnknownVar name
+  maybe (throwError $ UnknownVar name) pure var
 
 readNumber ∷ Text → EvalM Integer
 readNumber txt =
@@ -66,7 +64,7 @@ readSafe t
   | isId t = readVar t
   | otherwise = readNumber t
   where
-    isId txt = maybe False (isLetter . fst) $ T.uncons txt
+    isId txt = maybe False (isLetter . fst) (T.uncons txt)
 
 evalRPNOnce ∷ Text → EvalM Integer
 evalRPNOnce str =
@@ -82,7 +80,7 @@ evalRPNOnce str =
 evalRPNMany ∷ [Text] → EnvVars → Text
 evalRPNMany txts env = reportEvalResults $ evalState (runExceptT (runReaderT (mapM evalOnce txts) env)) []
   where
-    evalOnce txt = (fromText txt <>) <$> (buildOk <$> evalRPNOnce txt) `catchError` (pure . buildErr) -- TODO
+    evalOnce txt = (fromText txt <>) <$> (buildOk <$> evalRPNOnce txt) `catchError` (pure . buildErr)
     buildOk res = " = " <> showb res
     buildErr err = " Error: " <> showb err
 

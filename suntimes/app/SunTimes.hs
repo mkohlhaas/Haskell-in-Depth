@@ -37,10 +37,10 @@ getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
     whenToOptions Now = []
     whenToOptions (On day) = ["date" =: formatTime defaultTimeLocale "%Y-%m-%d" day]
 
-getSunTimes ∷ GeoCoords → When → MyApp (SunTimes ZonedTime) -- https://hackage.haskell.org/package/time-1.9.3/docs/Data-Time-LocalTime.html#t:ZonedTime
+getSunTimes ∷ GeoCoords → When → MyApp (SunTimes ZonedTime)
 getSunTimes gc d = do
   SunTimes {..} ← getSunTimesUTC gc d `catch` noTimeHandler
-  ltz ← lookupTimeZone gc sunrise `catchAll` const (pure utc) -- if lookup of timezone fails just use UTC timezone (https://hackage.haskell.org/package/time-1.13/docs/Data-Time-LocalTime.html#v:utc)
+  ltz ← lookupTimeZone gc sunrise `catchAll` const (pure utc)
   pure $ SunTimes (utcToZonedTime ltz sunrise) (utcToZonedTime ltz sunset)
   where
     noTimeHandler ∷ MonadThrow m ⇒ SunInfoException → m a
@@ -68,8 +68,7 @@ lookupTimeZone GeoCoords {..} t = do
             "fields" =: ("gmtOffset,abbreviation,dst" ∷ T.Text),
             "by" =: ("position" ∷ T.Text)
           ]
-  r ←
-    liftIO $
+  r ← liftIO $
       runReq defaultHttpConfig $
         req GET ep NoReqBody jsonResponse reqParams
   pure (timeZoneInfo2TimeZone $ responseBody r)
