@@ -8,6 +8,7 @@ import App (MyApp)
 import Control.Concurrent (threadDelay)
 import Control.Monad (unless, when)
 import Control.Monad.Catch (MonadCatch (catch), MonadThrow (throwM), finally)
+import Control.Monad.Logger (logInfoN)
 import Control.Monad.Reader (MonadIO (liftIO))
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -17,21 +18,22 @@ import GeoCoordsReq (getCoords)
 import STExcept (RequestError (..), SunInfoException (FormatError, NetworkError, ServiceAPIError))
 import SunTimes (getSunTimes)
 import Types (GeoCoords (display_name), SunTimes (..), When (..))
-import Control.Monad.Logger (logInfoN)
 
--- [<date>@]<address/location>
+-- [<date>@]<location>
 parseRequestLine ∷ Text → Either RequestError (Text, When)
 parseRequestLine txt = parse $ split txt
   where
     split t = case T.breakOn "@" t of
       (addr, "") → ("", addr)
       (day, addr) → (T.strip day, T.strip $ T.tail addr)
+
     parse (_, "") = Left EmptyRequest
     parse ("", addr) = Right (addr, Now)
     parse (d, addr) =
-      case parseTimeM False defaultTimeLocale "%Y-%-m-%-d" (T.unpack d) of
-        Nothing → Left (WrongDay d)
-        Just d' → Right (addr, On d')
+      maybe
+        (Left $ WrongDay d)
+        (\day → Right (addr, On day))
+        (parseTimeM False defaultTimeLocale "%Y-%-m-%-d" $ T.unpack d)
 
 formatResult ∷ Text → SunTimes ZonedTime → TimeLocale → Text
 formatResult req SunTimes {..} loc =
@@ -56,7 +58,9 @@ processMany = mapM_ processRequestWrapper
     processRequestWrapper r =
       unless ("#" `T.isPrefixOf` r) $ -- every request that starts with '#' is a comment
         (processRequest r >>= liftIO . TIO.putStrLn) `catch` handler r `finally` delaySec 1
+
     delaySec sec = liftIO $ threadDelay (sec * 1000000)
+
     handler ∷ Text → SunInfoException → MyApp ()
     handler r e = liftIO $ TIO.putStrLn $ "Error in request '" <> r <> "': " <> T.pack (show e)
 
@@ -69,7 +73,6 @@ processInteractively = action `catch` handler
       res ← processRequest req
       liftIO $ TIO.putStrLn res
 
-    -- `handler` only catches SunInfoException's
     handler ∷ SunInfoException → MyApp ()
     handler e@(ServiceAPIError _) = liftIO $ print e
     handler e@(NetworkError _) = liftIO $ print e

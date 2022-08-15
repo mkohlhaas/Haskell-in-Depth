@@ -23,10 +23,10 @@ getSunTimesUTC ∷ GeoCoords → When → MyApp (SunTimes UTCTime)
 getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
   liftIO $
     runReq defaultHttpConfig $ do
-      r ← req GET ep NoReqBody jsonResponse reqParams
+      r ← req GET endPoint NoReqBody jsonResponse reqParams
       pure (results $ responseBody r)
   where
-    ep = https "api.sunrise-sunset.org" /: "json" -- ep = end-point
+    endPoint = https "api.sunrise-sunset.org" /: "json"
     reqParams =
       mconcat $
         [ "lat" =: lat,

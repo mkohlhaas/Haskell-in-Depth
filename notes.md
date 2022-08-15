@@ -221,7 +221,7 @@
   - The module name can be hierarchical, with components separated by dots (e.g., Graphics.Rendering.Chart.Backend.Cairo). The Haskell Report does not set out a meaning for this hierarchy, ALTHOUGH EXISTING IMPLEMENTATIONS normally use it as an instruction for finding module source code files in subdirectories.
   - Note that a module is always imported by its full name, regardless of whether we import it from the same subdirectory (as in S.A) or a neighboring subdirectory (as in T.B ).
     ![Module Hierarchy](data/pics/module_hierarchy.png)
-  - Whenever we write import in a program, we import a particular module but not the whole module subhierarchy. Hierarchical module names are about naming only, and we shouldn’t expect anything else.
+  - Whenever we write import in a program, we import a particular module but not the whole module subhierarchy. Hierarchical module names are about naming only, and we shouldn't expect anything else.
 
   - Provide include/module root path with -i`path` (no spaces after flag):
     ```shell
@@ -639,7 +639,7 @@
   Name | Functionality provided
   --- | ---
   AccumT   | Accumulates data with the ability to read the current value at any time during the computation (something between WriterT and ReaderT, or a limited StateT).
-  ExceptT  | Exits a computation by generating exceptions with the full information about the current context. We’ll use this monad transformer in the next chapter extensively.
+  ExceptT  | Exits a computation by generating exceptions with the full information about the current context. We'll use this monad transformer in the next chapter extensively.
   MaybeT   | Exits computations without producing a result.
   ReaderT  | Implements access to a read-only environment.
   StateT   | Implements read/write access to a state value.
@@ -682,4 +682,48 @@
   - This module reexports the `Control.Exception` API and adds several type classes that can be used in monad stacks that support throwing and catching `GHC` exceptions.
   - The utility functions are also redefined in terms of monad stacks, as opposed to IO.
 
-- SomeException
+- Page 216:
+  - Every GHC exception is encapsulated in a value of the `SomeException` type from the `Control.Exception` module.
+    ```haskell
+    data SomeException = forall e . Exception e => SomeException e
+    ```
+  - This definition uses the `ExistentialQuantification` GHC extension, which provides the `forall` keyword to be used for data type definitions.
+
+- Page 233: **Exception-Handling Strategies**
+  - **IGNORE**
+    - We've got an exception, but we are unsure how to deal with it in this particular line of code, so we let it go further along the call stack.
+  - **THROW**
+    - We've discovered a bad situation, but we don't know how to deal with it, so we let it go further along the call stack as an exception.
+  - **RETHROW**
+    - We've caught an exception, and we can change it somehow (usually to introduce our own type of exceptions) and throw it again.
+  - **DEFAULT**
+    - We don't have a requested value due to an exception but are able to return a default value instead; we handle the exception and resume normal operations.
+  - **PRINT, STOP**
+    - We don't know how to proceed, so we log an exception and halt.
+  - **PRINT, CONTINUE**
+    - We are able to resume normal operations, so we log an exception and continue.
+  - **PRINT, REPEAT**
+    - We can try repeating the same operation, so we log an exception and repeat.
+
+- Page 234: **Preparing an Application to Raise and Handle Exceptions**
+  - Our application is represented by a monad stack. We can make it ready for raising and handling exceptions by deriving instances of the `MonadThrow`, `MonadCatch`, and `MonadMask`.
+  ```haskell
+  newtype MyApp a = MyApp {runApp ∷ ReaderT WebAPIAuth (LoggingT IO) a}
+  deriving (Functor, Applicative, Monad, MonadIO, MonadThrow, MonadCatch, MonadLogger, MonadMask, MonadReader WebAPIAuth)
+  ```
+  - `MonadThrow`, `MonadCatch` for `throw`, `catch`, ...
+  - `MonadMask` for `finally`.
+
+- Page 234: **Defining a Custom Exception Type**
+  - Derive instance of `Exception` type class.
+  ```haskell
+  {-# LANGUAGE DeriveAnyClass #-}
+
+  data SunInfoException
+    = UnknownLocation Text
+    | UnknownTime GeoCoords
+    deriving (Exception)
+  ```
+
+- Page 245:
+  - [`monad-logger`](https://hackage.haskell.org/package/monad-logger) is one of the most used logger libraries for mtl-style applications.
