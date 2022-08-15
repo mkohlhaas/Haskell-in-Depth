@@ -10,62 +10,62 @@ import ParseIP (buildIP, buildIPFoldl, buildIPFoldlShl, buildIPFoldr, parseIP, p
 import Test.Tasty (TestTree)
 import Test.Tasty.Hedgehog (testProperty)
 
-prop_buildIPs :: Property
+prop_buildIPs ∷ Property
 prop_buildIPs = property $ do
-  ipcs <- forAll genIPComponents
+  ipcs ← forAll genIPComponents
   let ip = buildIP ipcs
   buildIPFoldr ipcs === ip
   buildIPFoldl ipcs === ip
   buildIPFoldlShl ipcs === ip
 
-prop_parseIP :: Property
+prop_parseIP ∷ Property
 prop_parseIP = property $ do
-  ip <- forAll genIP
+  ip ← forAll genIP
   parseIP (show ip) === Just ip
 
-prop_parseIP_show :: Property
+prop_parseIP_show ∷ Property
 prop_parseIP_show = property $ do
-  ip <- forAll genIP
+  ip ← forAll genIP
   tripping ip show parseIP
 
-prop_parseIPRange_show :: Property
+prop_parseIPRange_show ∷ Property
 prop_parseIPRange_show = property $ do
-  ipr <- forAll genIPRange
+  ipr ← forAll genIPRange
   tripping ipr show parseIPRange
 
-prop_parseIPRanges_show :: Property
+prop_parseIPRanges_show ∷ Property
 prop_parseIPRanges_show = property $ do
-  iprdb <- forAll genIPRangeDB
+  iprdb ← forAll genIPRangeDB
   tripping iprdb show parseIPRanges
 
---    iprdb' <- evalEither (parseIPRanges $ show iprdb)
+--    iprdb' ← evalEither (parseIPRanges $ show iprdb)
 --    iprdb' === iprdb
 
-prop_no_parseInvalidIPRange :: Property
+prop_no_parseInvalidIPRange ∷ Property
 prop_no_parseInvalidIPRange = property $ do
-  inv_ip <- forAll genInvalidIPRange
+  inv_ip ← forAll genInvalidIPRange
   parseIPRange (show inv_ip) === Nothing
 
-prop_lookupIP_empty :: Property
+prop_lookupIP_empty ∷ Property
 prop_lookupIP_empty = property $ do
-  ip <- forAll genIP
+  ip ← forAll genIP
   assert (not $ lookupIP (IPRangeDB []) ip)
 
-prop_lookupIP_bordersIncluded :: Property
+prop_lookupIP_bordersIncluded ∷ Property
 prop_lookupIP_bordersIncluded = property $ do
-  iprdb@(IPRangeDB iprdbs) <- forAll genIPRangeDB
-  IPRange ip1 ip2 <- forAll $ Gen.element iprdbs
+  iprdb@(IPRangeDB iprdbs) ← forAll genIPRangeDB
+  IPRange ip1 ip2 ← forAll $ Gen.element iprdbs
   assert (lookupIP iprdb ip1)
   assert (lookupIP iprdb ip2)
 
-prop_lookupIPs_agree :: Property
+prop_lookupIPs_agree ∷ Property
 prop_lookupIPs_agree = property $ do
-  iprdb <- forAll genIPRangeDB
+  iprdb ← forAll genIPRangeDB
   let fiprdb = FL.fromIPRangeDB iprdb
-  ip <- forAll genIP
+  ip ← forAll genIP
   assert (lookupIP iprdb ip == FL.lookupIP fiprdb ip)
 
-props :: [TestTree]
+props ∷ [TestTree]
 props =
   [ testProperty "buildIP implementations agrees with each other" prop_buildIPs,
     testProperty "parseIP works as expected" prop_parseIP,

@@ -5,7 +5,7 @@ import Data (iptexts)
 import NFUtils ()
 import ParseIP (parseIP, parseIPIter, parseIPIterStrict, parseIPMonadic)
 
-benchParseIP :: [Benchmark]
+benchParseIP ∷ [Benchmark]
 benchParseIP =
   [ bench "parseIP/current" $ nf (map parseIP) iptexts,
     bgroup

@@ -5,12 +5,12 @@ import Data (readIPRDBFile)
 import NFUtils ()
 import ParseIP (parseIPRange)
 
-benchRanges :: [Benchmark]
+benchRanges ∷ [Benchmark]
 benchRanges =
   [ bgroup
       "ranges"
-      [ bgroup "read" $ map (\(desc, fname) -> bench desc $ nfIO (readIPRDBFile fname)) rangeFiles,
-        bgroup "parse" $ map (\(desc, fname) -> env (readIPRDBFile fname) $ \iprdbf -> bench desc $ nf parseIPRange iprdbf) rangeFiles
+      [ bgroup "read" $ map (\(desc, fname) → bench desc $ nfIO (readIPRDBFile fname)) rangeFiles,
+        bgroup "parse" $ map (\(desc, fname) → env (readIPRDBFile fname) $ \iprdbf → bench desc $ nf parseIPRange iprdbf) rangeFiles
       ]
   ]
   where

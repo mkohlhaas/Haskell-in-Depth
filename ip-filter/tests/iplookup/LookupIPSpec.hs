@@ -4,11 +4,11 @@ import IPTypes (IP (IP), IPRange (IPRange), IPRangeDB (IPRangeDB))
 import LookupIP (lookupIP)
 import Test.Tasty.Hspec (Spec, describe, it, shouldNotSatisfy, shouldSatisfy)
 
-lookupIPSpecs :: Spec
+lookupIPSpecs ∷ Spec
 lookupIPSpecs = describe "LookupIP" $ do
   spec_lookupIP
 
-spec_lookupIP :: Spec
+spec_lookupIP ∷ Spec
 spec_lookupIP =
   describe "lookupIP" $ do
     let empty_iprdb = IPRangeDB []

@@ -5,10 +5,10 @@ import Props (props)
 import Test.Tasty (defaultMain, testGroup)
 import Test.Tasty.Hspec (testSpecs)
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  specs <- concat <$> mapM testSpecs [parseIPSpecs, lookupIPSpecs]
-  goldens <- goldenTests
+  specs ← concat <$> mapM testSpecs [parseIPSpecs, lookupIPSpecs]
+  goldens ← goldenTests
   defaultMain
     ( testGroup
         "All Tests"

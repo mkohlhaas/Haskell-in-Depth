@@ -6,7 +6,7 @@ import Control.Exception (Exception)
 import Data.List (intercalate)
 import Data.Word (Word32)
 
--- newtype IP = IP {unIP :: Word32}
+-- newtype IP = IP {unIP ∷ Word32}
 newtype IP = IP Word32
   deriving (Eq, Ord)
 

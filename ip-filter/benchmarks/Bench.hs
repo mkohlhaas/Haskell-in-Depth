@@ -5,7 +5,7 @@ import BenchParseIP (benchParseIP)
 import BenchRanges (benchRanges)
 import Criterion.Main (defaultMain)
 
-main :: IO ()
+main ∷ IO ()
 main = defaultMain benchmarks
   where
     benchmarks =

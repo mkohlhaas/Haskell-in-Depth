@@ -3,14 +3,14 @@ module LookupIP where
 import Data.List (find)
 import IPTypes (IP, IPRange (IPRange), IPRangeDB (..))
 
-lookupIP :: IPRangeDB -> IP -> Bool
+lookupIP ∷ IPRangeDB → IP → Bool
 lookupIP (IPRangeDB ips) ip = case find (inRange ip) ips of
-  Nothing -> False
-  Just _ -> True
+  Nothing → False
+  Just _ → True
   where
     inRange ip' (IPRange beg end) = beg <= ip' && ip' <= end
 
-reportIPs :: IPRangeDB -> [IP] -> String
+reportIPs ∷ IPRangeDB → [IP] → String
 reportIPs iprdb = unlines . map go
   where
     go ip = show ip ++ ": " ++ yesno (lookupIP iprdb ip)

@@ -5,10 +5,10 @@ import IPTypes (IP, IPRange (IPRange), IPRangeDB (..))
 
 newtype FastIPRangeDB = IPRDB (IntervalMap IP ())
 
-fromIPRangeDB :: IPRangeDB -> FastIPRangeDB
+fromIPRangeDB ∷ IPRangeDB → FastIPRangeDB
 fromIPRangeDB (IPRangeDB iprdb) = IPRDB $ foldr ins empty iprdb
   where
     ins (IPRange ip1 ip2) = insert (Interval ip1 ip2) ()
 
-lookupIP :: FastIPRangeDB -> IP -> Bool
+lookupIP ∷ FastIPRangeDB → IP → Bool
 lookupIP (IPRDB imap) ip = not $ null $ search ip imap

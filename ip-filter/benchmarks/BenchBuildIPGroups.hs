@@ -4,7 +4,7 @@ import Criterion.Main (Benchmark, bench, bgroup, nf)
 import NFUtils ()
 import ParseIP (buildIP, buildIPFoldl, buildIPFoldlShl, buildIPFoldr)
 
-benchBuildIP :: [Benchmark]
+benchBuildIP ∷ [Benchmark]
 benchBuildIP =
   [ bgroup
       "buildIP"

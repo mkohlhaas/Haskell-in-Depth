@@ -5,14 +5,14 @@ import IPTypes (IP (IP), IPRange (IPRange), IPRangeDB (IPRangeDB))
 import ParseIP (buildIP, parseIP, parseIPRange, parseIPRanges)
 import Test.Tasty.Hspec (Spec, describe, it, shouldBe)
 
-parseIPSpecs :: Spec
+parseIPSpecs ∷ Spec
 parseIPSpecs = describe "ParseIP" $ do
   spec_buildIP
   spec_parseIP
   spec_parseIPRange
   spec_parseIPRanges
 
-spec_buildIP :: Spec
+spec_buildIP ∷ Spec
 spec_buildIP =
   describe "buildIP" $ do
     it "builds from zero" $ buildIP [0, 0, 0, 0] `shouldBe` IP 0
@@ -20,7 +20,7 @@ spec_buildIP =
     it "builds from localhost" $ buildIP [127, 0, 0, 1] `shouldBe` IP (1 + 127 * 256 ^ 3)
     it "builds from arbitrary address" $ buildIP [192, 168, 3, 15] `shouldBe` IP (15 + 3 * 256 + 168 * 256 ^ 2 + 192 * 256 ^ 3)
 
-spec_parseIP :: Spec
+spec_parseIP ∷ Spec
 spec_parseIP =
   describe "parseIP" $ do
     it "parses zero" $ parseIP "0.0.0.0" `shouldBe` Just (IP 0)
@@ -39,7 +39,7 @@ spec_parseIP =
     it "fails to parse negative components" $ parseIP "256.168.-1.0" `shouldBe` Nothing
     it "fails to parse non-numeric components" $ parseIP "192.x.1.0" `shouldBe` Nothing
 
-spec_parseIPRange :: Spec
+spec_parseIPRange ∷ Spec
 spec_parseIPRange =
   describe "parseIPRange" $ do
     it "parses pair" $ parseIPRange "192.168.0.1,192.168.3.100" `shouldBe` IPRange <$> parseIP "192.168.0.1" <*> parseIP "192.168.3.100"
@@ -48,7 +48,7 @@ spec_parseIPRange =
     it "fails to parse single ip with comma" $ parseIPRange "192.168.0.1," `shouldBe` Nothing
     it "fails to parse triple" $ parseIPRange "192.168.0.1,192.168.0.2,192.168.0.4" `shouldBe` Nothing
 
-spec_parseIPRanges :: Spec
+spec_parseIPRanges ∷ Spec
 spec_parseIPRanges =
   describe "parseIPRanges" $ do
     let sample_range = "192.168.0.1,192.168.3.100"
