@@ -646,7 +646,7 @@
   WriterT  | Logs data in the form of appending an element to a monoid.
   RWST     | Combines the functionalities of the ReaderT, WriterT, and StateT monad transformers.
   SelectT  | Useful for implementing search algorithms
-  ContT    | [The Continuation Monad](https://www.haskellforall.com/2012/12/the-continuation-monad.html) for stopping and resuming computations.
+  ContT    | [The Continuation Monad](https://www.haskellforall.com/2012/12/the-continuation-monad.html) and [Why continuation-passing style works, and the Cont monad](https://williamyaoh.com/posts/2022-05-02-the-cont-monad.html) for stopping and resuming computations.
 
 - Page 208: **Exception Handling**
   - Exception-handling mechanisms introduce significant complexity and potential performance drawbacks.
