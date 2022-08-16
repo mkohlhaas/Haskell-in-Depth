@@ -20,7 +20,7 @@ genIPList n = map IP $ take n $ iterate (+ step) 0
 simulate ∷ FastIPRangeDB → [IP] → (Int, Int)
 simulate iprdb ips = (yes, no)
   where
-    yes = length $ filter id $ map (lookupIP iprdb) ips
+    yes = length $ filter id $ map (isIpInRange iprdb) ips
     no = nReqs - yes
     -- no = length ips - yes
 

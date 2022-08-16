@@ -1,7 +1,7 @@
 module LookupIPSpec where
 
 import IPTypes (IP (IP), IPRange (IPRange), IPRangeDB (IPRangeDB))
-import LookupIP (lookupIP)
+import LookupIP (isIpInRange)
 import Test.Tasty.Hspec (Spec, describe, it, shouldNotSatisfy, shouldSatisfy)
 
 lookupIPSpecs ∷ Spec
@@ -15,6 +15,6 @@ spec_lookupIP =
         sample_iprdb = IPRangeDB [IPRange (IP 0) (IP 1), IPRange (IP 100) (IP 120)]
         ip1 = IP 110
         ip2 = IP 50
-    it "no IP in empty list" $ ip1 `shouldNotSatisfy` lookupIP empty_iprdb
-    it "IP in sample list" $ ip1 `shouldSatisfy` lookupIP sample_iprdb
-    it "no IP in sample list" $ ip2 `shouldNotSatisfy` lookupIP sample_iprdb
+    it "no IP in empty list" $ ip1 `shouldNotSatisfy` isIpInRange empty_iprdb
+    it "IP in sample list" $ ip1 `shouldSatisfy` isIpInRange sample_iprdb
+    it "no IP in sample list" $ ip2 `shouldNotSatisfy` isIpInRange sample_iprdb

@@ -540,7 +540,7 @@
   - `MonadFail`: When GHC compiles this code, it inserts the call to the `fail` function from the `MonadFail` type class for failed pattern matching.
     ```haskell
     main = do
-      [str] <- getArgs
+      [str] ← getArgs
       putStrLn str
     ```
 
@@ -562,7 +562,7 @@
       ...
     ```
     - We are in our custom `MyApp` monad: `traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()`
-    - `listDirectory` is in the `IO` monad: `listDirectory :: FilePath -> IO [FilePath]`
+    - `listDirectory` is in the `IO` monad: `listDirectory ∷ FilePath → IO [FilePath]`
 
 - Page 188: **Example for using `liftM2`**
   - `liftM2` is monadic.
@@ -615,7 +615,7 @@
   - [MultiParamTypeClasses](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/multi_param_type_classes.html#extension-MultiParamTypeClasses)
     ```haskell
     class Collection c a where
-      union :: c a -> c a -> c a      -- Allow the definition of typeclasses with more than one parameter.
+      union ∷ c a → c a → c a      -- Allow the definition of typeclasses with more than one parameter.
       ...
     ```
   - [UndecidableInstances](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/instances.html#extension-UndecidableInstances)
@@ -629,7 +629,7 @@
   -  GHC provides the coerce function, which represents this triviality. Basically, coerce means leave it without doing anything.
   - It's like a verbose newtype derivation in PureScript:
     ```haskell
-    newtype Identity a = Identity { runIdentity :: a }
+    newtype Identity a = Identity { runIdentity ∷ a }
 
     instance Functor Identity where
       fmap = coerce
@@ -661,11 +661,11 @@
 
 - Page 211: **ExceptT Monad Transformer**
   ```haskell
-  class Monad m => MonadError e m | m -> e where
-    throwError :: e -> m a
-    catchError :: m a -> (e -> m a) -> m a
+  class Monad m ⇒ MonadError e m | m → e where
+    throwError ∷ e → m a
+    catchError ∷ m a → (e → m a) → m a
 
-  runExceptT :: ExceptT e m a -> m (Either e a)
+  runExceptT ∷ ExceptT e m a → m (Either e a)
   ```
 
 - Page 214: **GHC Extension**
@@ -685,9 +685,9 @@
 - Page 216:
   - Every GHC exception is encapsulated in a value of the `SomeException` type from the `Control.Exception` module.
     ```haskell
-    data SomeException = forall e . Exception e => SomeException e
+    data SomeException = ∀ e . Exception e ⇒ SomeException e
     ```
-  - This definition uses the `ExistentialQuantification` GHC extension, which provides the `forall` keyword to be used for data type definitions.
+  - This definition uses the `ExistentialQuantification` GHC extension, which provides the `∀` keyword to be used for data type definitions.
 
 - Page 233: **Exception-Handling Strategies**
   - **IGNORE**
@@ -731,10 +731,10 @@
 - Page 247:
   - `notImplemented` and `undefined` can be useful for test-driven development (TDD):
     ```haskell
-    notImplemented :: a
+    notImplemented ∷ a
     notImplemented = error "Not implemented"
 
-    undefined :: a
+    undefined ∷ a
     undefined = error "Prelude.undefined"
     ```
 
@@ -753,4 +753,19 @@
     isLengthOf ∷ Int → [a] → Bool
     isLengthOf n xs = length xs == n
     ```
+
+- Page 253:
+  - To prevent double compilation of modules, it's customary to put modules that require testing into a named internal library.
+  - Then, both the application and the test suite depend on that library.
+
+- Page 261: **TypeApplications GHC extension**
+  - [Type Applications](https://downloads.haskell.org/~ghc/9.0.1/docs/html/users_guide/exts/type_applications.html#extension-TypeApplications)
+    ```haskell
+    readMaybe ∷ ∀ a. Read a ⇒ String → Maybe a
+
+    -- source code
+    {-# LANGUAGE TypeApplications #-}
+    readMaybe @Integer                                 -- type application source code turns readMaybe into:
+
+    readMaybe ∷ Read Integer ⇒ String → Maybe Integer
 

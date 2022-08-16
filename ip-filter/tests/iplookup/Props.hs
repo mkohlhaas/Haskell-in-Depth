@@ -5,7 +5,7 @@ import GenIP (genIP, genIPComponents, genIPRange, genIPRangeDB, genInvalidIPRang
 import Hedgehog (Property, assert, forAll, property, tripping, (===))
 import qualified Hedgehog.Gen as Gen
 import IPTypes (IPRange (IPRange), IPRangeDB (IPRangeDB))
-import LookupIP (lookupIP)
+import LookupIP (isIpInRange)
 import ParseIP (buildIP, buildIPFoldl, buildIPFoldlShl, buildIPFoldr, parseIP, parseIPRange, parseIPRanges)
 import Test.Tasty (TestTree)
 import Test.Tasty.Hedgehog (testProperty)
@@ -38,32 +38,29 @@ prop_parseIPRanges_show = property $ do
   iprdb ← forAll genIPRangeDB
   tripping iprdb show parseIPRanges
 
---    iprdb' ← evalEither (parseIPRanges $ show iprdb)
---    iprdb' === iprdb
-
 prop_no_parseInvalidIPRange ∷ Property
 prop_no_parseInvalidIPRange = property $ do
   inv_ip ← forAll genInvalidIPRange
   parseIPRange (show inv_ip) === Nothing
 
-prop_lookupIP_empty ∷ Property
-prop_lookupIP_empty = property $ do
+prop_isIpInRange_empty ∷ Property
+prop_isIpInRange_empty = property $ do
   ip ← forAll genIP
-  assert (not $ lookupIP (IPRangeDB []) ip)
+  assert (not $ isIpInRange (IPRangeDB []) ip)
 
-prop_lookupIP_bordersIncluded ∷ Property
-prop_lookupIP_bordersIncluded = property $ do
+prop_isIpInRange_bordersIncluded ∷ Property
+prop_isIpInRange_bordersIncluded = property $ do
   iprdb@(IPRangeDB iprdbs) ← forAll genIPRangeDB
   IPRange ip1 ip2 ← forAll $ Gen.element iprdbs
-  assert (lookupIP iprdb ip1)
-  assert (lookupIP iprdb ip2)
+  assert (isIpInRange iprdb ip1)
+  assert (isIpInRange iprdb ip2)
 
-prop_lookupIPs_agree ∷ Property
-prop_lookupIPs_agree = property $ do
+prop_isIpInRanges_agree ∷ Property
+prop_isIpInRanges_agree = property $ do
   iprdb ← forAll genIPRangeDB
   let fiprdb = FL.fromIPRangeDB iprdb
   ip ← forAll genIP
-  assert (lookupIP iprdb ip == FL.lookupIP fiprdb ip)
+  assert (isIpInRange iprdb ip == FL.isIpInRange fiprdb ip)
 
 props ∷ [TestTree]
 props =
@@ -73,7 +70,7 @@ props =
     testProperty "parseIPRange agrees with show" prop_parseIPRange_show,
     testProperty "parseIPRanges agrees with show" prop_parseIPRanges_show,
     testProperty "no parse of invalid IP ranges" prop_no_parseInvalidIPRange,
-    testProperty "no ip in empty list" prop_lookupIP_empty,
-    testProperty "lookupIP includes borders" prop_lookupIP_bordersIncluded,
-    testProperty "lookupIP agrees with fast lookupIP" prop_lookupIPs_agree
+    testProperty "no ip in empty list" prop_isIpInRange_empty,
+    testProperty "isIpInRange includes borders" prop_isIpInRange_bordersIncluded,
+    testProperty "isIpInRange agrees with fast isIpInRange" prop_isIpInRanges_agree
   ]

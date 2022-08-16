@@ -64,7 +64,8 @@ executable iplookup-simulation
 
 test-suite iplookup-doctest
     type:               exitcode-stdio-1.0
-    main-is:            tests/iplookup-doctest/Doctests.hs
+    main-is:            Doctests.hs
+    hs-source-dirs:     tests/iplookup-doctest
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
     build-depends:
