@@ -32,7 +32,7 @@ buildIPFoldlShl ∷ [Word8] → IP
 buildIPFoldlShl = IP . foldl (\s b → shiftL s 8 + fromIntegral b) 0
 
 guarded ∷ Alternative f ⇒ (a → Bool) → a → f a
-guarded f a = if f a then pure a else empty
+guarded fn x = if fn x then pure x else empty
 
 -- | Checks if the list has the given length
 --
@@ -58,7 +58,7 @@ isLengthOf n xs = length xs == n
 parseIP ∷ String → Maybe IP
 parseIP = parseIPMonadic
 
--- >⇒ (fish operator)
+-- >=> (fish operator)
 {-# INLINE parseIPMonadic #-}
 parseIPMonadic ∷ String → Maybe IP
 parseIPMonadic =
@@ -148,9 +148,7 @@ parseIPRange =
 parseIPRanges ∷ String → Either ParseError IPRangeDB
 parseIPRanges = fmap IPRangeDB . mapM parseLine . zip [1 ..] . lines
   where
-    parseLine (ln, s) = case parseIPRange s of
-      Nothing → Left (ParseError ln)
-      Just ipr → Right ipr
+    parseLine (lineNumber, str) = maybe (Left $ ParseError lineNumber) Right (parseIPRange str)
 
 parseValidIPs ∷ String → [IP]
 parseValidIPs = mapMaybe parseIP . lines

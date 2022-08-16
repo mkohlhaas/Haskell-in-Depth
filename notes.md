@@ -727,3 +727,30 @@
 
 - Page 245:
   - [`monad-logger`](https://hackage.haskell.org/package/monad-logger) is one of the most used logger libraries for mtl-style applications.
+
+- Page 247:
+  - `notImplemented` and `undefined` can be useful for test-driven development (TDD):
+    ```haskell
+    notImplemented :: a
+    notImplemented = error "Not implemented"
+
+    undefined :: a
+    undefined = error "Prelude.undefined"
+    ```
+
+- Page 250:
+  - Look at this parse function again:
+    ```haskell
+    parseIPMonadic ∷ String → Maybe IP
+    parseIPMonadic =
+      guarded (4 `isLengthOf`) . splitOn "."
+        >=> mapM (readMaybe @Integer >=> toIntegralSized)
+        >=> pure . buildIP
+
+    guarded ∷ Alternative f ⇒ (a → Bool) → a → f a
+    guarded fn x = if fn x then pure x else empty
+
+    isLengthOf ∷ Int → [a] → Bool
+    isLengthOf n xs = length xs == n
+    ```
+

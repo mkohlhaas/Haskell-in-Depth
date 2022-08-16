@@ -33,6 +33,6 @@ main = (execParser opts >>= run) `catches` [Handler parserExit]
     opts =
       info
         (mkParams <**> helper)
-        (fullDesc <> progDesc ("Answers YES/NO depending on whether " ++ "an IP address belongs to the IP range database"))
+        (fullDesc <> progDesc ("Answers True/False depending on whether " ++ "an IP address belongs to the IP range database"))
     parserExit ∷ ExitCode → IO ()
     parserExit _ = pure ()

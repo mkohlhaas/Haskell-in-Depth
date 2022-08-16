@@ -40,5 +40,5 @@ data InvalidArgsException
   deriving (Exception)
 
 instance Show InvalidArgsException where
-  show (LoadIPRangesError (ParseError ln)) = "Error loading ip range databases (line: " ++ show ln ++ ")"
-  show (InvalidIP s) = "Invalid IP address to check: " ++ s
+  show (LoadIPRangesError (ParseError lineNumber)) = "Error loading ip range databases (line: " ++ show lineNumber ++ ")"
+  show (InvalidIP str) = "Invalid IP address to check: " ++ str
