@@ -18,7 +18,7 @@
   - [`hspec` implements specification-based testing](https://hackage.haskell.org/package/hspec)
   - [A `golden test` is an IO action that writes its result to a file. To pass the test, this output file should be identical to the corresponding `golden` file](https://hackage.haskell.org/package/tasty-golden)
   - [`tasty` lets you combine your unit tests, golden tests, QuickCheck/SmallCheck properties,...](https://hackage.haskell.org/package/tasty)
-  - [`doctest` is useless - ignore it!](https://hackage.haskell.org/package/doctest)
+  - [`doctest`](https://github.com/sol/doctest#readme)
 ```
 $ cabal -v0 run iplookup -- data/ipranges.txt 5.12.120.250     # 5.12.120.250: True
 $ cabal -v0 run iplookup -- data/ipranges.txt 127.10.10.1      # 127.10.10.1: False
