@@ -13,20 +13,20 @@ data C -- Celsius
 data F -- Fahrenheit
 data K -- Kelvin
 
-paperBurning :: Temp F
+paperBurning ∷ Temp F
 paperBurning = 451
 
-absoluteZero :: Temp C
+absoluteZero ∷ Temp C
 absoluteZero = -273.15
 
-f2c :: Temp F -> Temp C
+f2c ∷ Temp F → Temp C
 f2c (Temp f) = Temp ((f -32) * 5 / 9)
 
 -- TYPE ERROR: Couldn't match type ‘C’ with ‘F’
 -- err = paperBurning - absoluteZero
 
-diff :: Temp C
+diff ∷ Temp C
 diff = f2c paperBurning - absoluteZero
 
-nonsence :: Temp Bool
+nonsence ∷ Temp Bool
 nonsence = 0

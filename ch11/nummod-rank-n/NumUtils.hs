@@ -2,4 +2,4 @@
 
 module NumUtils where
 
-newtype NumModifier = NumModifier {run :: forall a. Num a => a -> a}
+newtype NumModifier = NumModifier {run ∷ ∀ a. Num a ⇒ a → a}

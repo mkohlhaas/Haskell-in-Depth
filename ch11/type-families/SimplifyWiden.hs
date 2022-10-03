@@ -19,7 +19,7 @@ type instance Simplify Char = String
 type instance Simplify Bool = String
 
 class Simplifier t where
-  simplify :: t -> Simplify t
+  simplify ∷ t → Simplify t
 
 instance Simplifier Integer where
   simplify = id
@@ -47,7 +47,7 @@ type family Widen a where
   Widen t = String
 
 class Widener a where
-  widen :: a -> Widen a
+  widen ∷ a → Widen a
 
 instance Widener Bool where
   widen False = 0

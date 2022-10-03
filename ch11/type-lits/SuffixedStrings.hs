@@ -10,10 +10,10 @@ import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
 
 -- Example: suffixed strings
 
-newtype SuffixedString (suffix :: Symbol) = SuffixedString String
+newtype SuffixedString (suffix ∷ Symbol) = SuffixedString String
 
-suffixed :: String -> SuffixedString suffix
+suffixed ∷ String → SuffixedString suffix
 suffixed = SuffixedString
 
-asString :: ∀ suffix. KnownSymbol suffix => SuffixedString suffix -> String
-asString (SuffixedString str) = str ++ "@" ++ symbolVal (Proxy :: Proxy suffix)
+asString ∷ ∀ suffix. KnownSymbol suffix ⇒ SuffixedString suffix → String
+asString (SuffixedString str) = str ++ "@" ++ symbolVal (Proxy ∷ Proxy suffix)

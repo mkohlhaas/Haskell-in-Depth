@@ -11,9 +11,9 @@ data instance XList Bool = XBits Integer Integer
 data instance XList Char = XCons Char (XList Char) | XNil
 
 class XListable a where
-  xempty :: XList a
-  xcons :: a -> XList a -> XList a
-  xheadMay :: XList a -> Maybe a
+  xempty ∷ XList a
+  xcons ∷ a → XList a → XList a
+  xheadMay ∷ XList a → Maybe a
 
 instance XListable () where
   xempty = XListUnit 0
@@ -39,5 +39,5 @@ instance XListable Char where
   xheadMay (XCons c _) = Just c
   xheadMay XNil = Nothing
 
-testXList :: (Eq a, XListable a) => a -> Bool
+testXList ∷ (Eq a, XListable a) ⇒ a → Bool
 testXList a = xheadMay (xcons a xempty) == Just a

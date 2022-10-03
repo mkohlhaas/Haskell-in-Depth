@@ -3,12 +3,12 @@ import SimplifyWiden (Simplifier (simplify), Widener (widen))
 import Unescape (uprint)
 import XListable (testXList)
 
-testGraphs :: IO ()
+testGraphs ∷ IO ()
 testGraphs = do
   print $ neighbors g1 0
   print $ isLoop g1 (MkEdge1 0 1)
 
-main :: IO ()
+main ∷ IO ()
 main = do
   print $ simplify True ++ " " ++ widen 'x'
   print $ simplify answer + widen (widen False)
@@ -21,5 +21,5 @@ main = do
         testXList 'x'
       ]
   where
-    answer :: Integer
+    answer ∷ Integer
     answer = 42
