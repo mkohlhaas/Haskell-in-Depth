@@ -9,7 +9,7 @@ benchBuildIP =
   [ bgroup
       "buildIP"
       [ let theip = [17, 0, 32, 2]
-         in bgroup
+         in bgroup -- building a hierarchy of benchmarks with groups
               "single"
               [ bench "default" $ nf buildIP theip,
                 bench "foldr" $ nf buildIPFoldr theip,

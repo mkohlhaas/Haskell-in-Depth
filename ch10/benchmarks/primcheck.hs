@@ -13,7 +13,7 @@ primeNumber = 16183
 main ∷ IO ()
 main =
   defaultMain
-    [ bench "isPrime (declarative)" (whnf IP.isPrime primeNumber),
-      bench "isPrime (unfolded)" (whnf IPU.isPrime primeNumber),
-      bench "isPrime (rewritten)" (whnf isPrime primeNumber)
+    [ bench "isPrime (declarative)" $ whnf IP.isPrime primeNumber, -- whnf = weak head normal form
+      bench "isPrime (unfolded)" $ whnf IPU.isPrime primeNumber,
+      bench "isPrime (rewritten)" $ whnf isPrime primeNumber
     ]

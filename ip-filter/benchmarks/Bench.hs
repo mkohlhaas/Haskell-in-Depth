@@ -8,8 +8,4 @@ import Criterion.Main (defaultMain)
 main ∷ IO ()
 main = defaultMain benchmarks
   where
-    benchmarks =
-      benchBuildIP -- <> bench_buildIP_list
-        <> benchParseIP
-        <> benchRanges
-        <> benchLookupIP
+    benchmarks = benchBuildIP <> benchParseIP <> benchRanges <> benchLookupIP

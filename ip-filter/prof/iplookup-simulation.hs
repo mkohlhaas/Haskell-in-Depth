@@ -1,7 +1,7 @@
 module Main where
 
+-- import LookupIP -- slow implementation
 import FastLookup
--- import LookupIP
 import IPTypes
 import ParseIP
 
@@ -16,12 +16,13 @@ genIPList n = map IP $ take n $ iterate (+ step) 0
   where
     step = maxBound `div` fromIntegral n
 
--- simulate ∷ IPRangeDB → [IP] → (Int, Int)
+-- simulate ∷ IPRangeDB → [IP] → (Int, Int) -- slow implementation
 simulate ∷ FastIPRangeDB → [IP] → (Int, Int)
 simulate iprdb ips = (yes, no)
   where
     yes = length $ filter id $ map (isIpInRange iprdb) ips
     no = nReqs - yes
+    -- huge performance penalty
     -- no = length ips - yes
 
 report ∷ (Int, Int) → IO ()

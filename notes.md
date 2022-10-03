@@ -768,4 +768,8 @@
     readMaybe @Integer                                 -- type application source code turns readMaybe into:
 
     readMaybe ∷ Read Integer ⇒ String → Maybe Integer
+    ```
 
+- Page 295: Bang Patterns
+  The `BangPatterns` GHC extension enables adding `!` (bang) to patterns.
+  Example for Bang Patterns (`parseIPIterStrict`) on Page 338.

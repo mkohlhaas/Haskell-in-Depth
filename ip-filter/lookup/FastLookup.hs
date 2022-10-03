@@ -11,4 +11,4 @@ fromIPRangeDB (IPRangeDB iprdb) = IPRDB $ foldr ins empty iprdb
     ins (IPRange ip1 ip2) = insert (Interval ip1 ip2) ()
 
 isIpInRange ∷ FastIPRangeDB → IP → Bool
-isIpInRange (IPRDB imap) ip = not $ null $ search ip imap
+isIpInRange (IPRDB imap) ip = not . null $ search ip imap

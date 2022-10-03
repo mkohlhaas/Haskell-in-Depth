@@ -18,7 +18,7 @@ ips ∷ [(String, IP)]
 ips = map (\s → (s, fromJust $ parseIP s)) iptexts
 
 readIPRDBFile ∷ FilePath → IO String
-readIPRDBFile fname = getDataFileName (ipBenchDir ++ fname) >>= readFile
+readIPRDBFile fname = getDataFileName (ipBenchDir <> fname) >>= readFile
   where
     ipBenchDir = "data/benchmarks/"
 
