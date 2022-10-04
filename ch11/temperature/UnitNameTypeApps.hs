@@ -20,10 +20,10 @@ instance UnitName Temp where
   unitName = "_unspecified unit_"
 
 instance UnitName u ⇒ UnitName (Temp u) where
-  unitName = unitName @u
+  unitName = unitName @u -- using type application
 
 instance UnitName u ⇒ Show (Temp u) where
-  show (Temp t) = show t ++ "°" ++ unitName @u
+  show (Temp t) = show t ++ "°" ++ unitName @u -- using type application
 
 unit ∷ ∀ u. UnitName u ⇒ Temp u → String
-unit _ = unitName @u
+unit _ = unitName @u -- using type application

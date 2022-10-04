@@ -1,0 +1,18 @@
+- Order of Code Examples
+  - `$ cabal run temp-proxies`
+    - `temperature/temp-proxies.hs`
+    - `temperature/TempPhantom.hs`
+    - `temperature/UnitNameProxies.hs`
+  - `$ cabal run temp-type-apps`
+     - `temperature/temp-type-apps.hs`
+     - `temperature/UnitNameTypeApps.hs`
+  - `$ cabal run type-operators`
+    - `type-operators/type-operators.hs`
+  - `$ cabal run temp-kinds`
+    - `temperature/temp-kinds.hs`
+  - `$ cabal run type-lits`
+    - `type-lits/Pointers.hs`
+    - `type-lits/SuffixedStrings.hs`
+    - `type-lits/Main.hs`
+
+- `temp-proxies`, `temp-type-apps` and `temp-kinds` are identical but using different implementations for UnitName.

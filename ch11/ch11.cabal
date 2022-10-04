@@ -24,8 +24,8 @@ executable temp-kinds
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
     other-extensions:
-        GeneralizedNewtypeDeriving ScopedTypeVariables PolyKinds
-        AllowAmbiguousTypes TypeApplications
+        AllowAmbiguousTypes GeneralizedNewtypeDeriving PolyKinds
+        ScopedTypeVariables TypeApplications
 
     build-depends:      base >=4.14.3.0 && <4.15
 
@@ -39,8 +39,8 @@ executable temp-proxies
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
     other-extensions:
-        GeneralizedNewtypeDeriving ScopedTypeVariables PolyKinds
-        InstanceSigs
+        GeneralizedNewtypeDeriving InstanceSigs PolyKinds
+        ScopedTypeVariables
 
     build-depends:      base >=4.14.3.0 && <4.15
 
@@ -54,8 +54,8 @@ executable temp-type-apps
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
     other-extensions:
-        GeneralizedNewtypeDeriving ScopedTypeVariables PolyKinds
-        AllowAmbiguousTypes TypeApplications
+        AllowAmbiguousTypes GeneralizedNewtypeDeriving PolyKinds
+        ScopedTypeVariables TypeApplications
 
     build-depends:      base >=4.14.3.0 && <4.15
 
@@ -70,7 +70,7 @@ executable type-families
 
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
-    other-extensions:   TypeFamilies FlexibleInstances
+    other-extensions:   FlexibleInstances TypeFamilies
     build-depends:
         base >=4.14.3.0 && <4.15,
         containers >=0.5 && <0.7
@@ -91,5 +91,5 @@ executable type-operators
     main-is:            type-operators/type-operators.hs
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
-    other-extensions:   TypeOperators NoStarIsType
+    other-extensions:   NoStarIsType TypeOperators
     build-depends:      base >=4.14.3.0 && <4.15

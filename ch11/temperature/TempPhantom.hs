@@ -2,13 +2,14 @@
 
 module TempPhantom where
 
--- Does it make sense to have types without values? Absolutely!
-
--- 'unit' is called a phantom type
+-- 'unit' is called a phantom type - this type parameter doesn't appear on the RHS
+-- Deriving Num and Fractional allows to use basic arithmetic (+, -, *, /) for Temp.
+-- Temp is a Double. There can be different kind of temperatures, e.g. Celsius, Fahrenheit, Kelvin, which shouldn't be mixed.
 newtype Temp unit = Temp Double
   deriving (Num, Fractional)
 
--- empty declarations
+-- empty declarations - no values
+-- Creates C, F and K types.
 data C -- Celsius
 data F -- Fahrenheit
 data K -- Kelvin
@@ -22,11 +23,12 @@ absoluteZero = -273.15
 f2c ∷ Temp F → Temp C
 f2c (Temp f) = Temp ((f -32) * 5 / 9)
 
--- TYPE ERROR: Couldn't match type ‘C’ with ‘F’
+-- Type Error: Couldn't match type ‘C’ with ‘F’
 -- err = paperBurning - absoluteZero
 
 diff ∷ Temp C
 diff = f2c paperBurning - absoluteZero
 
+-- This is allowed but doesn't make sense.
 nonsence ∷ Temp Bool
 nonsence = 0
