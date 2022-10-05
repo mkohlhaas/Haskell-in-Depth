@@ -14,5 +14,18 @@
     - `type-lits/Pointers.hs`
     - `type-lits/SuffixedStrings.hs`
     - `type-lits/Main.hs`
+  - `$ cabal run type-families`
+    - `type-families/SimplifyWiden.hs`
+    - `type-families/Main.hs`
 
 - `temp-proxies`, `temp-type-apps` and `temp-kinds` are identical but using different implementations for UnitName.
+
+- Sometimes we need to map types onto types.
+  - Type families allow expressing such computations: they map one or several types to a result, which is also a type.
+  - Haskell provides several flavors of type families:
+      - Type Synonym Families (they don't create new types)
+          - Open (when it is allowed to add new instances everywhere, even in other modules)
+          - Closed (when there is a closed list of instances)
+      - Data Families (they allow defining new data types),
+      - Associated Families (they are defined inside type classes).
+  - Another word that is often used to characterize type families is `indexed`. We use types as indices to type families to get resulting types.
