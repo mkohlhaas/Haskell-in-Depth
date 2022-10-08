@@ -12,6 +12,7 @@ main ∷ IO ()
 main = do
   print $ simplify True ++ " " ++ widen 'x'
   print $ simplify answer + widen (widen False)
+  uprint "Виталий" -- "Vitali"
   uprint "Привет, мир!"
   print $
     and

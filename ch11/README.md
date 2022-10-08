@@ -16,8 +16,17 @@
     - `type-lits/Main.hs`
   - `$ cabal run type-families`
     - `type-families/SimplifyWiden.hs`
+    - `type-families/Unescape.hs`
+    - `type-families/XListable.hs`
+    - `type-families/Graphs.hs`
     - `type-families/Main.hs`
-
+  - `$ cabal run dynvalues-gadt`
+    - `dynvalues-gadt/dynvalues-gadt.hs`
+    - `../expr/gadts/Main.hs`
+  - `$ cabal run nummod-rank-n`
+    - `nummod-rank-n/NumUtils.hs`
+    - `nummod-rank-n/Main.hs`
+ 
 - `temp-proxies`, `temp-type-apps` and `temp-kinds` are identical but using different implementations for UnitName.
 
 - Sometimes we need to map types onto types.
