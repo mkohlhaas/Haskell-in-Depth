@@ -5,7 +5,7 @@ type Age = Int
 data Student = Student Name Age
   deriving (Eq)
 
-main :: IO ()
+main ∷ IO ()
 main = do
   let st1 = Student "Jane Doe" 20
       st2 = Student "John Doe" 22

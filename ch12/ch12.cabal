@@ -8,13 +8,14 @@ library rpc-lib
         ServerUtils
         RpcCommon
 
-    hs-source-dirs:   rpc/lib
+    hs-source-dirs:     rpc/lib
     other-modules:
         DeclsGenerator
         RemoteIO
         RemoteParser
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         bytestring >=0.10 && <0.12,
@@ -29,58 +30,65 @@ library rpc-lib
         template-haskell >=2.13 && <2.17
 
 executable basic-deriv
-    main-is:          basic-deriv.hs
-    hs-source-dirs:   deriv
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            basic-deriv.hs
+    hs-source-dirs:     deriv
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable coerce
-    main-is:          coerce.hs
-    hs-source-dirs:   deriv
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            coerce.hs
+    hs-source-dirs:     deriv
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable generic-sql
-    main-is:          Main.hs
-    hs-source-dirs:   genSQL
-    other-modules:    GenericSQL
-    default-language: Haskell2010
+    main-is:            Main.hs
+    hs-source-dirs:     genSQL
+    other-modules:      GenericSQL
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         text ==1.2.*,
         text-show >=3.0 && <4
 
 executable hello-th
-    main-is:          Main.hs
-    hs-source-dirs:   th/hello
-    other-modules:    Hello
-    default-language: Haskell2010
+    main-is:            Main.hs
+    hs-source-dirs:     th/hello
+    other-modules:      Hello
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         template-haskell >=2.13 && <2.17
 
 executable mstr-literals
-    main-is:          Main.hs
-    hs-source-dirs:   th/mstr-lits
-    other-modules:    Str
-    default-language: Haskell2010
+    main-is:            Main.hs
+    hs-source-dirs:     th/mstr-lits
+    other-modules:      Str
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         template-haskell >=2.13 && <2.17
 
 executable newtype
-    main-is:          newtype.hs
-    hs-source-dirs:   deriv
-    default-language: Haskell2010
+    main-is:            newtype.hs
+    hs-source-dirs:     deriv
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         mtl >=2.0 && <2.3
 
 executable ping-client
-    main-is:          client.hs
-    hs-source-dirs:   rpc/ping
-    other-modules:    PingCommon
-    default-language: Haskell2010
+    main-is:            client.hs
+    hs-source-dirs:     rpc/ping
+    other-modules:      PingCommon
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         cereal ==0.5.*,
@@ -88,10 +96,11 @@ executable ping-client
         rpc-lib -any
 
 executable ping-server
-    main-is:          server.hs
-    hs-source-dirs:   rpc/ping
-    other-modules:    PingCommon
-    default-language: Haskell2010
+    main-is:            server.hs
+    hs-source-dirs:     rpc/ping
+    other-modules:      PingCommon
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         cereal ==0.5.*,
@@ -99,39 +108,44 @@ executable ping-server
         rpc-lib -any
 
 executable predicates
-    main-is:          Main.hs
-    hs-source-dirs:   th/predicates
-    other-modules:    Predicates
-    default-language: Haskell2010
+    main-is:            Main.hs
+    hs-source-dirs:     th/predicates
+    other-modules:      Predicates
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         template-haskell >=2.13 && <2.17
 
 executable projectors
-    main-is:          Main.hs
-    hs-source-dirs:   th/projectors
-    other-modules:    Projectors
-    default-language: Haskell2010
+    main-is:            Main.hs
+    hs-source-dirs:     th/projectors
+    other-modules:      Projectors
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         template-haskell >=2.13 && <2.17
 
 executable strategies
-    main-is:          strategies.hs
-    hs-source-dirs:   deriv
-    default-language: Haskell2010
+    main-is:            strategies.hs
+    hs-source-dirs:     deriv
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         aeson >=1.2 && <1.6,
         base >=4.14.3.0 && <4.15
 
 executable via
-    main-is:          via.hs
-    hs-source-dirs:   deriv
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            via.hs
+    hs-source-dirs:     deriv
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable view-generic
-    main-is:          view-generic.hs
-    hs-source-dirs:   generics
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            view-generic.hs
+    hs-source-dirs:     generics
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
