@@ -11,8 +11,10 @@ import DeclsGenerator (remote)
 import RemoteIO
 import RpcCommon
 
-callRemote :: (Serialize a, Serialize b) => Operation -> RemoteAction st a b
+-- callRemote ∷ (Serialize a1, Serialize a2, Serialize b) ⇒ a1 → a2 → RSIO st b
+-- send ⇒ receive ⇒ decode
+callRemote ∷ (Serialize a, Serialize b) ⇒ Operation → RemoteAction st a b
 callRemote operation params = do
   sendRSIO (operation, encode params)
-  answer <- receiveRSIO
+  answer ← receiveRSIO
   unEitherStaged Stage2 (decode answer)

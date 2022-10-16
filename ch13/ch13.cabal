@@ -3,8 +3,9 @@ name:          ch13
 version:       0.1.0.0
 
 executable api-servant
-    main-is:          api/ApiServant.hs
-    default-language: Haskell2010
+    main-is:            api/ApiServant.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         aeson >=1.2 && <1.6,
         base >=4.14.3.0 && <4.15,
@@ -14,61 +15,68 @@ executable api-servant
         warp >=3.2 && <3.4
 
 executable api-stage0
-    main-is:          api/Api0.hs
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            api/Api0.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable api-stage1
-    main-is:          api/Api1.hs
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            api/Api1.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable api-stage2
-    main-is:          api/Api2.hs
-    default-language: Haskell2010
+    main-is:            api/Api2.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     other-extensions:
-        KindSignatures TypeOperators PolyKinds DataKinds TypeFamilies
+        DataKinds KindSignatures PolyKinds TypeFamilies TypeOperators
 
-    build-depends:    base >=4.14.3.0 && <4.15
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable api-stage3
-    main-is:          api/Api3.hs
-    default-language: Haskell2010
+    main-is:            api/Api3.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     other-extensions:
-        KindSignatures TypeOperators PolyKinds DataKinds TypeFamilies
-        FlexibleInstances InstanceSigs ScopedTypeVariables
+        DataKinds FlexibleInstances InstanceSigs KindSignatures PolyKinds
+        ScopedTypeVariables TypeFamilies TypeOperators
 
-    build-depends:    base >=4.14.3.0 && <4.15
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable door
-    main-is:          doors/SingManual.hs
-    default-language: Haskell2010
+    main-is:            doors/SingManual.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     other-extensions:
-        DataKinds GADTs TypeOperators KindSignatures StandaloneDeriving
+        DataKinds GADTs KindSignatures StandaloneDeriving TypeOperators
 
-    build-depends:    base >=4.14.3.0 && <4.15
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable door-gen
-    main-is:          doors/SingGen.hs
-    default-language: Haskell2010
+    main-is:            doors/SingGen.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     other-extensions:
-        DataKinds GADTs TypeOperators KindSignatures StandaloneDeriving
+        DataKinds GADTs KindSignatures StandaloneDeriving TypeOperators
 
     build-depends:
         base >=4.14.3.0 && <4.15,
         singletons >=2.5 && <2.8
 
 executable elevator
-    main-is:          UseSafe.hs
-    hs-source-dirs:   elevator
+    main-is:            UseSafe.hs
+    hs-source-dirs:     elevator
     other-modules:
         Elevator.LowLevel
         Elevator.Safe
         Elevator.Safe.Floor
-        Elevator.Safe.Operations
         Elevator.Safe.Moves
+        Elevator.Safe.Operations
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         dec >=0.0.3 && <0.1,
@@ -77,13 +85,14 @@ executable elevator
         singletons >=2.5 && <2.8
 
 executable unsafe-elevator
-    main-is:          UseUnsafe.hs
-    hs-source-dirs:   elevator
+    main-is:            UseUnsafe.hs
+    hs-source-dirs:     elevator
     other-modules:
         Elevator.LowLevel
         Elevator.Unsafe
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         mtl >=2.0 && <2.3

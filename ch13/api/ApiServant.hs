@@ -25,7 +25,7 @@ type BookInfoAPI =
     :<|> "year" :> Capture "id" BookID :> Get '[JSON] Int
     :<|> "rating" :> Capture "id" BookID :> Get '[JSON] Rating
 
-impl :: Server BookInfoAPI
+impl ∷ Server BookInfoAPI
 impl =
   pure Ok
     :<|> title
@@ -36,8 +36,8 @@ impl =
     year _ = pure 2021
     rating _ = pure Great
 
-app :: Application
-app = serve (Proxy :: Proxy BookInfoAPI) impl
+app ∷ Application
+app = serve (Proxy ∷ Proxy BookInfoAPI) impl
 
-main :: IO ()
+main ∷ IO ()
 main = run 8081 app

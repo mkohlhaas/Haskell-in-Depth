@@ -3,7 +3,7 @@
 
 module Main where
 
-import Hello
+import Hello (hello)
 
-main :: IO ()
-main = $hello
+main ∷ IO ()
+main = $hello -- splicing

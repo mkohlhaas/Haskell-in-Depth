@@ -1,13 +1,13 @@
 module Elevator.LowLevel where
 
-up :: IO ()
+up ∷ IO ()
 up = putStrLn "Going up"
 
-down :: IO ()
+down ∷ IO ()
 down = putStrLn "Going down"
 
-open :: IO ()
+open ∷ IO ()
 open = putStrLn "Door is opening"
 
-close :: IO ()
+close ∷ IO ()
 close = putStrLn "Door is closing"

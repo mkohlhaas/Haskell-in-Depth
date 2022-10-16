@@ -9,10 +9,10 @@ import Control.Monad.State (MonadState, StateT (StateT))
 import Data.ByteString (ByteString)
 import Network.Connection (Connection)
 
-msgSizeField :: Int
+msgSizeField ∷ Int
 msgSizeField = 8 -- in bytes
 
-data RemoteException = ConnectionClosed | RemoteException String
+data RemoteException = ConnectionClosed | RemoteException !String
 
 instance Show RemoteException where
   show ConnectionClosed = "Connection closed"
@@ -21,19 +21,25 @@ instance Show RemoteException where
 instance Exception RemoteException
 
 class RemoteState a where
-  initState :: a
+  initState ∷ a
 
 instance RemoteState () where
   initState = ()
 
-newtype RSIO st a = RSIO {runRem :: StateT st (ReaderT Connection IO) a}
+-- application stack
+newtype RSIO st a = RSIO {runRem ∷ StateT st (ReaderT Connection IO) a}
   deriving newtype (Functor, Applicative, Monad, MonadIO, MonadReader Connection, MonadState st, MonadThrow, MonadCatch)
 
 type Operation = String
 
-type RemoteAction st a b = a -> RSIO st b
+type RemoteAction st a b = a → RSIO st b
 
 type RPCTable st = [(Operation, RemoteAction st ByteString ByteString)]
 
-data DecodeStages = Stage0 | Stage1 | Stage2
+-- Stage0: Decode the first field of an envelope (the size of the payload).
+-- Stage1: Decode the second field of an envelope to a ByteString.
+-- Stage2: Decode the ByteString to a value we expect.
+--         Server: result of a function call
+--         Client: tuple with all the parameters
+data DecodingStage = Stage0 | Stage1 | Stage2
   deriving (Show)

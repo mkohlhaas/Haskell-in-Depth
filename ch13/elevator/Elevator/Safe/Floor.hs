@@ -19,36 +19,36 @@ type GoodFloor mx cur = (SNatI mx, SNatI cur, LE cur mx)
 
 type BelowTop mx cur = LE (S cur) mx
 
-data Floor (mx :: Nat) (cur :: Nat) where
-  MkFloor :: GoodFloor mx cur => Floor mx cur
+data Floor (mx ∷ Nat) (cur ∷ Nat) where
+  MkFloor ∷ GoodFloor mx cur ⇒ Floor mx cur
 
 instance Show (Floor mx cur) where
   show MkFloor =
-    "Floor " <> show (snatToNat (snat :: SNat cur))
+    "Floor " <> show (snatToNat (snat ∷ SNat cur))
       <> " of "
-      <> show (snatToNat (snat :: SNat mx))
+      <> show (snatToNat (snat ∷ SNat mx))
 
-next :: BelowTop mx cur => Floor mx cur -> Floor mx (S cur)
+next ∷ BelowTop mx cur ⇒ Floor mx cur → Floor mx (S cur)
 next MkFloor = MkFloor
 
-prev :: ∀ mx cur. Floor mx (S cur) -> Floor mx cur
+prev ∷ ∀ mx cur. Floor mx (S cur) → Floor mx cur
 prev MkFloor =
   withSNat snatCur $
     withLEProof
       leCur
       MkFloor
   where
-    snatCur :: SNat cur
-    snatCur = case snat :: SNat (S cur) of
-      SS -> snat
-    leCur :: LEProof cur mx
+    snatCur ∷ SNat cur
+    snatCur = case snat ∷ SNat (S cur) of
+      SS → snat
+    leCur ∷ LEProof cur mx
     leCur = leStepL leProof
 
-sameFloor :: ∀ mx to from. Floor mx to -> Floor mx from -> Maybe (to :~: from)
+sameFloor ∷ ∀ mx to from. Floor mx to → Floor mx from → Maybe (to :~: from)
 sameFloor MkFloor MkFloor = eqNat
 
-mkFloor :: ∀ mx cur. (SNatI mx, SNatI cur) => Maybe (Floor mx cur)
+mkFloor ∷ ∀ mx cur. (SNatI mx, SNatI cur) ⇒ Maybe (Floor mx cur)
 mkFloor =
-  case decideLE :: Dec (LEProof cur mx) of
-    Yes prf -> withLEProof prf $ Just MkFloor
-    No _ -> Nothing
+  case decideLE ∷ Dec (LEProof cur mx) of
+    Yes prf → withLEProof prf $ Just MkFloor
+    No _ → Nothing

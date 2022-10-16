@@ -1,14 +1,26 @@
 - Order of Code Examples
-    - `deriv/basic-deriv.hs`
-    - `deriv/strategies.hs`
-    - `deriv/coerce.hs`
-    - `deriv/newtype.hs`
-    - `deriv/via.hs`
-
-``` shell
-cabal run basic-deriv
-cabal run strategies
-cabal run coerce
-cabal run newtype
-cabal run via
-```
+- `deriv/basic-deriv.hs`
+- `deriv/strategies.hs`
+- `deriv/coerce.hs`
+- `deriv/newtype.hs`
+- `deriv/via.hs`
+- `generics/view-generic.hs`
+- `genSQL/GenericSQL.hs`
+- `genSQL/Main.hs`
+- `th/hello/Hello.hs`
+- `th/hello/Main.hs`
+- `th/projectors/Projectors.hs`
+- `th/projectors/Main.hs`
+- `th/predicates/Predicates.hs`
+- `th/predicates/Main.hs`
+- `th/mstr-lits/Str.hs`
+- `th/mstr-lits/Main.hs`
+- `rpc/ping/PingCommon.hs`
+- `rpc/ping/client.hs`
+- `rpc/ping/server.hs`
+- `rpc/lib/RpcCommon.hs`
+- `rpc/lib/RemoteIO.hs`
+- `rpc/lib/ClientUtils.hs`
+- `rpc/lib/ServerUtils.hs`
+- `rpc/lib/DeclsGenerator.hs`
+- `rpc/lib/RemoteParser.hs`

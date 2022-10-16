@@ -6,13 +6,14 @@ module PingCommon where
 
 import Data.Serialize (Serialize)
 import GHC.Generics (Generic)
-import RpcCommon (RSIO, RemoteState (..))
+import RpcCommon -- (RSIO, RemoteState (..))
 
 instance RemoteState Integer where
   initState = 0
 
+-- main application monad to work with
 type RemotePing a = RSIO Integer a
 
-data PingAnswer = PingAnswer String Integer
+data PingAnswer = PingAnswer !String !Integer
   deriving stock (Show, Generic)
   deriving anyclass (Serialize)
