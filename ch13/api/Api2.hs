@@ -35,9 +35,9 @@ type BookInfoAPI =
     :<|> "year" :> Capture BookID :> Get Int
     :<|> "rating" :> Capture BookID :> Get Rating
 
-type HandlerAction a = IO a
+type HandlerAction = IO
 
--- This type is not used anywhere
+-- This type is not used anywhere.
 -- BookInfoAPIImpl is the same as 'Server BookInfoAPI'
 type BookInfoAPIImpl =
   HandlerAction ServiceStatus
@@ -73,7 +73,7 @@ impl2 =
     :<|> year
     :<|> rating
   where
-    notImplemented = ioError (userError "not implemented")
+    notImplemented = fail "not implemented"
     title _ = notImplemented
     year _ = notImplemented
     rating _ = notImplemented
@@ -83,22 +83,40 @@ type Request = [String]
 encode ∷ Show a ⇒ IO a → IO String
 encode m = show <$> m
 
-route ∷ Server BookInfoAPI → Request → Maybe (IO String)
+route ∷ Server BookInfoAPI → Request → Maybe (HandlerAction String)
 route (root :<|> _) [] = pure $ encode root
-route (_ :<|> title :<|> year :<|> rating) [op, bid'] = do
-  bid ← readMaybe bid'
+route (_ :<|> title :<|> year :<|> rating) [op, bookId'] = do
+  bookId ← readMaybe bookId'
   case op of
-    "title" → pure $ title bid
-    "year" → pure $ encode $ year bid
-    "rating" → pure $ encode $ rating bid
+    "title" → pure $ title bookId
+    "year" → pure $ encode $ year bookId
+    "rating" → pure $ encode $ rating bookId
     _ → Nothing
 route _ _ = Nothing
 
-get ∷ Server BookInfoAPI → Request → IO String
+get ∷ Server BookInfoAPI → Request → HandlerAction String
 get impl xs =
   case route impl xs of
     Just m → m
     Nothing → pure "Malformed request"
+
+-- >>> get impl1 ["title", "7548"]
+-- "Haskell in Depth"
+
+-- >>> get impl1 ["year", "7548"]
+-- "2021"
+
+-- >>> get impl1 ["rating", "7548"]
+-- "Great"
+
+-- >>> get impl2 ["title", "7548"]
+-- user error (not implemented)
+
+-- >>> get impl2 ["year", "7548"]
+-- user error (not implemented)
+
+-- >>> get impl2 ["rating", "7548"]
+-- user error (not implemented)
 
 check ∷ Server BookInfoAPI → IO ()
 check impl = do

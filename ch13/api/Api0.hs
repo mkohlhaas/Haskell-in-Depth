@@ -1,8 +1,3 @@
-{-
- "/title/7548"
- ghci> get ["title", "7548"]
--}
-
 get ∷ [String] → IO String
 get [] = pure "OK"
 get [op, _] =
@@ -10,8 +5,23 @@ get [op, _] =
     "title" → pure "Haskell in Depth"
     "year" → pure "2021"
     "rating" → pure "Great"
-    _ → ioError $ userError "Not implemented"
-get _ = ioError $ userError "Malformed request"
+    _ → fail "Not implemented"
+get _ = fail "Malformed request"
+
+-- >>> get ["title", "7548"]
+-- "Haskell in Depth"
+
+-- >>> get ["foo", "7548"]
+-- user error (Not implemented)
+
+-- >>> get ["foo", "7548", "useless"]
+-- user error (Malformed request)
+
+-- >>> get ["year", "7548"]
+-- "2021"
+
+-- >>> get ["rating", "7548"]
+-- "Great"
 
 check ∷ IO ()
 check = do

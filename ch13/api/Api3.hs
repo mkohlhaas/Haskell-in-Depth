@@ -114,6 +114,24 @@ get proxy handler request = case route proxy handler request of
   Nothing → ioError (userError "404")
   Just m → m
 
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["title", "7548"]
+-- "Haskell in Depth"
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["year", "7548"]
+-- "2021"
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["rating", "7548"]
+-- "Great"
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["title", "7548"]
+-- user error (not implemented)
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["year", "7548"]
+-- user error (not implemented)
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["rating", "7548"]
+-- user error (not implemented)
+
 check ∷ Server BookInfoAPI → IO ()
 check impl = do
   b ← get (Proxy ∷ Proxy BookInfoAPI) impl []
