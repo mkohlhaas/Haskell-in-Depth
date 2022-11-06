@@ -19,10 +19,8 @@ suffixed = SuffixedString
 asString ∷ ∀ suffix. KnownSymbol suffix ⇒ SuffixedString suffix → String
 asString (SuffixedString str) = str ++ "@" ++ symbolVal (Proxy ∷ Proxy suffix)
 
--- |
 -- >>> asString (suffixed "bravit" ∷ SuffixedString "teachers")
 -- "bravit@teachers"
 
--- |
 -- >>> asString (suffixed "bravit" ∷ SuffixedString "devs")
 -- "bravit@devs"

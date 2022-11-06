@@ -1,16 +1,21 @@
+{-# LANGUAGE ExplicitForAll #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE NoStarIsType #-}
 
--- sum
+-- sum type
 data a + b = Inl !a | Inr !b
   deriving Show
 
--- product with custom data constructor `:*:`
+-- product type (with custom data constructor `:*:`)
 data a * b = a :*: b -- infix data constructor names are required to start with ':'
   deriving Show
 
 infixl 6 +
 infixl 7 *
+
+-- Type operators are a purely syntactic way to give nice names to types.
+-- >>> :kind ∀ a b. a * b
+-- ∀ a b. a * b ∷ Type
 
 -- now the following types are allowed
 boolOrInt1 ∷ Bool + Int
@@ -30,6 +35,7 @@ second ∷ a * b → b
 second (_ :*: b) = b
 
 -- Type operators make type signatures shorter and more evident.
+
 -- Compare the type `Either Int (Bool, Bool)` with the following:
 val1 ∷ Int + Bool * Bool
 val1 = Inl 0
@@ -41,20 +47,30 @@ val2 = Inr (True :*: False)
 type Point a = a + a * a + a * a * a
 
 -- Left associativity with the specified precedence means that `a + a * a + a * a * a` is parsed as follows:
--- type Point a = (a + (a * a)) + ((a * a) * a)
--- type Point a = (a + (a * a)) + (a * a * a)   -- the same
+-- handle precedence: a + (a * a) + (a * a * a)
+-- handle left associativity for `*`: a + (a * a) + ((a * a) * a)
+-- handle left associativity for `+`: (a + (a * a)) + ((a * a) * a)
 
 -- origin in 1D-space
 zero1D ∷ Point Int
 zero1D = Inl (Inl 0)
 
+-- >>> zero1D
+-- Inl (Inl 0)
+
 -- origin in 2D-space
 zero2D ∷ Point Int
 zero2D = Inl (Inr (0 :*: 0))
 
+-- >>> zero2D
+-- Inl (Inr (0 :*: 0))
+
 -- origin in 3D-space
 zero3D ∷ Point Int
 zero3D = Inr (0 :*: 0 :*: 0)
+
+-- >>> zero3D
+-- Inr ((0 :*: 0) :*: 0)
 
 main ∷ IO ()
 main = do

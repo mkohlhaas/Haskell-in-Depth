@@ -1,4 +1,4 @@
-import Graphs (Edge (MkEdge1), g1, isLoop, neighbors)
+import Graphs (Edge (MkEdge1), g1, isEdgeLoopy, neighbors)
 import SimplifyWiden (Simplifier (simplify), Widener (widen))
 import Unescape (uprint)
 import XListable (testXList)
@@ -6,15 +6,15 @@ import XListable (testXList)
 testGraphs ∷ IO ()
 testGraphs = do
   print $ neighbors g1 0
-  print $ isLoop g1 (MkEdge1 0 1)
+  print $ isEdgeLoopy g1 (MkEdge1 0 1)
 
 main ∷ IO ()
 main = do
-  print $ simplify True ++ " " ++ widen 'x'
-  print $ simplify answer + widen (widen False)
+  print $ simplify True ++ " " ++ widen 'x' ------ "True x"
+  print $ simplify answer + widen (widen False) -- 42
   uprint "Виталий" -- "Vitali"
   uprint "Привет, мир!"
-  print $
+  print $ ---------------------------------------- True
     and
       [ testXList (),
         testXList True,

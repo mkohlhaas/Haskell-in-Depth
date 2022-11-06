@@ -1,17 +1,17 @@
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
+{-# LANGUAGE NoStarIsType #-}
 {-# LANGUAGE PolyKinds #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE UndecidableInstances #-}
+{-# LANGUAGE InstanceSigs #-}
 
 module Unescape where
 
 import GHC.Show (showLitChar)
 import Unsafe.Coerce (unsafeCoerce)
 
--- |
--- "Vitali" (= author's first name)
 -- The root of the problem is the Show instance for Char which does all the escaping.
 -- >>> "Виталий"
 -- "\1042\1080\1090\1072\1083\1080\1081"
@@ -22,8 +22,10 @@ newtype UnescapingChar = UnescapingChar {unescapingChar ∷ Char}
 -- Create a Show instance for our new Char without any escaping.
 -- Just a shameless copy of the Char's Show instance without escaping.
 instance Show UnescapingChar where
+  showsPrec ∷ Int → UnescapingChar → ShowS
   showsPrec _ (UnescapingChar '\'') = showString "'\\''"
   showsPrec _ (UnescapingChar c) = showChar '\'' . showLitChar' c . showChar '\''
+  showList ∷ [UnescapingChar] → ShowS
   showList cs = showChar '"' . showLitString' (map unescapingChar cs) . showChar '"'
 
 showLitChar' ∷ Char → ShowS
@@ -35,12 +37,10 @@ showLitString' [] s = s
 showLitString' ('"' : cs) s = showString "\\\"" (showLitString' cs s)
 showLitString' (c : cs) s = showLitChar' c (showLitString' cs s)
 
--- |
 -- before
 -- >>> 'ë'
 -- '\235'
 
--- |
 -- after
 -- >>> UnescapingChar 'ë'
 -- 'ë'
@@ -58,43 +58,36 @@ showLitString' (c : cs) s = showLitChar' c (showLitString' cs s)
 --   - All unapplied type constructors (such as Maybe or Either) and concrete types (such as Int or Double) remain unaffected.
 
 type family ToUnescapingTF (a ∷ k) ∷ k where -- using PolyKinds
-  ToUnescapingTF Char = UnescapingChar -- Char becomes UnescapingChar
+  ToUnescapingTF Char = UnescapingChar ------------------------------ Char becomes UnescapingChar
   ToUnescapingTF (t b ∷ k) = (ToUnescapingTF t) (ToUnescapingTF b) -- the applied type constructor needs recursion using currying
-  ToUnescapingTF a = a -- everything else is left alone
+  ToUnescapingTF a = a ---------------------------------------------- everything else is left alone
 
--- |
 -- >>> :kind! ToUnescapingTF Char
--- ToUnescapingTF Char :: *
+-- ToUnescapingTF Char ∷ Type
 -- = UnescapingChar
 
--- |
 -- >>> :kind! ToUnescapingTF (Maybe Char)
--- ToUnescapingTF (Maybe Char) :: *
+-- ToUnescapingTF (Maybe Char) ∷ Type
 -- = Maybe UnescapingChar
 
--- |
 -- >>> :kind! ToUnescapingTF (Either String)
--- ToUnescapingTF (Either String) :: * -> *
+-- ToUnescapingTF (Either String) ∷ Type → Type
 -- = Either [UnescapingChar]
 
--- |
 -- >>> :kind! ToUnescapingTF (Either String String)
--- ToUnescapingTF (Either String String) :: *
+-- ToUnescapingTF (Either String String) ∷ Type
 -- = Either [UnescapingChar] [UnescapingChar]
 
--- |
 -- >>> :kind! ToUnescapingTF Int
--- ToUnescapingTF Int :: *
+-- ToUnescapingTF Int ∷ Type
 -- = Int
 
--- |
 -- >>> :kind! ToUnescapingTF [Char]
--- ToUnescapingTF [Char] :: *
+-- ToUnescapingTF [Char] ∷ Type
 -- = [UnescapingChar]
 
--- |
 -- >>> :kind! ToUnescapingTF Maybe
--- ToUnescapingTF Maybe :: * -> *
+-- ToUnescapingTF Maybe ∷ Type → Type
 -- = Maybe
 
 -- Now we need a function to process values. As usual, we define it in a type class.
@@ -104,6 +97,7 @@ class ToUnescaping a where
 -- Due to using newtype for UnescapingChar, the type resulting from ToUnescapingTF t shares the same run-time representation as t.
 -- The unsafeCoerce function implements toUnescaping by doing nothing. Its only role is to persuade the type checker that everything is all right.
 instance Show a ⇒ ToUnescaping a where
+  toUnescaping ∷ Show a ⇒ a → ToUnescapingTF a
   toUnescaping = unsafeCoerce
 
 -- We can combine these two constraints into one using the ConstraintKinds GHC extension.
@@ -117,7 +111,6 @@ ushow = show . toUnescaping
 uprint ∷ UnescapingShow t ⇒ t → IO ()
 uprint = putStrLn . ushow
 
--- |
 -- Works only in GHCi.
 -- >>> :set -interactive-print=uprint
 -- >>> "Vogt Nyx: »Büß du ja zwölf Qirsch, Kämpe!«"

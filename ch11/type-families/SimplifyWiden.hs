@@ -1,11 +1,12 @@
 {-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE NoStarIsType #-}
 
 module SimplifyWiden where
 
 ---------------------------------------------
--- Type synonym families (open and closed) --
+-- Type synonym families (Open and Closed) --
 ---------------------------------------------
 
 -- A synonym type family describes how types are mapped onto other types.
@@ -47,8 +48,6 @@ type instance Simplify Bool = String
 class Simplifier t where
   simplify ∷ t → Simplify t
 
--- instances to implement the transformation itself
-
 instance Simplifier Integer where
   simplify ∷ Integer → Simplify Integer -- Integer → Integer
   simplify = id
@@ -66,7 +65,7 @@ instance Simplifier String where
   simplify = id
 
 -- instance Simplifier Bool where
-  -- simplify ∷ Bool → Simplify Bool -- Bool → Integer
+-- simplify ∷ Bool → Simplify Bool -- Bool → Integer
 --   simplify False = 0
 --   simplify True = 1
 
@@ -79,20 +78,16 @@ instance Simplifier Char where
   simplify ∷ Char → Simplify Char -- Char → String
   simplify = (: "")
 
--- ghci> :kind Simplify Bool
+-- >>> :kind! Simplify Bool
 -- Simplify Bool ∷ Type
--- ghci> :kind! Simplify Bool
--- Simplify Bool ∷ Type = String (Note the BANG(!) in :kind! - it forces GHC to reduce a type family application.)
+-- = String
 
--- |
 -- >>> simplify (3.14 ∷ Double)
 -- 3
 
--- |
 -- >>> simplify True
 -- "True"
 
--- |
 -- >>> simplify 'x'
 -- "x"
 
@@ -100,7 +95,7 @@ instance Simplifier Char where
 -- 2. Closed type family --
 ---------------------------
 
--- Note the where keyword!
+-- Note the keyword `where`.
 type family Widen a where
   Widen Bool = Int
   Widen Int = Integer
@@ -131,31 +126,29 @@ instance Widener Integer where
   widen ∷ Integer → Widen Integer
   widen = show
 
--- ghci> :type widen False
--- widen False ∷ Int
--- ghci> :type widen (1 ∷ Int)
--- widen (1 ∷ Int) ∷ Integer
+-- >>> :type widen False
+-- widen False :: Int
+--
+-- >>> :type widen (1 ∷ Int)
+-- widen (1 ∷ Int) :: Integer
 
--- |
 -- >>> widen False
 -- 0
 
--- |
+-- >>> widen True
+-- 1
+
 -- >>> widen 'x'
 -- "x"
 
--- |
 -- >>> widen (1 ∷ Int)
 -- 1
 
--- |
 -- >>> widen (1 ∷ Double)
 -- "1.0"
 
--- |
 -- >>> widen (1 ∷ Integer)
 -- "1"
 
--- |
 -- >>> widen (widen True)
 -- 1

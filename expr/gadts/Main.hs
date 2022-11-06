@@ -2,7 +2,7 @@
 
 -- GADTs add type control to arithmetic expressions.
 
-data Expr' a = Lit' a | Add' (Expr' a) (Expr' a) | Mult' (Expr' a) (Expr' a)
+data Expr' a = Lit' !a | Add' !(Expr' a) !(Expr' a) | Mult' !(Expr' a) !(Expr' a)
 
 myeval' ∷ Num a ⇒ Expr' a → a
 myeval' (Lit' e) = e
@@ -22,12 +22,12 @@ data Expr'' a where
 
 -- GADT (expanded to support Booleans)
 data Expr a where
-  NumLit ∷ Num a ⇒ a → Expr a -- CHANGED
-  BoolLit ∷ Bool → Expr Bool -- NEW
-  Add ∷ Num a ⇒ Expr a → Expr a → Expr a -- SAME
-  Mult ∷ Num a ⇒ Expr a → Expr a → Expr a -- SAME
+  Add ∷ Num a ⇒ Expr a → Expr a → Expr a ------- SAME
+  Mult ∷ Num a ⇒ Expr a → Expr a → Expr a ------ SAME
+  NumLit ∷ Num a ⇒ a → Expr a ------------------ CHANGED
+  BoolLit ∷ Bool → Expr Bool ------------------- NEW
   IsZero ∷ (Num a, Eq a) ⇒ Expr a → Expr Bool -- NEW
-  If ∷ Expr Bool → Expr a → Expr a → Expr a -- NEW
+  If ∷ Expr Bool → Expr a → Expr a → Expr a ---- NEW
 
 myeval ∷ Expr a → a
 myeval (NumLit e) = e
@@ -35,7 +35,7 @@ myeval (BoolLit b) = b
 myeval (Add e1 e2) = myeval e1 + myeval e2
 myeval (Mult e1 e2) = myeval e1 * myeval e2
 myeval (IsZero e) = myeval e == 0
-myeval (If be e1 e2) = myeval (if myeval be then e1 else e2)
+myeval (If e e1 e2) = myeval (if myeval e then e1 else e2)
 
 expr1 ∷ Expr Integer
 expr1 = Add (NumLit 5) (NumLit (-5))
@@ -43,11 +43,9 @@ expr1 = Add (NumLit 5) (NumLit (-5))
 expr2 ∷ Expr Double
 expr2 = If (IsZero expr1) (NumLit 0.5) (NumLit 1)
 
--- |
 -- >>> myeval expr1
 -- 0
 
--- |
 -- >>> myeval expr2
 -- 0.5
 
@@ -56,7 +54,7 @@ expr2 = If (IsZero expr1) (NumLit 0.5) (NumLit 1)
 
 -- It is hard to construct `Expr a`s programmatically.
 -- Remember, we have an implicit `∀ a` in the type:
---   It is impossible to define e.g. a `String → Expr a` function, because with this type, we should provide the result of any type.
+-- It is impossible to define e.g. a `String → Expr a` function, because with this type, we should provide the result of any type.
 -- Depending on the given String, it can be either Bool or some numeric type.
 
 -- existential wrapper as a workaround

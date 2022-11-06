@@ -1,10 +1,12 @@
 {-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE NoStarIsType #-}
 
 -- Defining and using new kinds besides Type and Constraint.
 
@@ -21,19 +23,22 @@ data TempUnits = F | C
 -- `F` is a value and a type.
 -- TempUnits is a type and a kind.
 
--- ghci> :set -XNoStarIsType -XDataKinds
--- ghci> :type F
--- F :: TempUnits
--- ghci> :kind F
--- F :: TempUnits
--- ghci> :kind TempUnits
--- TempUnits :: Type
+-- >>> :type F
+-- F ∷ TempUnits
 
--- ghci> paperBurning - absoluteZero
--- <interactive>:6:16: error: Couldn't match type ‘'C’ with ‘'F’
+-- >>> :kind F
+-- F ∷ TempUnits
+
+-- >>> :kind TempUnits
+-- TempUnits ∷ Type
+
+-- >>> paperBurning - absoluteZero
+-- Couldn't match type ‘'C’ with ‘'F’
+-- Expected type: Temp 'F
+--   Actual type: Temp 'C
 
 -- Sometimes we or the compiler need to disambiguate equally named values and corresponding promoted types.
--- In these situations, the ' prefix is used to mention a type and not a value.
+-- In these situations, a tick (') is used to mention a type and not a value.
 
 -- `u` is a phantom type but only of a certain kind(!), i.e. TempUnits with the only possible types(!) `F` and `C`
 newtype Temp (u ∷ TempUnits) = Temp Double
@@ -52,7 +57,7 @@ f2c (Temp f) = Temp ((f -32) * 5 / 9)
 -- nonsense ∷ Temp Bool
 -- nonsense = Temp 0
 
--- Type Error: Couldn't match type ‘C’ with ‘F’
+-- Type Error: Couldn't match type ‘C’ with ‘F’ ...
 -- err = paperBurning - absoluteZero
 
 diff ∷ Temp C
@@ -62,18 +67,41 @@ diff = f2c paperBurning - absoluteZero
 class UnitName (u ∷ TempUnits) where
   unitName ∷ String
 
--- Now we are not allowed to define instances for anything except `F` and `C`.
+-- Now we are only allowed to define instances for `F` and `C`.
 instance UnitName C where
+  unitName ∷ String
   unitName = "C"
 
 instance UnitName F where
+  unitName ∷ String
   unitName = "F"
 
 instance UnitName u ⇒ Show (Temp u) where
+  show ∷ UnitName u ⇒ Temp u → String
   show (Temp t) = show t ++ "°" ++ unitName @u
 
 unit ∷ ∀ u. UnitName u ⇒ Temp u → String
 unit _ = unitName @u
+
+-- >>> unit absoluteZero
+-- "C"
+
+-- >>> unit paperBurning
+-- "F"
+
+-- >>> show absoluteZero
+-- "-273.15\176C"
+
+-- >>> show paperBurning
+-- "451.0\176F"
+
+-- >>> paperBurning - absoluteZero
+-- Couldn't match type ‘'C’ with ‘'F’
+-- Expected type: Temp 'F
+--   Actual type: Temp 'C
+
+-- >>> f2c paperBurning - absoluteZero
+-- 505.92777777777775°C
 
 printTemp ∷ ∀ u. UnitName u ⇒ Temp u → IO ()
 printTemp t = do
