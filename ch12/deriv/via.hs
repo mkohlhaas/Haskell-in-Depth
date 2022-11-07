@@ -1,5 +1,6 @@
 {-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# OPTIONS_GHC -ddump-deriv #-}
 
 -- {-# LANGUAGE DerivingStrategies #-}
 -- {-# LANGUAGE StandaloneDeriving #-}

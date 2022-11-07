@@ -1,5 +1,6 @@
 {-# LANGUAGE RoleAnnotations #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# OPTIONS_GHC -ddump-deriv #-}
 
 import Data.Coerce
 import Unsafe.Coerce

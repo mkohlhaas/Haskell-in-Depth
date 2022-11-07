@@ -2,6 +2,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralisedNewtypeDeriving #-}
+{-# OPTIONS_GHC -ddump-deriv #-}
 
 import Data.Aeson (ToJSON, encode)
 import GHC.Generics (Generic)
@@ -18,7 +19,13 @@ newtype Age = Age {age ∷ Int}
 theAge ∷ Age
 theAge = 33
 
+-- >>> theAge
+-- Age {age = 33}
+
+-- >>> encode theAge
+-- "{\"age\":33}"
+
 main ∷ IO ()
 main = do
-  print theAge
-  print $ encode theAge
+  print theAge ----------- Age {age = 33}
+  print $ encode theAge -- "{\"age\":33}"

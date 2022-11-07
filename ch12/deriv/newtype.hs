@@ -5,6 +5,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 -- {-# LANGUAGE StandaloneDeriving #-}
 {-# LANGUAGE TypeFamilies #-}
+{-# OPTIONS_GHC -ddump-deriv #-}
 
 import Control.Monad.State
 import Data.Coerce
@@ -20,7 +21,7 @@ newtype Age = Age Int
 -- instance Ord Age where
 --   compare = coerce (compare ∷ Int → Int → Ordering)
 
-newtype MyApp a = MyApp {runApp ∷ StateT Int IO a}
+newtype MyApp a = MyApp {runApp :: StateT Int IO a}
   deriving (Functor, Applicative, Monad)
 
 -- GCH generates this:
@@ -35,7 +36,7 @@ type instance Inspect Int = Bool
 type instance Inspect Age = Int
 
 class Inspector a where
-  inspect ∷ a → Inspect a
+  inspect :: a -> Inspect a
 
 instance Inspector Int where
   inspect n = n > 0
@@ -51,7 +52,6 @@ instance Inspector Int where
 -- |
 -- >>> Age 42 < Age 42
 -- False
-
-main ∷ IO ()
+main :: IO ()
 main = do
   print $ Age 42 < Age 42 -- False
