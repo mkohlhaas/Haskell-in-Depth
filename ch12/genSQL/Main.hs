@@ -10,13 +10,13 @@ import GHC.Generics
 import GenericSQL
 
 data Student = Student {studentId ∷ !Int, name ∷ !Text, year ∷ !Int}
-  deriving stock (Generic, Show)
-  deriving anyclass (ToSQL)
+  deriving (Generic, Show, ToSQL) -- GHC will use the anyclass strategy for ToSQL.
+  -- deriving stock (Generic, Show)
+  -- deriving anyclass (ToSQL)
 
 data Course = Course {courseId ∷ !Int, title ∷ !Text, instructor ∷ !Text}
   deriving stock (Generic, Show)
   deriving anyclass (ToSQL)
-
 
 -- >>> from (Student 18265 "John Doe" 2)
 -- M1 {unM1 = M1 {unM1 = M1 {unM1 = K1 {unK1 = 18265}} :*: (M1 {unM1 = K1 {unK1 = "John Doe"}} :*: M1 {unM1 = K1 {unK1 = 2}})}}
