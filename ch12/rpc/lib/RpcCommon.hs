@@ -1,5 +1,6 @@
 {-# LANGUAGE DerivingStrategies #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
+{-# LANGUAGE InstanceSigs #-}
 
 module RpcCommon where
 
@@ -15,8 +16,16 @@ msgSizeField = 8 -- in bytes
 data RemoteException = ConnectionClosed | RemoteException !String
 
 instance Show RemoteException where
+  show ∷ RemoteException → String
   show ConnectionClosed = "Connection closed"
   show (RemoteException msg) = "Remote Exception: " <> msg
+
+-- >>> :info Exception
+-- type Exception :: * -> Constraint
+-- class (Typeable e, Show e) => Exception e where
+--   toException :: e -> SomeException
+--   fromException :: SomeException -> Maybe e
+--   displayException :: e -> String
 
 instance Exception RemoteException
 
@@ -24,6 +33,7 @@ class RemoteState a where
   initState ∷ a
 
 instance RemoteState () where
+  initState ∷ ()
   initState = ()
 
 -- application stack
@@ -32,6 +42,9 @@ newtype RSIO st a = RSIO {runRem ∷ StateT st (ReaderT Connection IO) a}
 
 type Operation = String
 
+-- a = input params of client
+-- b = output of server
+-- Basically function `a → b` embedded in a monadic context.
 type RemoteAction st a b = a → RSIO st b
 
 type RPCTable st = [(Operation, RemoteAction st ByteString ByteString)]

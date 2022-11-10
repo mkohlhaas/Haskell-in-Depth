@@ -4,13 +4,15 @@
 
 module DeclsGenerator where
 
+import Control.Monad
 import Language.Haskell.TH
-import Language.Haskell.TH.Quote
+import Language.Haskell.TH.Quote (QuasiQuoter (..))
 import Network.Socket (PortNumber)
-import RemoteParser
+import RemoteParser (FuncInfo (..), parseRemoteInterface)
 
 remote ∷ QuasiQuoter
-remote = QuasiQuoter
+remote =
+  QuasiQuoter
     { quoteExp = undefined,
       quotePat = undefined,
       quoteType = undefined,
@@ -20,24 +22,24 @@ remote = QuasiQuoter
 quoteFuncInfoDec ∷ String → Q [Dec]
 quoteFuncInfoDec quote = parseRemoteInterface quote >>= genClientStubs
 
+-- don't use Unicode
 -- >>> runQ $ parseRemoteInterface "ping :: RemotePing PingAnswer\necho :: String -> RemotePing String"
 -- [FuncInfo {name = "ping", ty = AppT (ConT RemotePing) (ConT PingAnswer)},FuncInfo {name = "echo", ty = AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))}]
 
+-- don't use Unicode
+-- >>> runQ $ quoteFuncInfoDec "ping :: RemotePing PingAnswer\necho :: String -> RemotePing String"
+-- [SigD ping (AppT (ConT RemotePing) (ConT PingAnswer)),FunD ping [Clause [] (NormalB (InfixE (Just (LamE [VarP f_1] (AppE (VarE f_1) (ConE GHC.Tuple.())))) (VarE GHC.Base.$) (Just (AppE (VarE callRemote) (ListE [LitE (CharL 'p'),LitE (CharL 'i'),LitE (CharL 'n'),LitE (CharL 'g')]))))) []],SigD echo (AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))),FunD echo [Clause [] (NormalB (InfixE (Just (VarE GHC.Base.id)) (VarE GHC.Base.$) (Just (AppE (VarE callRemote) (ListE [LitE (CharL 'e'),LitE (CharL 'c'),LitE (CharL 'h'),LitE (CharL 'o')]))))) []]]
+
+-- don't use Unicode
 -- >>> runQ $ parseRemoteInterface  "ping :: RemotePing PingAnswer\necho :: String -> RemotePing String" >>= genClientStubs
 -- [SigD ping (AppT (ConT RemotePing) (ConT PingAnswer)),FunD ping [Clause [] (NormalB (InfixE (Just (LamE [VarP f_0] (AppE (VarE f_0) (ConE GHC.Tuple.())))) (VarE GHC.Base.$) (Just (AppE (VarE callRemote) (ListE [LitE (CharL 'p'),LitE (CharL 'i'),LitE (CharL 'n'),LitE (CharL 'g')]))))) []],SigD echo (AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))),FunD echo [Clause [] (NormalB (InfixE (Just (VarE GHC.Base.id)) (VarE GHC.Base.$) (Just (AppE (VarE callRemote) (ListE [LitE (CharL 'e'),LitE (CharL 'c'),LitE (CharL 'h'),LitE (CharL 'o')]))))) []]]
-
--- >>> runQ $ quoteFuncInfoDec "ping :: RemotePing PingAnswer\necho :: String -> RemotePing String"
--- [SigD ping (AppT (ConT RemotePing) (ConT PingAnswer)),FunD ping [Clause [] (NormalB (InfixE (Just (LamE [VarP f_2] (AppE (VarE f_2) (ConE GHC.Tuple.())))) (VarE GHC.Base.$) (Just (AppE (VarE callRemote) (ListE [LitE (CharL 'p'),LitE (CharL 'i'),LitE (CharL 'n'),LitE (CharL 'g')]))))) []],SigD echo (AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))),FunD echo [Clause [] (NormalB (InfixE (Just (VarE GHC.Base.id)) (VarE GHC.Base.$) (Just (AppE (VarE callRemote) (ListE [LitE (CharL 'e'),LitE (CharL 'c'),LitE (CharL 'h'),LitE (CharL 'o')]))))) []]]
 
 genClientStubs ∷ [FuncInfo] → Q [Dec]
 genClientStubs fis = concat <$> mapM (genClientStub "callRemote") fis
 
+-- doesn't work because of the way the project is built
 -- >>> runQ $ genClientStubs [FuncInfo {name = "ping", ty = AppT (ConT RemotePing) (ConT PingAnswer)},FuncInfo {name = "echo", ty = AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))}]
--- Data constructor not in scope: RemotePing :: Name
--- Data constructor not in scope: PingAnswer :: Name
--- Data constructor not in scope: String :: Name
--- Data constructor not in scope: RemotePing :: Name
--- Data constructor not in scope: String :: Name
+-- Data constructor not in scope: RemotePing ∷ Name ...
 
 genClientStub ∷ String → FuncInfo → Q [Dec]
 genClientStub callee FuncInfo {..} = do
@@ -48,20 +50,6 @@ genClientStub callee FuncInfo {..} = do
     typeSig = SigD funName ty
     stubBody = [|$(curryAll (arity ty)) $ $(dyn callee) name|]
 
--- >>> runQ $ genClientStub (FuncInfo {name = "ping", ty = AppT (ConT RemotePing) (ConT PingAnswer)},FuncInfo {name = "echo", ty = AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))})
--- Data constructor not in scope: RemotePing :: Name
--- Data constructor not in scope: PingAnswer :: Name
--- Data constructor not in scope: String :: Name
--- Data constructor not in scope: RemotePing :: Name
--- Data constructor not in scope: String :: Name
-
--- >>> :type genClientStub (FuncInfo {name = "ping", ty = AppT (ConT RemotePing) (ConT PingAnswer)},FuncInfo {name = "echo", ty = AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))})
--- Data constructor not in scope: RemotePing :: Name
--- Data constructor not in scope: PingAnswer :: Name
--- Data constructor not in scope: String :: Name
--- Data constructor not in scope: RemotePing :: Name
--- Data constructor not in scope: String :: Name
-
 genServer ∷ [Name] → Q [Dec]
 genServer names =
   [d|
@@ -69,50 +57,123 @@ genServer names =
     server host port = serveRPC host port $(genRemoteTable names)
     |]
 
+-- >>> mkName "test"
+-- test
+
+-- >>> :type mkName "test"
+-- mkName "test" ∷ Name
+
+-- >>> :type genServer [mkName "test"]
+-- genServer [mkName "test"] ∷ Q [Dec]
+
+-- This will be generated by TH (cleaned up):
+-- genServer ['ping, 'echo] ⇒
+-- server ∷ String → PortNumber → IO ()
+-- server host port
+--   = serveRPC host port [("ping", (runSerialized $ (const ∷ a → () → a) ping)),
+--                         ("echo", (runSerialized $ id echo))]
+--                        |-----------------------------------------------------|
+--                                                |
+--                              from $(genRemoteTable [(mkName "ping")])
+
 genRemoteTable ∷ [Name] → Q Exp
 genRemoteTable names = mapM reifyFunc names >>= listE . map (genServerStub "runSerialized")
 
+-- >>> $(genRemoteTable [(mkName "ping")])
+-- ‘ping’ is not in scope at a reify
+
+-- >>> runQ $ genRemoteTable [mkName "test"]
+-- user error (Template Haskell failure)
+
+-- Dynamically binding a variable (unhygenic).
+-- >>> :type dyn
+-- dyn ∷ String → ExpQ
+
 genServerStub ∷ String → FuncInfo → ExpQ
 genServerStub callee FuncInfo {..} = [|(name, $(dyn callee) $ $(uncurryAll (arity ty)) $(dyn name))|]
+
+-- >>> runQ $ genServerStub "test" [FuncInfo {name = "ping", ty = AppT (ConT RemotePing) (ConT PingAnswer)},FuncInfo {name = "echo", ty = AppT (AppT ArrowT (ConT String)) (AppT (ConT RemotePing) (ConT String))}]
+-- Data constructor not in scope: RemotePing ∷ Name
+-- Data constructor not in scope: PingAnswer ∷ Name
+-- Data constructor not in scope: String ∷ Name
+-- Data constructor not in scope: RemotePing ∷ Name
+-- Data constructor not in scope: String ∷ Name
 
 reifyFunc ∷ Name → Q FuncInfo
 reifyFunc nm = do
   VarI _ t Nothing ← reify nm
   pure $ FuncInfo (nameBase nm) t
 
+-- >>> :type $(reifyFunc (mkName "test"))
+-- Couldn't match type ‘FuncInfo’ with ‘Exp’
+-- Expected type: ExpQ
+--   Actual type: Q FuncInfo
+
 arity ∷ Type → Int
 arity (AppT (AppT ArrowT _) t) = arity t + 1
 arity (ForallT _ _ t) = arity t
 arity _ = 0
 
+-- >>> :type curry
+-- curry ∷ ((a, b) → c) → a → b → c
+
+-- >>> :type (curry . id)
+-- (curry . id) ∷ ((a, b) → c) → a → b → c
+
+-- >>> :type (curry . (curry . id))
+-- (curry . (curry . id)) ∷ (((a, b1), b2) → c) → a → b1 → b2 → c
+
+-- >>> :type (curry . (curry . (curry . id)))
+-- (curry . (curry . (curry . id))) ∷ ((((a, b1), b2), b3) → c) → a → b1 → b2 → b3 → c
+
 curryAll ∷ Int → Q Exp
-curryAll 0 = [|\f → f ()|]
-curryAll 1 = [|id|]
-curryAll n
+curryAll 0 = [|\f → f ()|] -- function with no args
+curryAll 1 = [|id|] --------- function with one arg
+curryAll n ------------------ function with several args
   | n > 1 = [|curry . $(curryAll (n -1))|]
   | otherwise = fail "curryAll argument can't be negative"
 
 -- >>> runQ $ curryAll 3
 -- InfixE (Just (VarE Data.Tuple.curry)) (VarE GHC.Base..) (Just (InfixE (Just (VarE Data.Tuple.curry)) (VarE GHC.Base..) (Just (VarE GHC.Base.id))))
 
--- >>> :type curryAll 3
--- curryAll 3 :: Q Exp
-
 -- >>> :type $(curryAll 3)
--- $(curryAll 3) :: (((a, b1), b2) -> c) -> a -> b1 -> b2 -> c
+
+-- $(curryAll 3) ∷ (((a, b1), b2) → c) → a → b1 → b2 → c
+
+-- >>> :type uncurry
+-- uncurry ∷ (a → b → c) → (a, b) → c
+
+-- >>> :type uncurry . id
+-- uncurry . id ∷ (a → b → c) → (a, b) → c
+
+-- >>> :type (uncurry . (uncurry . id))
+-- (uncurry . (uncurry . id)) ∷ (a → b1 → b2 → c) → ((a, b1), b2) → c
+
+-- >>> :type (uncurry . (uncurry . (uncurry . id)))
+-- (uncurry . (uncurry . (uncurry . id))) ∷ (a → b1 → b2 → b3 → c) → (((a, b1), b2), b3) → c
 
 uncurryAll ∷ Int → Q Exp
-uncurryAll 0 = [|(const ∷ a → () → a)|]
+uncurryAll 0 = [|(const ∷ a → () → a)|] -- type signature won't hurt but not necessary
 uncurryAll 1 = [|id|]
 uncurryAll n
   | n > 1 = [|uncurry . $(uncurryAll (n -1))|]
   | otherwise = fail "uncurryAll argument can't be negative"
 
--- >>> :type $(uncurryAll 3)
--- $(uncurryAll 3) :: (a -> b1 -> b2 -> c) -> ((a, b1), b2) -> c
+-- >>> :type const
+-- const ∷ a → b → a
 
 -- >>> :type uncurryAll 3
--- uncurryAll 3 :: Q Exp
+-- uncurryAll 3 ∷ Q Exp
+
+-- >>> :type $(uncurryAll 3)
+
+-- $(uncurryAll 3) ∷ (a → b1 → b2 → c) → ((a, b1), b2) → c
+
+-- >>> :type [e| Just x |]
+-- [e| Just x |] ∷ ExpQ
+
+-- >>> :type runQ
+-- runQ ∷ Quasi m ⇒ Q a → m a
 
 -- >>> runQ [e| Just x |]
 -- AppE (ConE GHC.Maybe.Just) (UnboundVarE x)
@@ -121,19 +182,14 @@ uncurryAll n
 -- ConP GHC.Maybe.Just [VarP x_0]
 
 add1 ∷ Q Exp
-add1 = [| (+ 1) |]
-
--- >>> add1 1
--- Couldn't match expected type ‘t0 -> t’ with actual type ‘Q Exp’
+add1 = [|(+ 1)|]
 
 -- >>> $add1 1
 -- 2
 
 -- >>> :type $add1 1
--- $add1 1 :: Num a => a
 
--- >>> runQ add1
--- InfixE Nothing (VarE GHC.Num.+) (Just (LitE (IntegerL 1)))
+-- $add1 1 ∷ Num a ⇒ a
 
 -- >>> runQ add1
 -- InfixE Nothing (VarE GHC.Num.+) (Just (LitE (IntegerL 1)))
@@ -145,14 +201,40 @@ add1 = [| (+ 1) |]
 -- AppE (VarE DeclsGenerator.add1) (LitE (IntegerL 1))
 
 add2 ∷ Q Exp
-add2 = [| $add1 . $add1 |]
+add2 = [|$add1 . $add1|]
 
 -- >>> $add2 10
 -- 12
+
+-- >>> :type $add2
+
+-- $add2 ∷ Num c ⇒ c → c
 
 -- >>> runQ add2
 -- InfixE (Just (InfixE Nothing (VarE GHC.Num.+) (Just (LitE (IntegerL 1))))) (VarE GHC.Base..) (Just (InfixE Nothing (VarE GHC.Num.+) (Just (LitE (IntegerL 1)))))
 
 -- >>> runQ [| $add2 10 |]
 -- AppE (InfixE (Just (InfixE Nothing (VarE GHC.Num.+) (Just (LitE (IntegerL 1))))) (VarE GHC.Base..) (Just (InfixE Nothing (VarE GHC.Num.+) (Just (LitE (IntegerL 1)))))) (LitE (IntegerL 10))
+
+-- https://wiki.haskell.org/A_practical_Template_Haskell_Tutorial#Template_Haskell_as_a_Code_Generator
+curryN ∷ Int → Q Exp
+curryN n = do
+  f ← newName "f"
+  xs ← replicateM n (newName "x")
+  let args = map VarP (f : xs)
+      ntup = TupE (Just <$> map VarE xs)
+  return $ LamE args (AppE (VarE f) ntup)
+
+-- >>> :type $(curryN 3)
+-- $(curryN 3) :: ((a, b, c) -> t) -> a -> b -> c -> t
+
+genCurries ∷ Int → Q [Dec]
+genCurries n = forM [1 .. n] mkCurryDec
+  where mkCurryDec ith = funD name [clause [] (normalB (curryN ith)) []]
+          where name = mkName $ "curry" ++ show ith
+
+-- >>> $(genCurries 20)
+-- Couldn't match type ‘[Dec]’ with ‘Exp’
+-- Expected type: ExpQ
+--   Actual type: Q [Dec]
 

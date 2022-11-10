@@ -1,3 +1,10 @@
+- https://www.tcs.ifi.lmu.de/lehre/ss-2020/fun/material/folien/folien-08-druckversion
+- https://markkarpov.com/tutorial/th.html
+- https://serokell.io/blog/introduction-to-template-haskell
+- https://functional.works-hub.com/learn/a-brief-introduction-to-template-haskell-a2e73
+- https://wiki.haskell.org/A_practical_Template_Haskell_Tutorial
+- https://wiki.haskell.org/Template_Haskell
+
 - Order of Code Examples
 - `deriv/basic-deriv.hs`
 - `deriv/strategies.hs`

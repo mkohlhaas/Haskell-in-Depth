@@ -5,6 +5,8 @@ import Control.Monad.State (MonadIO (liftIO), MonadState (get), modify)
 import PingCommon (PingAnswer (..), RemotePing)
 import ServerUtils (genServer, runSerialized, serveRPC)
 
+-- `liftIO` can be used whenever we have a monad stack where the base monad is IO!
+
 ping ∷ RemotePing PingAnswer
 ping = do
   modify (+ 1)

@@ -6,13 +6,12 @@ module ClientUtils
   )
 where
 
-import Data.Serialize
+import Data.Serialize (Serialize, decode, encode)
 import DeclsGenerator (remote)
 import RemoteIO
 import RpcCommon
 
--- callRemote ∷ (Serialize a1, Serialize a2, Serialize b) ⇒ a1 → a2 → RSIO st b
--- send ⇒ receive ⇒ decode
+-- encode ⇒ send ⇒ receive ⇒ decode
 callRemote ∷ (Serialize a, Serialize b) ⇒ Operation → RemoteAction st a b
 callRemote operation params = do
   sendRSIO (operation, encode params)
