@@ -1,7 +1,13 @@
+{-# LANGUAGE InstanceSigs #-}
+
 module Elevator.Unsafe where
 
-import Control.Monad.Trans
+import Control.Monad.Trans (MonadIO (..))
 import qualified Elevator.LowLevel as LL
+
+------------------------------------
+--           Data Types           --
+------------------------------------
 
 data DoorState = Opened | Closed
   deriving (Eq, Show)
@@ -9,20 +15,41 @@ data DoorState = Opened | Closed
 newtype Floor = Floor Int
   deriving (Eq, Ord)
 
+data Elevator = Elevator
+  { current ∷ !Floor,
+    door ∷ !DoorState
+  }
+  deriving (Show)
+
+------------------------------------
+--           Instances            --
+------------------------------------
+
+-- >>> :info Bounded
+-- type Bounded ∷ * → Constraint
+-- class Bounded a where
+--   minBound ∷ a
+--   maxBound ∷ a
+--   {-# MINIMAL minBound, maxBound #-}
+
 instance Bounded Floor where
+  minBound ∷ Floor
   minBound = Floor 0
+  maxBound ∷ Floor
   maxBound = Floor 5
 
 instance Show Floor where
-  show (Floor fl) = "Floor " <> show fl <> " of " <> show mx
+  show ∷ Floor → String
+  show (Floor fl) = "Floor " <> show fl <> " of " <> show mx <> "."
     where
       Floor mx = maxBound
 
-data Elevator = Elevator
-  { current ∷ Floor,
-    door ∷ DoorState
-  }
-  deriving (Show)
+-- >>> show (Floor 3)
+-- "Floor 3 of 5"
+
+------------------------------------
+--        Run-time Checks         --
+------------------------------------
 
 sameFloor ∷ Floor → Elevator → Bool
 sameFloor fl el = fl == current el
@@ -39,21 +66,29 @@ belowTop fl = fl < maxBound
 aboveGround ∷ Floor → Bool
 aboveGround fl = fl > minBound
 
+------------------------------------
+--               IO               --
+------------------------------------
+
+-- Switching to the `MonadIO m` context instead of working in the IO monad directly.
+-- This is often a good idea when wrapping low-level interfaces.
+-- We can now use our elevator in complex monad stacks based on IO.
+
 down ∷ MonadIO m ⇒ Elevator → m Elevator
 down el@(Elevator fl@(Floor n) Closed)
   | aboveGround fl = do
     liftIO LL.down
     pure $ el {current = Floor $ n - 1}
-  | otherwise = error "Elevator is on the ground floor"
-down (Elevator _ Opened) = error "Door must be closed before move"
+  | otherwise = error "Elevator is on the ground floor."
+down (Elevator _ Opened) = error "Door must be closed before move."
 
 up ∷ MonadIO m ⇒ Elevator → m Elevator
 up el@(Elevator fl@(Floor n) Closed)
   | belowTop fl = do
     liftIO LL.up
     pure $ el {current = Floor $ n + 1}
-  | otherwise = error "Elevator on the top floor"
-up (Elevator _ Opened) = error "Door must be closed before move"
+  | otherwise = error "Elevator on the top floor."
+up (Elevator _ Opened) = error "Door must be closed before move."
 
 open ∷ MonadIO m ⇒ Floor → Elevator → m Elevator
 open fl el
@@ -62,8 +97,8 @@ open fl el
       then do
         liftIO LL.open
         pure $ el {door = Opened}
-      else error "Door is already opened"
-  | otherwise = error "Can't operate the door with an elevator elsewhere"
+      else error "Door is already opened."
+  | otherwise = error "Can't operate the door on a different floor."
 
 close ∷ MonadIO m ⇒ Floor → Elevator → m Elevator
 close fl el
@@ -72,8 +107,8 @@ close fl el
       then do
         liftIO LL.close
         pure $ el {door = Closed}
-      else error "Door is already closed"
-  | otherwise = error "Can't operate the door with an elevator elsewhere"
+      else error "Door is already closed."
+  | otherwise = error "Can't operate the door with an elevator elsewhere."
 
 ensureClosed ∷ MonadIO m ⇒ Elevator → m Elevator
 ensureClosed el

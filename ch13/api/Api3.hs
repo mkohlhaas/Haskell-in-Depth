@@ -40,7 +40,13 @@ type BookInfoAPI =
 
 type HandlerAction a = IO a
 
-type family Server layout ∷ Type
+---------------------------------------------------------
+--         Type family to pattern match kinds!         --
+--         Pattern matching on the type-level.         --
+---------------------------------------------------------
+
+-- Server ... ≌ implementation
+type family Server api ∷ Type
 
 type instance Server (Get a) = HandlerAction a
 
@@ -49,6 +55,8 @@ type instance Server (a :<|> b) = Server a :<|> Server b
 type instance Server ((s ∷ Symbol) :> r) = Server r
 
 type instance Server (Capture a :> r) = a → Server r
+
+---------------------------------------------------------
 
 impl1 ∷ Server BookInfoAPI
 impl1 =
@@ -78,9 +86,15 @@ encode m = show <$> m
 
 type Request = [String]
 
--- Routing can also be constructed automatically from an interface.
-class HasServer layout where
-  route ∷ Proxy layout → Server layout → Request → Maybe (IO String)
+--------------------------------------------------------------------------------------------------------------------
+--                              Routing can also be constructed from an interface                                 --
+--------------------------------------------------------------------------------------------------------------------
+
+-- compare to previous version of route: (we generalize on the API)
+-- route ∷                Server BookInfoAPI → Request → Maybe (HandlerAction String)
+-- route ∷ Proxy api → Server api      → Request → Maybe (IO String)
+class HasServer api where
+  route ∷ Proxy api → Server api → Request → Maybe (IO String)
 
 instance Show a ⇒ HasServer (Get a) where
   route ∷ Proxy (Get a) → HandlerAction a → Request → Maybe (IO String)
@@ -109,33 +123,45 @@ instance (Read a, HasServer r) ⇒ HasServer (Capture a :> r) where
     route (Proxy ∷ Proxy r) (handler a) xs
   route _ _ _ = Nothing
 
-get ∷ HasServer layout ⇒ Proxy layout → Server layout → [String] → IO String
+--------------------------------------------------------------------------------------------------------------------
+
+get ∷ HasServer api ⇒ Proxy api → Server api → [String] → IO String
 get proxy handler request = case route proxy handler request of
   Nothing → ioError (userError "404")
   Just m → m
 
--- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["title", "7548"]
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 []
+-- "Ok"
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["title", "4711"]
 -- "Haskell in Depth"
 
--- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["year", "7548"]
+-- This is what you get if you don't have the overlapping instance for String:
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["title", "4711"]
+-- "\"Haskell in Depth\""
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["year", "4711"]
 -- "2021"
 
--- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["rating", "7548"]
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl1 ["rating", "4711"]
 -- "Great"
 
--- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["title", "7548"]
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 []
+-- "Down"
+
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["title", "4711"]
 -- user error (not implemented)
 
--- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["year", "7548"]
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["year", "4711"]
 -- user error (not implemented)
 
--- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["rating", "7548"]
+-- >>> get (Proxy ∷ Proxy BookInfoAPI) impl2 ["rating", "4711"]
 -- user error (not implemented)
 
 check ∷ Server BookInfoAPI → IO ()
 check impl = do
   b ← get (Proxy ∷ Proxy BookInfoAPI) impl []
-  answer ← get (Proxy ∷ Proxy BookInfoAPI) impl ["year", "7548"]
+  answer ← get (Proxy ∷ Proxy BookInfoAPI) impl ["year", "4711"]
   putStrLn (if b == "Ok" && answer == "2021" then "OK" else "Wrong answer!")
 
 main ∷ IO ()

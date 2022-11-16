@@ -1,4 +1,3 @@
-{-# LANGUAGE CPP #-}
 {-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DerivingStrategies #-}
@@ -8,15 +7,12 @@
 {-# LANGUAGE InstanceSigs #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving #-}
+{-# LANGUAGE StandaloneKindSignatures #-}
 {-# LANGUAGE TemplateHaskell #-}
 {-# LANGUAGE TypeApplications #-}
 {-# LANGUAGE TypeFamilies #-}
 {-# LANGUAGE TypeOperators #-}
 {-# LANGUAGE UndecidableInstances #-}
-
-#if __GLASGOW_HASKELL__ >= 810
-{-# LANGUAGE StandaloneKindSignatures #-}
-#endif
 
 module Elevator.Safe.Operations where
 
@@ -26,12 +22,7 @@ import Data.Type.Nat
 import qualified Elevator.LowLevel as LL
 import Elevator.Safe.Floor
 
-$( singletons
-     [d|
-       data Door = Opened | Closed
-         deriving (Eq, Show)
-       |]
- )
+$(singletons [d|data Door = Opened | Closed deriving (Eq, Show)|])
 
 data Elevator (mx ∷ Nat) (cur ∷ Nat) (door ∷ Door) where
   MkElevator ∷ SingI door ⇒ Floor mx cur → Elevator mx cur door

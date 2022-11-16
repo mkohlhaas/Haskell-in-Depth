@@ -8,25 +8,28 @@ get [op, _] =
     _ → fail "Not implemented"
 get _ = fail "Malformed request"
 
--- >>> get ["title", "7548"]
+-- >>> get []
+-- "OK"
+
+-- >>> get ["title", "4711"]
 -- "Haskell in Depth"
 
--- >>> get ["foo", "7548"]
+-- >>> get ["foo", "4711"]
 -- user error (Not implemented)
 
--- >>> get ["foo", "7548", "useless"]
+-- >>> get ["foo", "4711", "useless"]
 -- user error (Malformed request)
 
--- >>> get ["year", "7548"]
+-- >>> get ["year", "4711"]
 -- "2021"
 
--- >>> get ["rating", "7548"]
+-- >>> get ["rating", "4711"]
 -- "Great"
 
 check ∷ IO ()
 check = do
   b ← get []
-  y ← get ["year", "7548"]
+  y ← get ["year", "4711"]
   putStrLn (if b == "OK" && y == "2021" then "OK" else "Wrong answer!")
 
 main ∷ IO ()

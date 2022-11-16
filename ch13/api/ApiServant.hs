@@ -32,7 +32,7 @@ impl =
     :<|> year
     :<|> rating
   where
-    title _ = pure $ H.toHtml $ H.b "Haskell in Depth"
+    title _ = pure $ H.b "Haskell in Depth"
     year _ = pure 2021
     rating _ = pure Great
 
@@ -41,3 +41,9 @@ app = serve (Proxy ∷ Proxy BookInfoAPI) impl
 
 main ∷ IO ()
 main = run 8081 app
+
+-- $ cabal run api-servant
+-- $ curl http://localhost:8081/            ⇒ "Ok"
+-- $ curl http://localhost:8081/title/1234  ⇒ <b>Haskell in Depth</b>
+-- $ curl http://localhost:8081/year/1234   ⇒ 2021
+-- $ curl http://localhost:8081/rating/1234 ⇒ "Great"
