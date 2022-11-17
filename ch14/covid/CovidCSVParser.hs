@@ -12,8 +12,8 @@ import Data.Text.Encoding (decodeUtf8)
 import Data.Time (Day, fromGregorian)
 
 data CountryCodeWithRest = CountryCodeWithRest
-  { code ∷ ByteString,
-    rest ∷ ByteString
+  { code ∷ !ByteString,
+    rest ∷ !ByteString
   }
 
 -- Parser combinators

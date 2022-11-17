@@ -3,3 +3,10 @@
   - `simple-streaming.hs`
   - `sumtab.hs`
   - `chars.hs`
+  - `copy.hs`
+  - `csv-simple.hs`
+  - `lens-ex.hs`
+  - `data/owid-covid-data.csv.gz`
+  - `covid/CovidData.hs`
+  - `covid/CovidCSVParser.hs`
+  - `covid/Main.hs`

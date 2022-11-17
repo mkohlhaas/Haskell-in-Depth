@@ -17,3 +17,9 @@ printCodes = S.mapM_ (S.liftIO . printCode)
 
 main ∷ IO ()
 main = printChars $ printCodes $ S.copy $ S.each "hello"
+
+-- h 104
+-- e 101
+-- l 108
+-- l 108
+-- o 111

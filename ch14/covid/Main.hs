@@ -43,7 +43,7 @@ printStats stats = do
 
 main ∷ IO ()
 main = do
-  r <-
+  r ←
     runResourceT $
       C.readFile "data/owid-covid-data.csv.gz"
         & gunzip

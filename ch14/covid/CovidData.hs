@@ -13,39 +13,39 @@ import Data.Time (Day)
 import TextShow (TextShow (showb), fromText)
 
 data CountryData = CountryData
-  { _iso_code ∷ ByteString,
-    _continent ∷ Text,
-    _name ∷ Text,
-    _current_total_cases ∷ Int,
-    _current_total_deaths ∷ Int,
-    _days ∷ [(Day, DayInfo)],
-    _stat ∷ CountryStat
+  { _iso_code ∷ !ByteString,
+    _continent ∷ !Text,
+    _name ∷ !Text,
+    _current_total_cases ∷ !Int,
+    _current_total_deaths ∷ !Int,
+    _days ∷ ![(Day, DayInfo)],
+    _stat ∷ !CountryStat
   }
 
 data DayInfo = DayInfo
-  { _cases ∷ DayCases,
-    _deaths ∷ DayDeaths
+  { _cases ∷ !DayCases,
+    _deaths ∷ !DayDeaths
   }
 
 data DayCases = DayCases
-  { _total_cases ∷ Int,
-    _new_cases ∷ Int
+  { _total_cases ∷ !Int,
+    _new_cases ∷ !Int
   }
 
 data DayDeaths = DayDeaths
-  { _total_deaths ∷ Int,
-    _new_deaths ∷ Int
+  { _total_deaths ∷ !Int,
+    _new_deaths ∷ !Int
   }
 
 data CountryStat = CountryStat
-  { _population ∷ Int,
-    _population_density ∷ Maybe Double
+  { _population ∷ !Int,
+    _population_density ∷ !(Maybe Double)
   }
 
 data AccumulatedStat = AccumulatedStat
-  { _acc_population ∷ Int,
-    _acc_total_cases ∷ Int,
-    _acc_total_deaths ∷ Int
+  { _acc_population ∷ !Int,
+    _acc_total_cases ∷ !Int,
+    _acc_total_deaths ∷ !Int
   }
 
 makeLenses ''CountryData
