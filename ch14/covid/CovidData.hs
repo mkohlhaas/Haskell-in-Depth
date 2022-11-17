@@ -13,39 +13,39 @@ import Data.Time (Day)
 import TextShow (TextShow (showb), fromText)
 
 data CountryData = CountryData
-  { _iso_code :: ByteString,
-    _continent :: Text,
-    _name :: Text,
-    _current_total_cases :: Int,
-    _current_total_deaths :: Int,
-    _days :: [(Day, DayInfo)],
-    _stat :: CountryStat
+  { _iso_code ∷ ByteString,
+    _continent ∷ Text,
+    _name ∷ Text,
+    _current_total_cases ∷ Int,
+    _current_total_deaths ∷ Int,
+    _days ∷ [(Day, DayInfo)],
+    _stat ∷ CountryStat
   }
 
 data DayInfo = DayInfo
-  { _cases :: DayCases,
-    _deaths :: DayDeaths
+  { _cases ∷ DayCases,
+    _deaths ∷ DayDeaths
   }
 
 data DayCases = DayCases
-  { _total_cases :: Int,
-    _new_cases :: Int
+  { _total_cases ∷ Int,
+    _new_cases ∷ Int
   }
 
 data DayDeaths = DayDeaths
-  { _total_deaths :: Int,
-    _new_deaths :: Int
+  { _total_deaths ∷ Int,
+    _new_deaths ∷ Int
   }
 
 data CountryStat = CountryStat
-  { _population :: Int,
-    _population_density :: Maybe Double
+  { _population ∷ Int,
+    _population_density ∷ Maybe Double
   }
 
 data AccumulatedStat = AccumulatedStat
-  { _acc_population :: Int,
-    _acc_total_cases :: Int,
-    _acc_total_deaths :: Int
+  { _acc_population ∷ Int,
+    _acc_total_cases ∷ Int,
+    _acc_total_deaths ∷ Int
   }
 
 makeLenses ''CountryData
@@ -55,7 +55,7 @@ makeLenses ''DayDeaths
 makeLenses ''CountryStat
 makeLenses ''AccumulatedStat
 
-withDaysAndTotals :: CountryData -> [(Day, DayInfo)] -> CountryData
+withDaysAndTotals ∷ CountryData → [(Day, DayInfo)] → CountryData
 withDaysAndTotals countryData ds = withDays & current_total_deaths .~ ctDeaths & current_total_cases .~ ctCases
   where
     withDays = countryData & days %~ (++ ds)
@@ -65,8 +65,7 @@ withDaysAndTotals countryData ds = withDays & current_total_deaths .~ ctDeaths &
 
 instance TextShow CountryData where
   showb cd =
-    fromText (cd ^. name)
-      <> " "
+    fromText (cd ^. name) <> " "
       <> showb (cd ^. stat . population)
       <> " "
       <> showb (cd ^. current_total_cases)
@@ -82,21 +81,21 @@ instance Semigroup AccumulatedStat where
 instance Monoid AccumulatedStat where
   mempty = AccumulatedStat 0 0 0
 
-fromCountryData :: CountryData -> AccumulatedStat
+fromCountryData ∷ CountryData → AccumulatedStat
 fromCountryData cd =
   AccumulatedStat
     (cd ^. stat . population)
     (cd ^. current_total_cases)
     (cd ^. current_total_deaths)
 
-considerCountry :: Map Text AccumulatedStat -> CountryData -> Map Text AccumulatedStat
+considerCountry ∷ Map Text AccumulatedStat → CountryData → Map Text AccumulatedStat
 considerCountry stats cd = M.insertWith (<>) (cd ^. continent) (fromCountryData cd) stats
 
 --   stats &
 --      let new = fromCountryData cd
 --      in at (cd ^. continent) %~ Just . maybe new (<> new)
 
-worldStats :: Map Text AccumulatedStat -> AccumulatedStat
+worldStats ∷ Map Text AccumulatedStat → AccumulatedStat
 worldStats = M.foldl' (<>) mempty
 
 instance TextShow (Map Text AccumulatedStat) where

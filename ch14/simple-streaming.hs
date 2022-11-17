@@ -7,71 +7,71 @@ import Control.Monad (ap)
 import Data.Bifunctor (Bifunctor (bimap, first))
 import Data.Functor.Compose (Compose (Compose))
 
+-- f = functor ⇒ Stream will become a monad
 data Stream f m r
-  = Step (f (Stream f m r))
+  = Return r
   | Effect (m (Stream f m r))
-  | Return r
+  | Step (f (Stream f m r))
 
-empty :: Stream f m ()
+empty ∷ Stream f m ()
 empty = Return ()
 
-effect :: Monad m => m r -> Stream f m r
+-- m r = monadic result
+effect ∷ Monad m ⇒ m r → Stream f m r
 effect eff = Effect $ Return <$> eff
 
 data Of a b = a :> b
   deriving (Show)
 
+-- acts like a pair
 instance Functor (Of a) where
   fmap f (a :> b) = a :> f b
 
 instance Bifunctor Of where
   bimap f g (a :> b) = f a :> g b
 
-yield :: a -> Stream (Of a) m ()
+yield ∷ a → Stream (Of a) m ()
 yield a = Step (a :> empty)
 
-each :: [e] -> Stream (Of e) m ()
+each ∷ [e] → Stream (Of e) m ()
 each [] = Return ()
 each (x : xs) = Step $ x :> each xs
 
-ssum :: (Num e, Monad m) => Stream (Of e) m r -> m (Of e r)
+ssum ∷ (Num e, Monad m) ⇒ Stream (Of e) m r → m (Of e r)
 ssum (Return r) = pure (0 :> r)
-ssum (Effect m) = m >>= ssum
+ssum (Effect ma) = ma >>= ssum
 ssum (Step (e :> str)) = first (+ e) <$> ssum str
 
-printStream :: (Show e, Show r) => Stream (Of e) IO r -> IO ()
+printStream ∷ (Show e, Show r) ⇒ Stream (Of e) IO r → IO ()
 printStream (Return r) = putStrLn $ "Result: " <> show r
 printStream (Effect m) = do
   putStrLn "Run action:"
-  str <- m
-  printStream str
-printStream (Step (e :> str)) = do
+  stream ← m
+  printStream stream
+printStream (Step (e :> stream)) = do
   putStrLn $ "Element: " <> show e
-  printStream str
+  printStream stream
 
-instance (Functor f, Monad m) => Functor (Stream f m) where
-  fmap :: ∀ a b. (a -> b) -> Stream f m a -> Stream f m b
-  fmap fun = loop
+instance (Functor f, Monad m) ⇒ Functor (Stream f m) where
+  fmap ∷ ∀ a b. (a → b) → Stream f m a → Stream f m b
+  fmap fn (Return r) = Return $ fn r
+  fmap fn (Effect ma) = Effect $ fmap fn <$> ma
+  fmap fn (Step f) = Step $ fmap fn <$> f
+
+instance (Functor f, Monad m) ⇒ Monad (Stream f m) where
+  (>>=) ∷ ∀ r r1. Stream f m r → (r → Stream f m r1) → Stream f m r1
+  stream >>= fn = loop stream
     where
-      loop :: Stream f m a -> Stream f m b
-      loop (Return r) = Return $ fun r
+      loop ∷ Stream f m r → Stream f m r1
+      loop (Return r) = fn r
       loop (Effect m) = Effect $ loop <$> m
       loop (Step f) = Step $ loop <$> f
 
-instance (Functor f, Monad m) => Monad (Stream f m) where
-  (>>=) :: ∀ r r1. Stream f m r -> (r -> Stream f m r1) -> Stream f m r1
-  stream >>= fun = loop stream
-    where
-      loop :: Stream f m r -> Stream f m r1
-      loop (Return r) = fun r
-      loop (Effect m) = Effect $ loop <$> m
-      loop (Step f) = Step $ loop <$> f
-
-instance (Functor f, Monad m) => Applicative (Stream f m) where
+instance (Functor f, Monad m) ⇒ Applicative (Stream f m) where
   pure = Return
   (<*>) = ap
 
-stream1 :: Stream (Of Int) IO ()
+stream1 ∷ Stream (Of Int) IO ()
 stream1 = do
   yield 1
   effect (putStrLn "action 1")
@@ -79,81 +79,84 @@ stream1 = do
   effect (putStrLn "action 2")
   yield 3
 
-maps :: (Functor f, Monad m) => (∀ x. f x -> g x) -> Stream f m r -> Stream g m r
-maps fun = loop
+-- mapping the functors in Step (???)
+maps ∷ (Functor m, Functor f) ⇒ (f (Stream g m r) → g (Stream g m r)) → Stream f m r → Stream g m r
+maps fn = loop
   where
     loop (Return r) = Return r
     loop (Effect m) = Effect $ loop <$> m
-    loop (Step f) = Step $ fun $ loop <$> f
+    loop (Step f) = Step $ fn $ loop <$> f
 
-mapOf :: Monad m => (a -> b) -> Stream (Of a) m r -> Stream (Of b) m r
-mapOf fun = maps $ first fun
+mapOf ∷ Monad m ⇒ (a → b) → Stream (Of a) m r → Stream (Of b) m r
+mapOf fn = maps $ first fn
 
-zipsWith :: Monad m => (∀ x y p. (x -> y -> p) -> f x -> g y -> h p) -> Stream f m r -> Stream g m r -> Stream h m r
-zipsWith fun = loop
+-- zipsWith ∷ Functor m ⇒ ((Stream f m r → Stream g m r → Stream h m r) → f (Stream f m r) → g (Stream g m r) → h (Stream h m r)) → Stream f m r → Stream g m r → Stream h m r
+zipsWith ∷ Monad m ⇒ (∀ x y p. (x → y → p) → f x → g y → h p) → Stream f m r → Stream g m r → Stream h m r
+zipsWith fn = loop
   where
+    -- loop ∷ Stream f m r → Stream g m r → Stream h m r
     loop (Return r) _ = Return r
     loop _ (Return r) = Return r
-    loop (Effect m) t = Effect $ fmap (`loop` t) m
-    loop s (Effect n) = Effect $ fmap (loop s) n
-    loop (Step fs) (Step gs) = Step $ fun loop fs gs
+    loop (Effect m) t = Effect $ (`loop` t) <$> m
+    loop s (Effect n) = Effect $ loop s <$> n
+    loop (Step fs) (Step gs) = Step $ fn loop fs gs
 
-zipPair :: Monad m => Stream (Of a) m r -> Stream (Of b) m r -> Stream (Of (a, b)) m r
-zipPair = zipsWith fun
+zipPair ∷ Monad m ⇒ Stream (Of a) m r → Stream (Of b) m r → Stream (Of (a, b)) m r
+zipPair = zipsWith fn
   where
-    fun p (e1 :> x) (e2 :> y) = (e1, e2) :> p x y
+    -- fn ∷ (t → t1 → b1) → Of a t → Of b t1 → Of (a, b) b1
+    fn p (a :> x) (b :> y) = (a, b) :> p x y
 
-zips :: (Monad m, Functor f, Functor g) => Stream f m r -> Stream g m r -> Stream (Compose f g) m r
-zips = zipsWith fun
+compose ∷ (Monad m, Functor f, Functor g) ⇒ Stream f m r → Stream g m r → Stream (Compose f g) m r
+compose = zipsWith fn
   where
-    fun p fx gy = Compose (fmap (\x -> fmap (p x) gy) fx)
+    -- fn ∷ (t → a → a1) → f t → g a → Compose f g a1
+    fn p ft ga = Compose $ (\x → p x <$> ga) <$> ft
 
-decompose :: (Monad m, Functor f) => Stream (Compose m f) m r -> Stream f m r
+decompose ∷ (Monad m, Functor f) ⇒ Stream (Compose m f) m r → Stream f m r
 decompose = loop
   where
+    -- loop ∷ Stream (Compose m f) m r → Stream f m r
     loop (Return r) = Return r
-    loop (Effect m) = Effect (fmap loop m)
+    loop (Effect m) = Effect (loop <$> m)
     loop (Step (Compose mstr)) = Effect $ do Step . fmap loop <$> mstr
 
-mapsM :: (Monad m, Functor f, Functor g) => (∀ x. f x -> m (g x)) -> Stream f m r -> Stream g m r
-mapsM fun = decompose . maps (Compose . fun)
+-- mapsM ∷ (Monad m, Functor g, Functor f) ⇒ (f (Stream (Compose m g) m r) → m (g (Stream (Compose m g) m r))) → Stream f m r → Stream g m r
+mapsM ∷ (Monad m, Functor f, Functor g) ⇒ (∀ x. f x → m (g x)) → Stream f m r → Stream g m r
+mapsM fn = decompose . maps (Compose . fn)
 
-withEffect :: Monad m => (a -> m ()) -> Stream (Of a) m r -> Stream (Of a) m r
+withEffect ∷ Monad m ⇒ (a → m ()) → Stream (Of a) m r → Stream (Of a) m r
 withEffect eff = mapsM go
   where
+    -- go ∷ Of a b → m (Of a b)
     go p@(e :> _) = eff e >> pure p
 
-withPrinting :: Show a => Stream (Of a) IO r -> Stream (Of a) IO r
-withPrinting = withEffect (\e -> putStrLn ("Element: " ++ show e))
+withPrinting ∷ Show a ⇒ Stream (Of a) IO r → Stream (Of a) IO r
+withPrinting = withEffect (\e → putStrLn ("Element: " ++ show e))
 
-splitsAt :: (Monad m, Functor f) => Int -> Stream f m r -> Stream f m (Stream f m r)
+-- creates a Stream of Streams
+splitsAt ∷ (Monad m, Functor f) ⇒ Int → Stream f m r → Stream f m (Stream f m r)
 splitsAt = loop
   where
     loop n stream
       | n > 0 =
         case stream of
-          Return r -> Return (Return r)
-          Effect m -> Effect (fmap (loop n) m)
-          Step f -> Step (fmap (loop (n -1)) f)
+          Return r → Return (Return r)
+          Effect m → Effect (loop n <$> m)
+          Step f → Step (loop (n -1) <$> f)
       | otherwise = Return stream
 
-chunksOf :: ∀ f m r. (Monad m, Functor f) => Int -> Stream f m r -> Stream (Stream f m) m r
+chunksOf ∷ ∀ f m r. (Monad m, Functor f) ⇒ Int → Stream f m r → Stream (Stream f m) m r
 chunksOf n = loop
   where
-    cutChunk :: Stream f m r -> Stream f m (Stream (Stream f m) m r)
-    cutChunk str = fmap loop (splitsAt (n -1) str)
-
-    loop :: Stream f m r -> Stream (Stream f m) m r
+    cutChunk ∷ Stream f m r → Stream f m (Stream (Stream f m) m r)
+    cutChunk str = loop <$> splitsAt (n -1) str
+    loop ∷ Stream f m r → Stream (Stream f m) m r
     loop (Return r) = Return r
-    loop (Effect m) = Effect (fmap loop m)
-    loop (Step fs) = Step (Step (fmap cutChunk fs))
+    loop (Effect m) = Effect (loop <$> m)
+    loop (Step fs) = Step (Step (cutChunk <$> fs))
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  s :> () <-
-    ssum $
-      withEffect print $
-        mapsM ssum $
-          chunksOf 2 $
-            each [1, 1, 1, 1, 1 :: Int]
-  print s
+  s :> () ← ssum $ withEffect print $ mapsM ssum $ chunksOf 2 $ each [1, 1, 1, 1, 1 ∷ Int]
+  print s -- 2 2 1 5

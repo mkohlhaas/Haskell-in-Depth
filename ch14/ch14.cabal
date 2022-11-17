@@ -3,15 +3,17 @@ name:          ch14
 version:       0.1.0.0
 
 executable chars
-    main-is:          chars.hs
-    default-language: Haskell2010
+    main-is:            chars.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         streaming >=0.2.2 && <0.4
 
 executable copy
-    main-is:          copy.hs
-    default-language: Haskell2010
+    main-is:            copy.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         filepath >=1.4.1 && <1.5,
@@ -20,13 +22,14 @@ executable copy
         streaming-bytestring >=0.1.7 && <0.3
 
 executable covid
-    main-is:          Main.hs
-    hs-source-dirs:   covid
+    main-is:            Main.hs
+    hs-source-dirs:     covid
     other-modules:
         CovidCSVParser
         CovidData
 
-    default-language: Haskell2010
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         attoparsec ==0.13.*,
         base >=4.14.3.0 && <4.15,
@@ -42,8 +45,9 @@ executable covid
         time >=1.8 && <1.12
 
 executable csv-simple
-    main-is:          csv-simple.hs
-    default-language: Haskell2010
+    main-is:            csv-simple.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         attoparsec ==0.13.*,
         base >=4.14.3.0 && <4.15,
@@ -55,25 +59,29 @@ executable csv-simple
         text ==1.2.*
 
 executable lens-ex
-    main-is:          lens-ex.hs
-    default-language: Haskell2010
+    main-is:            lens-ex.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         lens >=4.17 && <4.20
 
 executable simple-streaming
-    main-is:          simple-streaming.hs
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            simple-streaming.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable stream
-    main-is:          stream.hs
-    default-language: Haskell2010
-    build-depends:    base >=4.14.3.0 && <4.15
+    main-is:            stream.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
 
 executable sumtab
-    main-is:          sumtab.hs
-    default-language: Haskell2010
+    main-is:            sumtab.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
     build-depends:
         base >=4.14.3.0 && <4.15,
         extra >=1.5 && <1.8,

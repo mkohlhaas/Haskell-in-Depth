@@ -12,22 +12,22 @@ import qualified Data.Text.Encoding as T
 import qualified Streaming.ByteString as BS
 import qualified Streaming.Prelude as S
 
-field :: Parser ByteString
-field = A.takeWhile (\c -> c /= ',' && c /= '\r' && c /= '\n')
+field ∷ Parser ByteString
+field = A.takeWhile (\c → c /= ',' && c /= '\r' && c /= '\n')
 
-textField :: Parser Text
+textField ∷ Parser Text
 textField = T.decodeUtf8 <$> field
 
-record :: Parser [Text]
+record ∷ Parser [Text]
 record = textField `sepBy1` char ','
 
-endOfFile :: Parser ()
+endOfFile ∷ Parser ()
 endOfFile = endOfInput <|> endOfLine *> endOfInput
 
-file :: Parser [[Text]]
+file ∷ Parser [[Text]]
 file = (:) <$> record <*> manyTill (endOfLine *> record) endOfFile
 
-main :: IO ()
+main ∷ IO ()
 -- main = B.readFile "data/quotes.csv" >>= print . parseOnly file
 main =
   runResourceT $

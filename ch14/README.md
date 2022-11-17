@@ -1,0 +1,5 @@
+- Order of Code Examples
+  - `stream.hs`
+  - `simple-streaming.hs`
+  - `sumtab.hs`
+  - `chars.hs`
