@@ -1,0 +1,111 @@
+cabal-version: 2.4
+name:          ch15
+version:       0.1.0.0
+
+flag with-pg
+    default: False
+    manual:  True
+
+executable hasql
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    build-depends:      base >=4.14.3.0 && <4.15
+
+    if flag(with-pg)
+        main-is:        Main.hs
+        hs-source-dirs: hasql
+        other-modules:
+            FilmInfo.Data
+            Statements
+            Sessions
+            DBActions
+
+        build-depends:
+            hasql,
+            hasql-th,
+            mtl,
+            profunctors,
+            text,
+            text-show,
+            vector
+
+    else
+        main-is: empty/Main.hs
+
+executable hdbc
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:
+        -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns
+        -Wincomplete-record-updates -Wno-unused-top-binds -Wno-orphans
+
+    build-depends:      base >=4.14.3.0 && <4.15
+
+    if flag(with-pg)
+        main-is:        hdbc.hs
+        hs-source-dirs: ch15
+        other-modules:  FilmInfo.Data
+        build-depends:
+            HDBC,
+            HDBC-postgresql,
+            convertible,
+            text,
+            text-show
+
+    else
+        main-is: empty/Main.hs
+
+executable opaleye
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:
+        -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns
+        -Wincomplete-record-updates -Wno-unused-top-binds -Wno-orphans
+
+    build-depends:      base >=4.14.3.0 && <4.15
+
+    if flag(with-pg)
+        main-is:        Main.hs
+        hs-source-dirs: ch15/opaleye ch15
+        other-modules:
+            FilmInfo.Data
+            FilmInfo.FromField
+            Tables
+            Queries
+            DBActions
+
+        build-depends:
+            bytestring,
+            opaleye,
+            postgresql-simple,
+            product-profunctors,
+            profunctors,
+            text,
+            text-show
+
+    else
+        main-is: empty/Main.hs
+
+executable pg-simple
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:
+        -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns
+        -Wincomplete-record-updates -Wno-unused-top-binds -Wno-orphans
+
+    build-depends:      base >=4.14.3.0 && <4.15
+
+    if flag(with-pg)
+        main-is:       pg-simple.hs
+        other-modules:
+            FilmInfo.Data
+            FilmInfo.FromField
+
+        build-depends:
+            bytestring,
+            postgresql-simple,
+            text,
+            text-show
+
+    else
+        main-is: empty/Main.hs
