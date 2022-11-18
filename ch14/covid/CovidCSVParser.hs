@@ -25,17 +25,13 @@ countryCode ∷ Parser ByteString
 countryCode = A.take 3 <* char ','
 
 countryCodeWithRest ∷ Parser CountryCodeWithRest
-countryCodeWithRest =
-  CountryCodeWithRest <$> countryCode
-    <*> A.takeWhile notEOL
-    <* endOfLine
+countryCodeWithRest = CountryCodeWithRest <$> countryCode <*> A.takeWhile notEOL <* endOfLine
 
 skipLine ∷ Parser ()
 skipLine = skipWhile notEOL <* endOfLine
 
 countryCodeWithRestOrSkip ∷ Parser (Maybe CountryCodeWithRest)
-countryCodeWithRestOrSkip =
-  Just <$> countryCodeWithRest <|> Nothing <$ skipLine
+countryCodeWithRestOrSkip = Just <$> countryCodeWithRest <|> Nothing <$ skipLine
 
 field ∷ Parser ByteString
 field = takeTill (== ',') <* char ','

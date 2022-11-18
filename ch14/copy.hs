@@ -12,7 +12,11 @@ copyFile' fIn fOut = do
 
 copyFile ∷ FilePath → FilePath → IO Int
 copyFile fIn fOut = runResourceT $ do
-  (len :> ()) ← BS.readFile fIn & BS.copy & BS.length & BS.writeFile fOut
+  (len :> ()) ←
+    BS.readFile fIn
+      & BS.copy
+      & BS.length
+      & BS.writeFile fOut
   pure len
 
 main ∷ IO ()
@@ -20,11 +24,10 @@ main = do
   [fp] ← getArgs
   let copyName = replaceBaseName fp (takeBaseName fp <> ".copy")
   len ← copyFile fp copyName
-  putStrLn $ show len <> " bytes copied"
+  putStrLn $ show len <> " bytes copied."
 
 {-
 Testing:
-
-dd if=/dev/urandom of=temp_1GB_file bs=1 count=0 seek=1g
+dd if=/dev/urandom of=temp_1GB_file bs=1M count=1024
 time cabal -v0 run copy -- temp_1GB_file
 -}

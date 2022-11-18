@@ -10,7 +10,7 @@ import Data.Map (Map)
 import qualified Data.Map as M
 import Data.Text (Text)
 import Data.Time (Day)
-import TextShow (TextShow (showb), fromText)
+import TextShow (Builder, TextShow (showb), fromText)
 
 data CountryData = CountryData
   { _iso_code ∷ !ByteString,
@@ -101,4 +101,5 @@ worldStats = M.foldl' (<>) mempty
 instance TextShow (Map Text AccumulatedStat) where
   showb stats = M.foldlWithKey' withEntry "" stats
     where
+      withEntry ∷ (TextShow a) ⇒ Builder → Text → a → Builder
       withEntry b nm st = b <> fromText nm <> "/" <> showb st <> "\n"
