@@ -2,74 +2,71 @@
 
 module DBActions where
 
-import Opaleye
-import Database.PostgreSQL.Simple (Connection)
-
-import Data.Text (Text)
 import Data.Int
 import Data.Maybe (catMaybes, listToMaybe)
-
-import FilmInfo.Data
+import Data.Text (Text)
+import Database.PostgreSQL.Simple (Connection)
+import FilmInfoData
+import Opaleye hiding (not, null)
 import qualified Queries as Q
 
-allFilms :: Connection -> IO [FilmInfo]
+allFilms ∷ Connection → IO [FilmInfo]
 allFilms conn = runSelect conn Q.filmSelect
 
-totalFilmsNumber :: Connection -> IO Int64
+totalFilmsNumber ∷ Connection → IO Int64
 totalFilmsNumber conn = do
-  [cnt] <- runSelect conn Q.countFilms
+  [cnt] ← runSelect conn Q.countFilms
   pure cnt
 
-findFilm :: Connection -> Text -> IO (Maybe FilmInfo)
+findFilm ∷ Connection → Text → IO (Maybe FilmInfo)
 findFilm conn = fmap listToMaybe . runSelect conn . Q.findFilm
 
-filmsLonger :: Connection -> FilmLength -> IO [FilmInfo]
+filmsLonger ∷ Connection → FilmLength → IO [FilmInfo]
 filmsLonger conn = runSelect conn . Q.filmsLonger
 
-filmsCategories :: Connection -> [Text] -> IO [FilmCategories]
+filmsCategories ∷ Connection → [Text] → IO [FilmCategories]
 filmsCategories conn films = catMaybes <$> mapM runSingle films
   where
     runSingle filmTitle = do
-      mfilm <- findFilm conn filmTitle
+      mfilm ← findFilm conn filmTitle
       case mfilm of
-        Nothing -> pure Nothing
-        Just film -> Just . FilmCategories film <$>
-                     runSelect conn (Q.filmCategories filmTitle)
+        Nothing → pure Nothing
+        Just film →
+          Just . FilmCategories film
+            <$> runSelect conn (Q.filmCategories filmTitle)
 
-setRating :: Connection -> Rating -> Text -> IO Int64
+setRating ∷ Connection → Rating → Text → IO Int64
 setRating conn r filmTitle = runUpdate_ conn (Q.setRating r filmTitle)
 
-findOrAddCategory :: Connection -> Text -> IO [CatId]
+findOrAddCategory ∷ Connection → Text → IO [CatId]
 findOrAddCategory conn catName = do
-  cats <- runSelect conn (Q.catIdByName catName)
+  cats ← runSelect conn (Q.catIdByName catName)
   case cats of
-    [] -> runInsert_ conn (Q.newCategory catName)
-    (cid:_) -> pure [cid]
+    [] → runInsert_ conn (Q.newCategory catName)
+    (cid : _) → pure [cid]
 
-isAssigned :: Connection -> CatId -> FilmId -> IO Bool
+isAssigned ∷ Connection → CatId → FilmId → IO Bool
 isAssigned conn cid fid = do
-  cats <- runSelect conn (Q.findAssigned cid fid) :: IO [CatId]
-  pure (length cats > 0)
+  cats ← runSelect conn (Q.findAssigned cid fid) ∷ IO [CatId]
+  pure (not (null cats))
 
-assignUnlessAssigned :: Connection -> CatId -> FilmId -> IO Int64
+assignUnlessAssigned ∷ Connection → CatId → FilmId → IO Int64
 assignUnlessAssigned conn cid fid = do
-  b <- isAssigned conn cid fid
-  case b of
-    True -> pure 0
-    False -> runInsert_ conn (Q.assignCategory cid fid)
+  b ← isAssigned conn cid fid
+  if b then pure 0 else runInsert_ conn (Q.assignCategory cid fid)
 
-assignCategory :: Connection -> Text -> Text -> IO Int64
+assignCategory ∷ Connection → Text → Text → IO Int64
 assignCategory conn catName filmTitle = do
-    [cid] <- findOrAddCategory conn catName
-    filmIds <- runSelect conn (Q.filmIdByTitle filmTitle)
-    case filmIds of
-      [] -> pure 0
-      (fid:_) -> assignUnlessAssigned conn cid fid
+  [cid] ← findOrAddCategory conn catName
+  filmIds ← runSelect conn (Q.filmIdByTitle filmTitle)
+  case filmIds of
+    [] → pure 0
+    (fid : _) → assignUnlessAssigned conn cid fid
 
-unassignCategory :: Connection -> Text -> Text -> IO Int64
+unassignCategory ∷ Connection → Text → Text → IO Int64
 unassignCategory conn catName filmTitle = do
-  catIds <- runSelect conn (Q.catIdByName catName)
-  filmIds <- runSelect conn (Q.filmIdByTitle filmTitle)
+  catIds ← runSelect conn (Q.catIdByName catName)
+  filmIds ← runSelect conn (Q.filmIdByTitle filmTitle)
   case (catIds, filmIds) of
-    ([cid], [fid]) -> runDelete_ conn (Q.unassignCategory cid fid)
-    _ -> pure 0
+    ([cid], [fid]) → runDelete_ conn (Q.unassignCategory cid fid)
+    _ → pure 0

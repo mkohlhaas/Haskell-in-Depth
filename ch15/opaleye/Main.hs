@@ -1,15 +1,13 @@
 {-# LANGUAGE OverloadedStrings #-}
 
-import Database.PostgreSQL.Simple (Connection, connectPostgreSQL)
-
-import Prelude hiding (putStr, putStrLn)
-import Data.Text.IO
-import TextShow
-
-import FilmInfo.Data
 import DBActions
+import Data.Text.IO
+import Database.PostgreSQL.Simple (Connection, connectPostgreSQL)
+import FilmInfoData
+import TextShow
+import Prelude hiding (putStr, putStrLn)
 
-demo :: Connection -> IO ()
+demo ∷ Connection → IO ()
 demo conn = do
   allFilms conn >>= mapM_ printFilm . take 5
 
@@ -29,8 +27,11 @@ demo conn = do
   filmsCategories conn films >>= mapM_ printT
 
   let newRating = NC17
-  putStr $ "\nSetting rating " <> fromRating newRating
-              <>  " for a film (" <> film <> "): "
+  putStr $
+    "\nSetting rating " <> fromRating newRating
+      <> " for a film ("
+      <> film
+      <> "): "
   setRating conn newRating film >>= printT
   findFilm conn film >>= printT
 
@@ -43,9 +44,9 @@ demo conn = do
   unassignCategory conn newCat film >>= print
   filmsCategories conn [film] >>= mapM_ printT
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  conn <- connectPostgreSQL connString
+  conn ← connectPostgreSQL connString
   demo conn
- where
-   connString = "host=localhost dbname=sakila_films"
+  where
+    connString = "host=localhost dbname=sakila_films"

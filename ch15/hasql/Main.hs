@@ -1,17 +1,15 @@
 {-# LANGUAGE OverloadedStrings #-}
 
+import DBActions
+import Data.Text.IO
+import qualified Data.Vector as V
+import FilmInfoData
 import Hasql.Connection (Connection)
 import qualified Hasql.Connection as Connection
-
-import Prelude hiding (putStr, putStrLn)
-import Data.Text.IO
 import TextShow
-import qualified Data.Vector as V
+import Prelude hiding (putStr, putStrLn)
 
-import FilmInfo.Data
-import DBActions
-
-demo :: Connection -> IO ()
+demo ∷ Connection → IO ()
 demo conn = do
   printAllFilms conn
   allFilms conn >>= mapM_ printFilm . V.take 5
@@ -32,8 +30,11 @@ demo conn = do
   filmsCategories conn films >>= mapM_ printT
 
   let newRating = NC17
-  putStr $ "\nSetting rating " <> fromRating newRating
-              <>  " for a film (" <> film <> "): "
+  putStr $
+    "\nSetting rating " <> fromRating newRating
+      <> " for a film ("
+      <> film
+      <> "): "
   setRating conn newRating film >>= printT
   findFilm conn film >>= printT
 
@@ -46,10 +47,10 @@ demo conn = do
   unassignCategory conn newCat film >>= print
   filmsCategories conn [film] >>= mapM_ printT
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  Right conn <- Connection.acquire connectionSettings
+  Right conn ← Connection.acquire connectionSettings
   demo conn
- where
+  where
     connectionSettings =
-      Connection.settings "localhost" 5432 "" "" "sakila_films"
+      Connection.settings "localhost" 5432 "schmidh" "CHANGE_ME" "sakila_films"

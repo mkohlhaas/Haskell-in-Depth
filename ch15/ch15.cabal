@@ -2,110 +2,75 @@ cabal-version: 2.4
 name:          ch15
 version:       0.1.0.0
 
-flag with-pg
-    default: False
-    manual:  True
-
 executable hasql
+    main-is:            Main.hs
+    hs-source-dirs:     hasql FilmInfo
+    other-modules:
+        FilmInfoData
+        Statements
+        Sessions
+        DBActions
+
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
-    build-depends:      base >=4.14.3.0 && <4.15
-
-    if flag(with-pg)
-        main-is:        Main.hs
-        hs-source-dirs: hasql
-        other-modules:
-            FilmInfo.Data
-            Statements
-            Sessions
-            DBActions
-
-        build-depends:
-            hasql,
-            hasql-th,
-            mtl,
-            profunctors,
-            text,
-            text-show,
-            vector
-
-    else
-        main-is: empty/Main.hs
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        hasql >=1.6.2 && <1.7,
+        hasql-th >=0.4.0 && <0.5,
+        mtl >=2.2.2 && <2.3,
+        profunctors >=5.6.2 && <5.7,
+        text >=1.2.4 && <1.3,
+        text-show >=3.10 && <3.11,
+        vector >=0.13.0 && <0.14
 
 executable hdbc
+    main-is:            hdbc.hs
+    hs-source-dirs:     hdbc FilmInfo
+    other-modules:      FilmInfoData
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
-    ghc-options:
-        -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns
-        -Wincomplete-record-updates -Wno-unused-top-binds -Wno-orphans
-
-    build-depends:      base >=4.14.3.0 && <4.15
-
-    if flag(with-pg)
-        main-is:        hdbc.hs
-        hs-source-dirs: ch15
-        other-modules:  FilmInfo.Data
-        build-depends:
-            HDBC,
-            HDBC-postgresql,
-            convertible,
-            text,
-            text-show
-
-    else
-        main-is: empty/Main.hs
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        HDBC >=2.4.0 && <2.5,
+        HDBC-postgresql >=2.5.0 && <2.6,
+        convertible >=1.1.1 && <1.2,
+        text >=1.2.4 && <1.3,
+        text-show >=3.10 && <3.11
 
 executable opaleye
+    main-is:            Main.hs
+    hs-source-dirs:     opaleye FilmInfo
+    other-modules:
+        FilmInfoData
+        FilmInfoFromField
+        Tables
+        Queries
+        DBActions
+
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
-    ghc-options:
-        -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns
-        -Wincomplete-record-updates -Wno-unused-top-binds -Wno-orphans
-
-    build-depends:      base >=4.14.3.0 && <4.15
-
-    if flag(with-pg)
-        main-is:        Main.hs
-        hs-source-dirs: ch15/opaleye ch15
-        other-modules:
-            FilmInfo.Data
-            FilmInfo.FromField
-            Tables
-            Queries
-            DBActions
-
-        build-depends:
-            bytestring,
-            opaleye,
-            postgresql-simple,
-            product-profunctors,
-            profunctors,
-            text,
-            text-show
-
-    else
-        main-is: empty/Main.hs
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        bytestring >=0.10.12 && <0.11,
+        opaleye >=0.9.6 && <0.10,
+        postgresql-simple >=0.6.5 && <0.7,
+        product-profunctors >=0.11.0 && <0.12,
+        profunctors >=5.6.2 && <5.7,
+        text >=1.2.4 && <1.3,
+        text-show >=3.10 && <3.11
 
 executable pg-simple
+    main-is:            pg-simple.hs
+    hs-source-dirs:     pg-simple FilmInfo
+    other-modules:
+        FilmInfoData
+        FilmInfoFromField
+
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
-    ghc-options:
-        -Wall -Werror -Wcompat -Widentities -Wincomplete-uni-patterns
-        -Wincomplete-record-updates -Wno-unused-top-binds -Wno-orphans
-
-    build-depends:      base >=4.14.3.0 && <4.15
-
-    if flag(with-pg)
-        main-is:       pg-simple.hs
-        other-modules:
-            FilmInfo.Data
-            FilmInfo.FromField
-
-        build-depends:
-            bytestring,
-            postgresql-simple,
-            text,
-            text-show
-
-    else
-        main-is: empty/Main.hs
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        bytestring >=0.10.12 && <0.11,
+        postgresql-simple >=0.6.5 && <0.7,
+        text >=1.2.4 && <1.3,
+        text-show >=3.10 && <3.11
