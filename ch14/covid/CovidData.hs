@@ -12,6 +12,10 @@ import Data.Text (Text)
 import Data.Time (Day)
 import TextShow (Builder, TextShow (showb), fromText)
 
+---------------------------------
+-- Hierarchical Data Structure --
+---------------------------------
+
 data CountryData = CountryData
   { _iso_code ∷ !ByteString,
     _continent ∷ !Text,
@@ -21,32 +25,40 @@ data CountryData = CountryData
     _days ∷ ![(Day, DayInfo)],
     _stat ∷ !CountryStat
   }
+  deriving Show
 
 data DayInfo = DayInfo
   { _cases ∷ !DayCases,
     _deaths ∷ !DayDeaths
   }
+  deriving Show
 
 data DayCases = DayCases
   { _total_cases ∷ !Int,
     _new_cases ∷ !Int
   }
+  deriving Show
 
 data DayDeaths = DayDeaths
   { _total_deaths ∷ !Int,
     _new_deaths ∷ !Int
   }
+  deriving Show
 
 data CountryStat = CountryStat
   { _population ∷ !Int,
     _population_density ∷ !(Maybe Double)
   }
+  deriving Show
 
 data AccumulatedStat = AccumulatedStat
   { _acc_population ∷ !Int,
     _acc_total_cases ∷ !Int,
     _acc_total_deaths ∷ !Int
   }
+  deriving Show
+
+-- Using lenses we have easy access to any level of this hierarchy.
 
 makeLenses ''CountryData
 makeLenses ''DayInfo
@@ -91,7 +103,8 @@ fromCountryData cd =
 considerCountry ∷ Map Text AccumulatedStat → CountryData → Map Text AccumulatedStat
 considerCountry stats cd = M.insertWith (<>) (cd ^. continent) (fromCountryData cd) stats
 
---   stats &
+-- with lenses
+-- considerCountry stats cd = stats &
 --      let new = fromCountryData cd
 --      in at (cd ^. continent) %~ Just . maybe new (<> new)
 

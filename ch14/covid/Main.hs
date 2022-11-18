@@ -25,6 +25,7 @@ tryMkCountryData str =
       case parseFullCountryData line1 of
         Nothing → S.effects otherLines >>= noCountryData
         Just cd → first (Just . withDaysAndTotals cd) <$> S.mconcat (S.map parseDayInfo otherLines)
+    -- noCountryData ∷ b → m (Of (Maybe a) b)
     noCountryData = pure . (Nothing :>)
 
 printCountryData ∷ (MonadIO m, TextShow a) ⇒ Stream (Of a) m r → m r
