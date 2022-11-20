@@ -1,35 +1,33 @@
 import Control.Concurrent (threadDelay)
 import Control.Concurrent.Async
 import Control.Monad (forever)
+import System.IO (BufferMode (..), hSetBuffering, stdout)
 
-import System.IO (hSetBuffering, stdout, BufferMode(..))
-
-oneSec :: Int
+oneSec ∷ Int
 oneSec = 1000000
 
-doSomethingUseful :: IO ()
+doSomethingUseful ∷ IO ()
 doSomethingUseful = do
   threadDelay $ 5 * oneSec
-  putStrLn "All done"
+  putStrLn "\nAll done."
 
-printDots :: Int -> IO ()
+printDots ∷ Int → IO ()
 printDots msec = forever $ do
-  putStrLn "."
+  putStr "."
   threadDelay msec
 
-waitEnter :: IO ()
+waitEnter ∷ IO ()
 waitEnter = getLine >> pure ()
 
-main :: IO ()
+main ∷ IO ()
 main = do
   hSetBuffering stdout NoBuffering
   putStrLn "Start doing something useful"
-{-
-  withAsync (printDots oneSec) $ \_ ->
-    withAsync waitEnter $ \enter ->
-      withAsync doSomethingUseful $ \useful ->
-        waitEither_ enter useful
--}
-  race_ (printDots oneSec) $
-    race_ waitEnter doSomethingUseful
-  putStrLn "Exiting..."
+  race_ (printDots oneSec) $ race_ waitEnter doSomethingUseful
+  {-
+    withAsync (printDots oneSec) $ \_ →
+      withAsync waitEnter $ \enter →
+        withAsync doSomethingUseful $ \useful →
+          waitEither_ enter useful
+  -}
+  putStrLn "Bye bye ..."

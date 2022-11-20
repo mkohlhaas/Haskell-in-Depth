@@ -1,36 +1,36 @@
-{-# LANGUAGE BangPatterns #-}
-
-import Control.Concurrent
-import Control.Concurrent.Async
+import Control.Concurrent (Chan, newChan, readChan, threadDelay, writeChan)
+import Control.Concurrent.Async (async, wait)
 import Control.Monad (forM_)
 
-oneSec :: Int
+oneSec ∷ Int
 oneSec = 1000000
 
-sendNumbers :: [Int] -> Chan (Maybe Int) -> IO ()
+-- producer
+sendNumbers ∷ [Int] → Chan (Maybe Int) → IO ()
 sendNumbers xs ch = do
-  forM_ xs $ \x -> do
+  forM_ xs $ \x → do
     writeChan ch (Just x)
-    threadDelay $ oneSec `div` 2
+    threadDelay oneSec
   writeChan ch Nothing
 
-sumNumbers :: Chan (Maybe Int) -> IO Int
+-- consumer
+sumNumbers ∷ Chan (Maybe Int) → IO Int
 sumNumbers ch = loop 0
   where
-    loop !acc = do
-      next <- readChan ch
+    loop acc = do
+      next ← readChan ch
       case next of
-        Just n -> do
+        Nothing → do
+          putStrLn "There are no more numbers."
+          pure acc
+        Just n → do
           putStrLn $ "We've got a number: " ++ show n
           loop (acc + n)
-        Nothing -> do
-          putStrLn "There are no more numbers"
-          pure acc
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  ch <- newChan
-  summator <- async (sumNumbers ch)
-  _ <- async (sendNumbers [1..5] ch)
-  res <- wait summator
-  putStrLn $ "Sum is " ++ show res
+  ch ← newChan
+  async (sendNumbers [1 .. 5] ch) --- one thread sends numbers (producer)
+  summator ← async (sumNumbers ch) -- another thread sums those numbers (consumer)
+  res ← wait summator
+  putStrLn $ "Sum is: " ++ show res

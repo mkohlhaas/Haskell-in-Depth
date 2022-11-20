@@ -1,0 +1,137 @@
+cabal-version: 2.4
+name:          ch16
+version:       0.1.0.0
+
+executable async-exc
+    main-is:            async-exc.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:      base >=4.14.3.0 && <4.15
+
+executable conc-hello
+    main-is:            conc-hello.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:      base >=4.14.3.0 && <4.15
+
+executable dots
+    main-is:            dots.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:      base >=4.14.3.0 && <4.15
+
+executable dots-async
+    main-is:            dots-async.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15
+
+executable dots-async-cancel
+    main-is:            dots-async-cancel.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15,
+        random >=1.2.1 && <1.3
+
+executable dots-async-interrupted
+    main-is:            dots-async-interrupted.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15
+
+executable dots-stm
+    main-is:            dots-stm.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15,
+        stm >=2.5.0 && <2.6
+
+executable interleaving
+    main-is:            interleaving.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:      base >=4.14.3.0 && <4.15
+
+executable mvar-deadlocks
+    main-is:            mvar-deadlocks.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15
+
+executable ordered-threads
+    main-is:            ordered-threads.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15,
+        stm >=2.5.0 && <2.6
+
+executable pub-sub
+    main-is:            pub-sub.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15,
+        stm >=2.5.0 && <2.6,
+        stm-chans >=3.0.0 && <3.1
+
+executable sum-numbers
+    main-is:            sum-numbers.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15
+
+executable sum-numbers-many-workers
+    main-is:            sum-numbers-many-workers.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15,
+        stm >=2.5.0 && <2.6,
+        stm-chans >=3.0.0 && <3.1
+
+executable tree-async
+    main-is:            tree-async.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        async >=2.2.4 && <2.3,
+        base >=4.14.3.0 && <4.15
+
+executable wait-completion
+    main-is:            wait-completion.hs
+    default-language:   Haskell2010
+    default-extensions: UnicodeSyntax
+    ghc-options:        -threaded
+    build-depends:
+        base >=4.14.3.0 && <4.15,
+        random >=1.2.1 && <1.3

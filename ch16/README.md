@@ -1,0 +1,18 @@
+- [Guest lecture: Concurrency in Haskell](https://www.youtube.com/watch?v=nrTge_JCib0)
+
+- Order of Code Examples
+  - `conc-hello.hs`
+  - `dots.hs`
+  - `interleaving.hs`
+  - `async-exc.hs`
+  - `dots-async.hs`
+  - `dots-async-cancel.hs`
+  - `dots-async-interrupted.hs`
+  - `tree-async.hs`
+  - `wait-completion.hs`
+  - `sum-numbers.hs`
+  - `mvar-deadlocks.hs`
+  - `ordered-threads.hs`
+  - `dots-stm.hs`
+  - `sum-numbers-many-workers.hs`
+  - `pub-sub.hs`

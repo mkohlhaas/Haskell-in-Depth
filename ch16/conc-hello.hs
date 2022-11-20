@@ -1,6 +1,6 @@
 import Control.Concurrent (getNumCapabilities)
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  n <- getNumCapabilities
+  n ← getNumCapabilities
   putStrLn $ "This program runs over " ++ show n ++ " capabilities"

@@ -1,62 +1,79 @@
-import Control.Exception
 import Control.Concurrent
+import Control.Exception
 
-oneSec :: Int
+oneSec ∷ Int
 oneSec = 1000000
 
-acquire :: IO ()
+acquire ∷ IO ()
 acquire = do
   putStrLn "Start resource acquisition"
   threadDelay oneSec
   putStrLn "Resource is acquired"
 
-release :: IO ()
-release = do
-  putStrLn "Start releasing the resource"
-  threadDelay oneSec
-  putStrLn "Resource is released"
-
-use :: IO ()
+use ∷ IO ()
 use = do
   putStrLn "Begin using the resource"
   threadDelay (2 * oneSec)
   putStrLn "End using the resource"
 
-workWithResource :: IO ()
+release ∷ IO ()
+release = do
+  putStrLn "Start releasing the resource"
+  threadDelay oneSec
+  putStrLn "Resource is released"
+
+workWithResource ∷ IO ()
 workWithResource = do
   acquire
   use `onException` release
   release
 
-workWithResourceSafe :: IO ()
-workWithResourceSafe = uninterruptibleMask $ \restore -> do
-    acquire
-    restore use `onException` release
-    release
+workWithResourceSafe ∷ IO ()
+workWithResourceSafe = uninterruptibleMask $ \restore → do
+  acquire
+  restore use `onException` release
+  release
 
-experiment :: Int -> IO () -> IO ()
+experiment ∷ Int → IO () → IO ()
 experiment timeout action = do
-  thr <- forkIO action
+  thr ← forkIO action
   threadDelay timeout
   killThread thr
   threadDelay (2 * oneSec)
 
-main :: IO ()
+main ∷ IO ()
 main = do
-  putStrLn "Asynchronous exception during `acquire`"
+  putStrLn "--------------------------------------------------"
+  putStrLn "-- Asynchronous exception during `acquire`      --"
+  putStrLn "--------------------------------------------------"
   experiment (oneSec `div` 2) workWithResource
 
-  putStrLn "\nAsynchronous exception during `use`"
+  putStrLn ""
+  putStrLn "--------------------------------------------------"
+  putStrLn "-- Asynchronous exception during `use`          --"
+  putStrLn "--------------------------------------------------"
   experiment (oneSec + oneSec `div` 2) workWithResource
 
-  putStrLn "\nAsynchronous exception during `release`"
+  putStrLn ""
+  putStrLn "--------------------------------------------------"
+  putStrLn "-- Asynchronous exception during `release`      --"
+  putStrLn "--------------------------------------------------"
   experiment (3 * oneSec + oneSec `div` 2) workWithResource
 
-  putStrLn "\nAsynchronous exception during `acquire`/safe"
+  putStrLn ""
+  putStrLn "--------------------------------------------------"
+  putStrLn "-- Asynchronous exception during `acquire`/safe --"
+  putStrLn "--------------------------------------------------"
   experiment (oneSec `div` 2) workWithResourceSafe
 
-  putStrLn "\nAsynchronous exception during `use`/safe"
+  putStrLn ""
+  putStrLn "--------------------------------------------------"
+  putStrLn "-- Asynchronous exception during `use`/safe     --"
+  putStrLn "--------------------------------------------------"
   experiment (oneSec + oneSec `div` 2) workWithResourceSafe
 
-  putStrLn "\nAsynchronous exception during `release`/safe"
+  putStrLn ""
+  putStrLn "--------------------------------------------------"
+  putStrLn "-- Asynchronous exception during `release`/safe --"
+  putStrLn "--------------------------------------------------"
   experiment (3 * oneSec + oneSec `div` 2) workWithResourceSafe

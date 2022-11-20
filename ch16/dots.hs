@@ -1,25 +1,25 @@
 import Control.Concurrent (forkIO, killThread, threadDelay)
 import Control.Monad (forever)
-import System.IO (hSetBuffering, stdout, BufferMode(..))
+import System.IO (BufferMode (..), hSetBuffering, stdout)
 
-oneSec :: Int
+oneSec ∷ Int
 oneSec = 1000000
 
-doSomethingUseful :: IO ()
+doSomethingUseful ∷ IO ()
 doSomethingUseful = do
   threadDelay $ 5 * oneSec
-  putStrLn "All done"
+  putStrLn "\nAll done."
 
-printDots :: Int -> IO ()
+printDots ∷ Int → IO ()
 printDots msec = forever $ do
-  putStrLn "."
+  putStr "."
   threadDelay msec
 
-main :: IO ()
+main ∷ IO ()
 main = do
   hSetBuffering stdout NoBuffering
   putStrLn "Start doing something useful"
-  dotsPrinter <- forkIO (printDots oneSec)
+  dotsPrinter ← forkIO (printDots oneSec)
   doSomethingUseful
   killThread dotsPrinter
-  putStrLn "Exiting..."
+  putStrLn "Bye bye ..."
