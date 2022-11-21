@@ -1,3 +1,4 @@
+==========================================================================================
 https://github.com/lovasko/tablize
 https://serokell.io/blog/type-families-haskell
 https://serokell.io/blog/haskell-type-level-witness
@@ -11,3 +12,23 @@ https://holmusk.dev/blog/2021-08-20-Exploring-Template-Haskell.html
 https://github.com/jhrcek/hs-playground/blob/main/template-haskell-intro/presentation.odp
 https://www.reddit.com/r/haskell/comments/s33jnu/typed_template_haskell_in_ghc_9/
 Ch. 12.3.2: RPC
+==========================================================================================
+1. https://github.com/mkohlhaas/Dependent-Types (proofs)
+2. https://github.com/mkohlhaas/Haskell-in-Depth: door chapter
+3. https://github.com/mkohlhaas/Functional-Programming-Made-Easier
+4. https://github.com/mkohlhaas/Thinking-with-Types
+5. https://github.com/mkohlhaas/Optics-by-Example
+6. https://github.com/mkohlhaas/Haskell-in-Depth
+7. https://github.com/mkohlhaas/Parallel-and-Concurrent-Programming-in-Haskell
+
+Haskell libraries:
+aeson
+attoparsec
+bytestring
+fmt
+mtl
+optparse-applicative
+text
+text builder
+transformers
+==========================================================================================
