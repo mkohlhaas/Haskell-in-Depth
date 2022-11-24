@@ -16,6 +16,10 @@
 -- If we have a value, then we know its type (as always in Haskell).
 -- With singletons, if we have a type, we can be 100% sure about the value also, because only one value exists.
 
+-----------
+-- State --
+-----------
+
 -- With the DataKinds extension, we get types Opened and Closed right away.
 -- Note that the promoted types have no values.
 data DoorState = Opened | Closed
@@ -27,6 +31,10 @@ data DoorState = Opened | Closed
 -- >>> :kind 'Opened
 -- 'Opened ∷ DoorState
 
+-------------------------------------------
+-- Explicit Singletons for State (GADTs) --
+-------------------------------------------
+
 -- Let's define two singleton values - SClosed and SOpened - for Opened and Closed as GADTs.
 -- One value, one type.
 data SDoorState (s ∷ DoorState) where
@@ -36,13 +44,20 @@ data SDoorState (s ∷ DoorState) where
 -- The SDoorState Closed type is a singleton. There exists only one value of this type, namely, SClosed.
 -- SDoorState Opened is another singleton.
 
+-- The SClosed and SOpened values are EXPLICIT singletons.
+
 -- >>> :type SOpened
 -- SOpened ∷ SDoorState 'Opened
 
 -- >>> :type SClosed
 -- SClosed ∷ SDoorState 'Closed
 
--- The SClosed and SOpened values are EXPLICIT singletons.
+------------------------------------------------
+-- Implicit Singletons for State (Type Class) --
+------------------------------------------------
+
+-- Will be used as a Constraint!
+
 -- Sometimes it's more convenient to work with them IMPLICITLY via a type class.
 class SDoorStateI (s ∷ DoorState) where
   sDoorState ∷ SDoorState s
@@ -55,12 +70,16 @@ instance SDoorStateI Closed where
   sDoorState ∷ SDoorState 'Closed
   sDoorState = SClosed
 
+--------------------
+-- Creating Doors --
+--------------------
+
 -- We build the door with the MkDoor data constructor.
 -- Note that it has no arguments.
 -- Instead, it introduces the SDoorStateI constraint.
 -- Depending on the door type we actually build, `Door Closed` or `Door Opened`, GHC adds the corresponding instance!
 
--- Suppose we have the MkDoor value. How do we get its state? Is it opened or closed?
+-- Suppose we have the MkDoor value. How do we get its state? Is the door opened or closed?
 -- Here is how singletons come into play.
 -- We should consult the corresponding SDoorStateI instance, get a singleton, and pattern match over it.
 
@@ -69,6 +88,7 @@ data Door (s ∷ DoorState) where
   MkDoor ∷ SDoorStateI s ⇒ Door s
 
 -- ... we can use the sDoorState instance method to acquire an explicit singleton and then pattern match over it.
+-- Data with a constraint (Door) → Singleton → Value (of internal state)
 -- `doorState` goes from type to value.
 doorState ∷ ∀ s. Door s → DoorState
 doorState MkDoor =
@@ -76,7 +96,7 @@ doorState MkDoor =
     SOpened → Opened ----------------- pattern matching
     SClosed → Closed ----------------- pattern matching
 
--- usage of doorState
+-- doorState usage
 instance Show (Door s) where
   show ∷ Door s → String
   show d = "Door " <> show (doorState d) <> "."
@@ -93,8 +113,33 @@ open _ = MkDoor
 close ∷ Door Opened → Door Closed
 close _ = MkDoor
 
--- We can't write a function that returns `Door s` for some particular `s` depending on user input.
+-- >>> open MkDoor
+-- Door Opened.
 
+-- >>> open (MkDoor ∷ Door Opened)
+-- Couldn't match type ‘'Opened’ with ‘'Closed’
+-- Expected type: Door 'Closed
+--   Actual type: Door 'Opened
+
+-- >>> close MkDoor
+-- Door Closed.
+
+-- >>> close (MkDoor ∷ Door Closed)
+-- Couldn't match type ‘'Closed’ with ‘'Opened’
+-- Expected type: Door 'Opened
+--   Actual type: Door 'Closed
+
+------------------
+-- Existentials --
+------------------
+
+-- We can't write a function that returns `Door s` for some particular `s` depending on user input.
+-- We can't return a Door on user input.
+-- GHC error: "Expecting one more argument to ‘Door’. Expected a type, but ‘Door’ has kind ‘DoorState → *’"
+-- parseDoor ∷ String → Maybe Door
+-- parseDoor = undefined
+
+-- door wrapper
 -- Therefore we hide `s` inside an existential.
 data SomeDoor where
   SomeDoor ∷ Door s → SomeDoor
@@ -108,15 +153,10 @@ deriving instance Show SomeDoor
 -- "SomeDoor Door Opened."
 
 -- With SomeDoor it's easy to parse user input and build a door.
--- Instead of `Door s` - which can't be returned based on user input - we return (Maybe) SomeDoor.
 parseDoor ∷ String → Maybe SomeDoor
 parseDoor "Opened" = Just $ SomeDoor (MkDoor ∷ Door Opened) -- explicit type annotation leads GHC to add the corresponding SDoorStateI instances
 parseDoor "Closed" = Just $ SomeDoor (MkDoor ∷ Door Closed)
 parseDoor _ = Nothing
-
--- GHC error: "Expecting one more argument to ‘Door’. Expected a type, but ‘Door’ has kind ‘DoorState -> *’"
--- parseDoor ∷ String → Maybe Door
--- parseDoor = undefined
 
 -- We don't know the resulting type in advance, so we have to hide it inside SomeDoor.
 switchState ∷ ∀ s. Door s → SomeDoor
@@ -126,14 +166,16 @@ switchState door@MkDoor =
     SClosed → SomeDoor $ open door
 
 -- Open an already opened door, or closing an already closed door is not possible.
+-- GHC error: Couldn't match type ‘'Opened’ with ‘'Closed’
+-- GHC error: Couldn't match type ‘'Closed’ with ‘'Opened’
 -- switchState ∷ ∀ s. Door s → SomeDoor
 -- switchState door@MkDoor =
 --   case sDoorState ∷ SDoorState s of
 --     SOpened → SomeDoor $ open door
 --     SClosed → SomeDoor $ close door
 
-switchSome ∷ SomeDoor → SomeDoor
-switchSome (SomeDoor d) = switchState d
+switchSomeDoor ∷ SomeDoor → SomeDoor
+switchSomeDoor (SomeDoor d) = switchState d
 
 doorState' ∷ ∀ s. SomeDoor → DoorState
 doorState' (SomeDoor d) = doorState d
@@ -147,15 +189,39 @@ doorState' (SomeDoor d) = doorState d
 -- >>> doorState' <$> parseDoor "Half-Opened"
 -- Nothing
 
-test ∷ String → IO ()
-test d =
+openSomeDoor ∷ SomeDoor → SomeDoor
+openSomeDoor _ = SomeDoor (MkDoor ∷ Door Opened)
+
+closeSomeDoor ∷ SomeDoor → SomeDoor
+closeSomeDoor _ = SomeDoor (MkDoor ∷ Door Closed)
+
+test1 ∷ String → IO ()
+test1 d =
   case parseDoor d of
     Just door → do
       putStrLn $ "Given: " <> show door
-      putStrLn $ "Switched: " <> show (switchSome door)
-    Nothing → putStrLn "Incorrect argument"
+      putStrLn $ "Switched: " <> show (switchSomeDoor door)
+    Nothing → putStrLn "Incorrect argument."
+
+-- Not very satisfying!
+-- Renders the whole thing mootless/useless.
+test2 ∷ String → IO ()
+test2 d =
+  case parseDoor d of
+    Just door → do
+      putStrLn $ "Given: " <> show door
+      putStrLn $ "Open SomeDoor: " <> show (openSomeDoor door)
+      putStrLn $ "Close SomeDoor: " <> show (closeSomeDoor door)
+    Nothing → putStrLn "Incorrect argument."
 
 main ∷ IO ()
 main = do
-  test "Opened"
-  test "Closed"
+  test1 "Opened"
+  test1 "Closed"
+  test1 "Half-Opened"
+  putStrLn "----------------------------------------------------"
+  putStrLn "All operations must be defined on the original Door!"
+  putStrLn "----------------------------------------------------"
+  test2 "Opened"
+  test2 "Closed"
+  test2 "Half-Opened"

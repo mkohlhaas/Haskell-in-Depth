@@ -14,7 +14,7 @@ https://www.reddit.com/r/haskell/comments/s33jnu/typed_template_haskell_in_ghc_9
 Ch. 12.3.2: RPC
 ==========================================================================================
 1. https://github.com/mkohlhaas/Dependent-Types (proofs)
-2. https://github.com/mkohlhaas/Haskell-in-Depth: door chapter
+2. https://github.com/mkohlhaas/Haskell-in-Depth: safe elevator chapter
 3. https://github.com/mkohlhaas/Functional-Programming-Made-Easier
 4. https://github.com/mkohlhaas/Thinking-with-Types
 5. https://github.com/mkohlhaas/Optics-by-Example
