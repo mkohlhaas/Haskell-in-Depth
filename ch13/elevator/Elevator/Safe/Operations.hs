@@ -34,16 +34,9 @@ currentDoor ∷ ∀ mx cur door. Elevator mx cur door → Door
 currentDoor (MkElevator _) = fromSing (sing ∷ Sing door)
 
 instance Show (Elevator mx cur door) where
-  show el =
-    "Elevator {current = " <> show (currentFloor el)
-      <> ", door = "
-      <> show (currentDoor el)
-      <> "}"
+  show el = "Elevator {current = " <> show (currentFloor el) <> ", door = " <> show (currentDoor el) <> "}"
 
-up ∷
-  (BelowTop mx cur, MonadIO m) ⇒
-  Elevator mx cur Closed →
-  m (Elevator mx (S cur) Closed)
+up ∷ (BelowTop mx cur, MonadIO m) ⇒ Elevator mx cur Closed → m (Elevator mx (S cur) Closed)
 up (MkElevator fl) = do
   liftIO LL.up
   pure (MkElevator $ next fl)
@@ -53,40 +46,23 @@ down (MkElevator fl) = do
   liftIO LL.down
   pure $ MkElevator $ prev fl
 
-open ∷
-  MonadIO m ⇒
-  Floor mx cur →
-  Elevator mx cur Closed →
-  m (Elevator mx cur Opened)
+open ∷ MonadIO m ⇒ Floor mx cur → Elevator mx cur Closed → m (Elevator mx cur Opened)
 open _ (MkElevator fl) = do
   liftIO LL.open
   pure (MkElevator fl)
 
-close ∷
-  MonadIO m ⇒
-  Floor mx cur →
-  Elevator mx cur Opened →
-  m (Elevator mx cur Closed)
+close ∷ MonadIO m ⇒ Floor mx cur → Elevator mx cur Opened → m (Elevator mx cur Closed)
 close _ (MkElevator fl) = do
   liftIO LL.close
   pure (MkElevator fl)
 
-ensureClosed ∷
-  ∀ mx cur door m.
-  MonadIO m ⇒
-  Elevator mx cur door →
-  m (Elevator mx cur Closed)
+ensureClosed ∷ ∀ mx cur door m. MonadIO m ⇒ Elevator mx cur door → m (Elevator mx cur Closed)
 ensureClosed el@(MkElevator fl) =
   case sing ∷ Sing door of
     SClosed → pure el
     SOpened → close fl el
 
-ensureOpenedAt ∷
-  ∀ mx cur door m.
-  MonadIO m ⇒
-  Floor mx cur →
-  Elevator mx cur door →
-  m (Elevator mx cur Opened)
+ensureOpenedAt ∷ ∀ mx cur door m. MonadIO m ⇒ Floor mx cur → Elevator mx cur door → m (Elevator mx cur Opened)
 ensureOpenedAt fl el@(MkElevator _) =
   case sing ∷ Sing door of
     SOpened → pure el

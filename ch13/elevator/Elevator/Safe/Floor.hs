@@ -11,10 +11,10 @@
 
 module Elevator.Safe.Floor where
 
-import Data.Type.Dec
-import Data.Type.Equality
-import Data.Type.Nat
-import Data.Type.Nat.LE
+import Data.Type.Dec (Dec (..))
+import Data.Type.Equality (type (:~:))
+import Data.Type.Nat (Nat (S), Nat0, Nat3, Nat5, SNat (SS), SNatI, eqNat, snat, snatToNat, withSNat)
+import Data.Type.Nat.LE (LE (..), LEProof, decideLE, leStepL, withLEProof)
 
 -- definition of Nat
 -- data Nat = Z | S Nat
@@ -23,7 +23,7 @@ type GoodFloor max cur = (SNatI max, SNatI cur, LE cur max)
 
 -- GoodFloor is a Constraint/triple of Constraints.
 -- >>> :kind GoodFloor
--- GoodFloor ∷ Nat > Nat → Constraint
+-- GoodFloor ∷ Nat → Nat → Constraint
 
 -- So is SNatI.
 -- >>> :kind SNatI
@@ -33,7 +33,7 @@ type GoodFloor max cur = (SNatI max, SNatI cur, LE cur max)
 -- >>> :kind LE
 -- LE ∷ Nat → Nat → Constraint
 
--- SNatI max: we can always get a natural number out of the natural number.
+-- SNatI max: we can always get a singleton out of the natural number.
 -- LE cur max: `cur` is less or equal to `max`.
 
 data Floor (max ∷ Nat) (cur ∷ Nat) where
@@ -41,10 +41,7 @@ data Floor (max ∷ Nat) (cur ∷ Nat) where
 
 instance Show (Floor max cur) where
   show ∷ Floor max cur → String
-  show MkFloor =
-    "Floor " <> show (snatToNat (snat ∷ SNat cur))
-      <> " of "
-      <> show (snatToNat (snat ∷ SNat max))
+  show MkFloor = "Floor " <> show (snatToNat (snat ∷ SNat cur)) <> " of " <> show (snatToNat (snat ∷ SNat max))
 
 -- >>> MkFloor ∷ Floor Nat5 Nat0
 -- Floor 0 of 5

@@ -12,7 +12,7 @@ https://blog.jle.im/entries/series/+introduction-to-singletons.html
 - `doors/SingManual.hs`
 - `doors/SingGen.hs`
 - `elevator/Elevator/Safe/Floor.hs`
-- `elevator/Elevator/Safe/Moves.hs`
 - `elevator/Elevator/Safe/Operations.hs`
+- `elevator/Elevator/Safe/Moves.hs`
 - `elevator/Elevator/Safe.hs`
 - `elevator/UseSafe.hs`
