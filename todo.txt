@@ -32,3 +32,35 @@ text
 text builder
 transformers
 ==========================================================================================
+Haskell in Depth
+
+CORE HASKELL
+
+✓ 1 Functions and types
+✓ 2 Type classes
+✓ 3 Developing an application: Stock quotes
+
+INTRODUCTION TO APPLICATION DESIGN
+
+✗ 4 Haskell development with modules, packages, and projects
+✓ 5 Monads as practical functionality providers
+✓ 6 Structuring programs with monad transformers
+
+QUALITY ASSURANCE
+
+✓ 7 Error handling and logging
+✗ 8 Writing tests
+✓ 9 Haskell data and code at run time
+✓ 10 Benchmarking and profiling
+
+ADVANCED HASKELL
+
+✓ 11 Type system advances
+✓ 12 Metaprogramming in Haskell
+✓ 13 More about types
+
+HASKELL TOOLKIT
+
+✗ 14 Data-processing pipelines
+✗ 15 Working with relational databases
+✗ 16 Concurrency
