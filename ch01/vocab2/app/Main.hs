@@ -35,6 +35,10 @@ processTextFile fname = do
   text ← TIO.readFile fname
   printAllWords $ extractVocab text
 
+-- >>> text ← TIO.readFile "../../data/texts/hamlet.txt"
+-- >>> take 10 $ extractVocab text
+-- [("a",497),("a'th",2),("a-crosse",1),("a-downe",1),("a-downe-a",1),("a-dreames",1),("a-foot",1),("a-sleepe",1),("a-while",3),("a-worke",1)]
+
 main ∷ IO ()
 main = do
   args ← getArgs
