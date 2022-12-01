@@ -12,4 +12,5 @@ main = do
   -- let ws = map head $ group $ sort $ map T.toCaseFold $ filter (not . T.null) $ map (T.dropAround $ not . isLetter) $ T.words text
   let ws = text & T.words & map (T.dropAround $ not . isLetter) & filter (not . T.null) & map T.toCaseFold & sort & group & map head
   TIO.putStrLn $ T.unwords ws
+  TIO.putStrLn $ T.unlines ws
   print $ length ws

@@ -4,24 +4,33 @@ import Control.Monad (when)
 import Data.Char (isLetter)
 import Data.Function ((&))
 import Data.List (group, sort, sortOn)
+import Data.Maybe (fromMaybe)
 import Data.Ord (Down (Down))
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
 import Fmt (blockListF', fmt, nameF, unlinesF, (+|), (|+))
 import System.Environment (getArgs, getProgName)
+import Text.Read (readMaybe)
 
 type Entry = (Text, Int)
 
 type Vocabulary = [Entry]
 
 extractVocab ∷ Text → Vocabulary
-extractVocab text = map buildEntry $ group $ sort ws
+extractVocab text =
+  text
+    & T.words
+    & map cleanWord
+    & filter (not . T.null)
+    & map T.toCaseFold
+    & sort
+    & group
+    & map buildEntry
   where
-    ws = text & T.words & map cleanWord & filter (not . T.null) & map T.toCaseFold
+    cleanWord = T.dropAround (not . isLetter)
     buildEntry [] = error "unexpected"
     buildEntry xs@(x : _) = (x, length xs)
-    cleanWord = T.dropAround (not . isLetter)
 
 allWords ∷ Vocabulary → [Text]
 allWords = map fst
@@ -36,15 +45,15 @@ allWordsReport ∷ Vocabulary → Text
 allWordsReport vocab = fmt $ nameF "All words" $ unlinesF (allWords vocab)
 
 wordsCountReport ∷ Vocabulary → Text
-wordsCountReport vocab = fmt $ "Total number of words: " +| total |+ "\nNumber of unique words: " +| unique |+ "\n"
+wordsCountReport vocab = fmt $ "Total number of words: " +| totalWords |+ "\nNumber of unique words: " +| uniqueWords |+ "\n"
   where
-    (total, unique) = wordsCount vocab
+    (totalWords, uniqueWords) = wordsCount vocab
 
 frequentWordsReport ∷ Vocabulary → Int → Text
 frequentWordsReport vocab num = fmt $ nameF "Frequent words" $ blockListF' "" fmtEntry reportData
   where
     reportData = take num $ wordsByFrequency vocab
-    fmtEntry (t, n) = "" +| t |+ ": " +| n |+ ""
+    fmtEntry (word, count) = "" +| word |+ ": " +| count |+ ""
 
 processTextFile ∷ FilePath → Bool → Int → IO ()
 processTextFile fname withAllWords n = do
@@ -62,4 +71,6 @@ main = do
     [fname, num] → processTextFile fname False (read num)
     _ → do
       progName ← getProgName
-      putStrLn $ "Usage: " ++ progName ++ " [-a] filename freq_words_num"
+      putStrLn $ "Usage: " ++ progName ++ " [-a] `filename` `number of words`"
+  where
+    read num = fromMaybe 10 $ readMaybe num

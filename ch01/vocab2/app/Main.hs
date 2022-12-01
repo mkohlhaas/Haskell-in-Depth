@@ -11,12 +11,19 @@ type Entry = (Text, Int)
 type Vocabulary = [Entry]
 
 extractVocab ∷ Text → Vocabulary
-extractVocab text = ws & sort & group & map buildEntry
+extractVocab text =
+  text
+    & T.words
+    & map cleanWord
+    & filter (not . T.null)
+    & map T.toCaseFold
+    & sort
+    & group
+    & map buildEntry
   where
-    ws = text & T.words & map cleanWord & filter (not . T.null) & map T.toCaseFold
+    cleanWord = T.dropAround (not . isLetter)
     buildEntry [] = error "unexpected"
     buildEntry xs@(x : _) = (x, length xs)
-    cleanWord = T.dropAround (not . isLetter)
 
 printAllWords ∷ Vocabulary → IO ()
 printAllWords vocab = do
@@ -26,8 +33,7 @@ printAllWords vocab = do
 processTextFile ∷ FilePath → IO ()
 processTextFile fname = do
   text ← TIO.readFile fname
-  let vocab = extractVocab text
-  printAllWords vocab
+  printAllWords $ extractVocab text
 
 main ∷ IO ()
 main = do
@@ -36,4 +42,4 @@ main = do
     [fname] → processTextFile fname
     _ → do
       progName ← getProgName
-      putStrLn $ "Usage: " ++ progName ++ " filename"
+      putStrLn $ "Usage: " <> progName <> " `filename`"
