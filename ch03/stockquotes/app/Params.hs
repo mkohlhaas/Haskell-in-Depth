@@ -4,12 +4,13 @@ import Data.Text (Text, strip)
 import Options.Applicative (Parser, execParser, fullDesc, help, helper, info, long, metavar, optional, progDesc, short, strArgument, strOption, switch, (<**>))
 
 data Params = Params
-  { fname ∷ FilePath,
-    company ∷ Maybe Text,
-    chart ∷ Bool,
-    htmlFile ∷ Maybe FilePath,
-    silent ∷ Bool
+  { fname ∷ !FilePath,
+    company ∷ !(Maybe Text),
+    chart ∷ !Bool,
+    htmlFile ∷ !(Maybe FilePath),
+    silent ∷ !Bool
   }
+  deriving Show
 
 mkParams ∷ Parser Params
 mkParams =

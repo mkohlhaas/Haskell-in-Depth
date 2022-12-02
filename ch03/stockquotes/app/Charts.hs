@@ -4,9 +4,9 @@ module Charts (plotChart) where
 
 import Control.Monad (void)
 import Data.Foldable (toList)
-import Graphics.Rendering.Chart.Backend.Diagrams
+import Graphics.Rendering.Chart.Backend.Diagrams (FileFormat (SVG), FileOptions (FileOptions), loadSansSerifFonts, renderableToFile)
 import Graphics.Rendering.Chart.Easy hiding (bars, close, label)
-import QuoteData
+import QuoteData (QuoteData (..))
 
 {- ORMOLU_DISABLE -}
 plotChart ∷ Foldable t ⇒ String → t QuoteData → FilePath → IO ()
