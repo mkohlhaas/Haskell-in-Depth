@@ -1,9 +1,12 @@
 - Order of Code Examples
-  - `./apps/radar/radar.hs`, `./libs/radar/Radar.hs`
+  - `./apps/radar/radar.hs`
+  - `./libs/radar/Radar.hs`
   - `./tests/radar/Test.hs`
-  - `./apps/person/`, `./libs/person/Person.hs`
+  - `./apps/person/`
+  - `./libs/person/Person.hs`
   - `../expr/libs/Expr.hs`
   - `./libs/contexts/Contexts.hs`
+  - `../tests/expr/Test1.hs`
 
 - List of imported functions in chapter 2:
   - TextShow: `showb`, `fromString`, `printT`

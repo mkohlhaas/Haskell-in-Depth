@@ -8,6 +8,15 @@ deriving instance Read Person
 
 deriving instance Eq Person
 
+-- >>> show homer
+-- >>> show spj
+-- >>> homer == homer
+-- >>> homer == spj
+-- "Person \"Homer Simpson\" (Just 39)"
+-- "Person \"Simon Peyton Jones\" Nothing"
+-- True
+-- False
+
 main ∷ IO ()
 main = do
   print homer
