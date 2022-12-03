@@ -18,7 +18,10 @@ library expr-lib
 
 executable prefix-postfix
     main-is:            prefix-postfix.hs
-    hs-source-dirs:     apps
+    other-modules:
+        Expr
+        ShuntingYard
+    hs-source-dirs:     libs apps
     default-language:   Haskell2010
     default-extensions: UnicodeSyntax
     build-depends:

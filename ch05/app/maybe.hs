@@ -14,12 +14,19 @@ type Locations = [(Phone, Location)]
 doubleStrNumber ∷ (Num a, Read a) ⇒ String → Maybe a
 doubleStrNumber str = readMaybe str <&> (2 *)
 
+-- applicative style
 plusStrNumbers ∷ (Num a, Read a) ⇒ String → String → Maybe a
 plusStrNumbers str1 str2 = (+) <$> readMaybe str1 <*> readMaybe str2
 
+-- monadic style
+plusStrNumbers' ∷ (Read a, Num a) ⇒ String → String → Maybe a
+plusStrNumbers' str1 str2 = do
+  n1 ← readMaybe str1
+  n2 ← readMaybe str2
+  pure $ n1 + n2
+
 locateByName ∷ PhoneNumbers → Locations → Name → Maybe Location
-locateByName pnumbers locs name =
-  lookup name pnumbers >>= flip lookup locs
+locateByName phoneNumbers locations name = lookup name phoneNumbers >>= flip lookup locations
 
 phoneNumbers ∷ PhoneNumbers
 phoneNumbers =
@@ -65,11 +72,37 @@ locations =
     ("0911", "Bayern")
   ]
 
+-- >>> doubleStrNumber "21" ∷ Maybe Int
+-- Just 42
+--
+-- >>> doubleStrNumber "x" ∷ Maybe Int
+-- Nothing
+--
+-- >>> plusStrNumbers "20" "22" ∷ Maybe Int
+-- Just 42
+--
+-- >>> plusStrNumbers "10" "x" ∷ Maybe Int
+-- Nothing
+--
+-- >>> plusStrNumbers' "20" "22" ∷ Maybe Int
+-- Just 42
+--
+-- >>> plusStrNumbers' "10" "x" ∷ Maybe Int
+-- Nothing
+--
+-- >>> locateByName phoneNumbers locations "Wuppertal"
+-- Just "Nordrhein-Westfalen"
+--
+-- >>> locateByName phoneNumbers locations "Koblenz"
+-- Nothing
+
 main ∷ IO ()
 main = do
   print (doubleStrNumber "21" ∷ Maybe Int) --------------------- Just 42
   print (doubleStrNumber "x" ∷ Maybe Int) ---------------------- Nothing
   print (plusStrNumbers "20" "22" ∷ Maybe Int) ----------------- Just 42
   print (plusStrNumbers "10" "x" ∷ Maybe Int) ------------------ Nothing
+  print (plusStrNumbers' "20" "22" ∷ Maybe Int) ---------------- Just 42
+  print (plusStrNumbers' "10" "x" ∷ Maybe Int) ----------------- Nothing
   print $ locateByName phoneNumbers locations "Wuppertal" ------ Just "Nordrhein-Westfalen"
   print $ locateByName phoneNumbers locations "Koblenz" -------- Nothing

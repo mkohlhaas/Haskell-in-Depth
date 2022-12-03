@@ -2,12 +2,12 @@
 
 import Control.Monad.Reader (MonadReader (local), Reader, ask, asks, runReader, when)
 
-data Config = Config {verbose ∷ Bool, debug ∷ Bool {- more config params -}}
+newtype Config = Config {verbose ∷ Bool {- more config params -}}
 
 type ConfigM = Reader Config
 
 getConfiguration ∷ IO Config
-getConfiguration = pure Config {verbose = True, debug = False {- more config params -}}
+getConfiguration = pure Config {verbose = True {- more config params -}}
 
 work ∷ ConfigM ()
 work = do

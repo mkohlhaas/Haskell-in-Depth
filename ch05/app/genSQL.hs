@@ -8,10 +8,12 @@ import Data.Functor ((<&>))
 import Data.Text (Text)
 import qualified Data.Text as T
 import qualified Data.Text.IO as TIO
+import Data.Coerce (coerce)
 
-type LineNumber = Int
+newtype LineNumber = LineNumber Int
+  deriving (Show)
 
-data ErrorMsg = WrongFormat LineNumber Text
+data ErrorMsg = WrongFormat !LineNumber !Text
   deriving (Show)
 
 type SQL = Writer [ErrorMsg] Text
@@ -24,7 +26,7 @@ processLine (_, T.splitOn ":" → [s1, s2]) = pure $ genInsert s1 s2
 processLine (i, s) = tell [WrongFormat i s] >> pure ""
 
 genSQL ∷ Text → SQL
-genSQL txt = txt & T.lines & zip [1 ..] & traverse processLine <&> T.concat
+genSQL txt = txt & T.lines & zip (fmap LineNumber [1 ..]) & traverse processLine <&> T.concat
 
 testData ∷ Text
 testData = "Pen:Bob\nGlass:Mary:10\nPencil:Alice\nBook:Bob\nBottle"
