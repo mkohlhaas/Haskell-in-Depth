@@ -10,8 +10,8 @@ import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
 -- used after leaving the directory and before entering it. NOTE: This task requires traversing the whole
 -- directory tree, no matter the maximum depth given!
 data DUEntryAction
-  = TraverseDir {dirpath ∷ FilePath, requireReporting ∷ Bool}
-  | RecordFileSize {fsize ∷ FileOffset}
+  = TraverseDir {dirpath ∷ !FilePath, requireReporting ∷ !Bool}
+  | RecordFileSize {fsize ∷ !FileOffset}
   | None
 
 type FileSize = FileOffset

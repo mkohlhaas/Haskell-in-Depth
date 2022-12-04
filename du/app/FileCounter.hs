@@ -3,8 +3,10 @@
 module FileCounter (fileCount) where
 
 import App
+import Slist
 import System.Directory.Extra (listFiles)
 import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
+import Prelude hiding (filter)
 
 type NumberOfFiles = Int
 
@@ -14,5 +16,5 @@ fileCount = do
   fileStatus ← currentPathStatus
   when (isDirectory fileStatus && depth <= maxDepth cfg) $ do
     traverseDirectoryWith fileCount
-    files ← liftIO $ listFiles path
+    files ← liftIO $ slist <$> listFiles path
     tell [(path, length $ filter (checkExtension cfg) files)]

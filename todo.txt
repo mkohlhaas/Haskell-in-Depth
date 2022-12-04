@@ -51,7 +51,7 @@ QUALITY ASSURANCE
 ✓ 7 Error handling and logging
 ✗ 8 Writing tests
 ✓ 9 Haskell data and code at run time
-✓ 10 Benchmarking and profiling
+✗ 10 Benchmarking and profiling
 
 ADVANCED HASKELL
 

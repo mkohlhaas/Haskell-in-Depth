@@ -24,6 +24,7 @@ executable du
         filepath >=1.4.1 && <1.5,
         mtl >=2.0 && <2.3,
         optparse-applicative >=0.14 && <0.17,
+        slist >= 0.2.1 && < 0.3,
         text ==1.2.*,
         text-show >=3.0 && <4,
         unix-compat ==0.5.*

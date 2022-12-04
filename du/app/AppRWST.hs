@@ -11,4 +11,4 @@ runMyApp app config = execRWSTW app (initialEnv config)
 execRWSTW ∷ Monad m ⇒ RWST r w s m a → r → s → m w
 execRWSTW m r s = do
   (_, _, w) ← runRWST m r s
-  return w
+  pure w
