@@ -2,7 +2,7 @@
 
 module Main where
 
-import App
+import App (AppConfig (AppConfig), FileOffset, runMyApp)
 import Data.Text.IO as TIO (putStr)
 import DirTree (dirTree)
 import DiskUsage (diskUsage)

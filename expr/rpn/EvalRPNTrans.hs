@@ -26,6 +26,12 @@ pop'' = do
   put $ tail xs
   pure $ head xs
 
+-- >>> guard False ∷ Maybe ()
+-- Nothing
+--
+-- >>> guard True ∷ Maybe ()
+-- Just ()
+
 pop ∷ EvalM Integer
 pop = do
   (x : xs) ← get -- if pattern matchting fails, we get `Nothing` b/c of do block MonadFail desugaring (p. 177)
@@ -48,9 +54,22 @@ readSafe str = maybe empty pure (readMaybe str)
 evalRPN ∷ String → Maybe Integer
 evalRPN str = evalStateT evalRPN' []
   where
+    evalRPN' ∷ StateT Stack Maybe Integer
     evalRPN' = traverse_ step (words str) >> oneElementOnStack' >> pop
+    step ∷ String → StateT Stack Maybe ()
     step "+" = processTops (+)
     step "*" = processTops (*)
     step "-" = processTops (-)
     step t = readSafe t >>= push
+    processTops ∷ (Integer → Integer → Integer) → StateT Stack Maybe ()
     processTops op = flip op <$> pop <*> pop >>= push
+
+-- >>> evalRPN "2 3 + 6 *"
+-- Just 30
+--
+-- >>> evalRPN "2 3"
+-- Nothing
+--
+-- >>> evalRPN "2 +"
+-- Nothing
+

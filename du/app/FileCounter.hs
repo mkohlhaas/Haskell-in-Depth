@@ -3,7 +3,7 @@
 module FileCounter (fileCount) where
 
 import App
-import Slist
+import Slist (filter, slist)
 import System.Directory.Extra (listFiles)
 import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
 import Prelude hiding (filter)

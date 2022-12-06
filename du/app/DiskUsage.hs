@@ -22,6 +22,7 @@ type TotalSize = FileOffset
 diskUsage ∷ MyApp (FilePath, FileSize) TotalSize ()
 diskUsage = liftM2 decide ask currentPathStatus >>= processEntry
   where
+    decide ∷ AppEnv → FileStatus → DUEntryAction
     decide AppEnv {..} fileStatus
       | isDirectory fileStatus =
         TraverseDir path (depth <= maxDepth cfg)
@@ -29,6 +30,7 @@ diskUsage = liftM2 decide ask currentPathStatus >>= processEntry
         RecordFileSize (fileSize fileStatus)
       | otherwise = None
 
+    processEntry ∷ DUEntryAction → MyApp (FilePath, FileSize) TotalSize ()
     processEntry None = pure ()
     processEntry RecordFileSize {fsize} = modify (+ fsize)
     processEntry TraverseDir {..} = do

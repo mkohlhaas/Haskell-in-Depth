@@ -36,5 +36,4 @@ currentPathStatus = do
   liftIO $ fileStatusFn path
 
 checkExtension ∷ AppConfig → FilePath → Bool
-checkExtension cfg fp =
-  maybe True (`isExtensionOf` fp) (extension cfg)
+checkExtension cfg fp = maybe True (`isExtensionOf` fp) (extension cfg)

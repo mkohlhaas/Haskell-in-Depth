@@ -1,13 +1,13 @@
 - Order of Code Examples
-  - `../du/app/AppTypes.hs`
-  - `../du/app/AppRWST.hs`
-  - `../du/app/Utils.hs`
-  - `../du/app/DirTree.hs`
-  - `../du/app/Main.hs`
-  - `../du/app/FileCounter.hs`
-  - `../du/app/DiskUsage.hs`
-  - `../du/app/Main.hs`
-  - `../du/app/AppRTWTST.hs`
+  - `./app/AppTypes.hs`
+  - `./app/AppRWST.hs`
+  - `./app/Utils.hs`
+  - `./app/DirTree.hs`
+  - `./app/Main.hs`
+  - `./app/FileCounter.hs`
+  - `./app/DiskUsage.hs`
+  - `./app/Main.hs`
+  - `./app/AppRTWTST.hs`
 
 #### Disk Usage
 ```

@@ -43,3 +43,13 @@ evalRPN str = evalState (runMaybeT evalRPN') []
     step "-" = processTops (-)
     step t = readSafe t >>= push
     processTops op = flip op <$> pop <*> pop >>= push
+
+-- >>> evalRPN "2 3 + 6 *"
+-- Just 30
+
+-- >>> evalRPN "2 3"
+-- Nothing
+
+-- >>> evalRPN "2 +"
+-- Nothing
+

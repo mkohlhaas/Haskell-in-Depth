@@ -4,7 +4,7 @@ module AppTypes where
 
 import System.PosixCompat.Files (FileStatus, getFileStatus, getSymbolicLinkStatus)
 
--- read-only (defined by command line params provided by the user)
+-- read-only (defined via command line params provided by the user)
 data AppConfig = AppConfig
   { basePath ∷ !FilePath,
     maxDepth ∷ !Int,
