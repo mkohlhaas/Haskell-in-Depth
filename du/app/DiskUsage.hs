@@ -4,7 +4,7 @@
 module DiskUsage (diskUsage) where
 
 import App
-import Utils (checkExtension, currentPathStatus, traverseDirectoryWith)
+import Utils (checkExtension, currentFileStatus, traverseDirectoryWith)
 
 -- To compute the total space used by some directory, we have to find the difference between the total space
 -- used after leaving the directory and before entering it. NOTE: This task requires traversing the whole
@@ -20,7 +20,7 @@ type TotalSize = FileOffset
 
 -- liftM2 decide ask currentPathStatus ≅ decide <$> ask <*> currentPathStatus
 diskUsage ∷ MyApp (FilePath, FileSize) TotalSize ()
-diskUsage = liftM2 decide ask currentPathStatus >>= processEntry
+diskUsage = liftM2 decide ask currentFileStatus >>= processEntry
   where
     decide ∷ AppEnv → FileStatus → DUEntryAction
     decide AppEnv {..} fileStatus

@@ -3,14 +3,14 @@
 module DirTree where
 
 import App
-import Utils (currentPathStatus, traverseDirectoryWith)
+import Utils (currentFileStatus, traverseDirectoryWith)
 
 type Depth = Int
 
 dirTree ∷ MyApp (FilePath, Depth) s ()
 dirTree = do
   AppEnv {..} ← ask
-  fileStatus ← currentPathStatus
+  fileStatus ← currentFileStatus
   when (isDirectory fileStatus && depth <= maxDepth cfg) $ do
-    tell [(takeBaseName path, depth)]
+    when (depth /= 0) (tell [(takeBaseName path, depth)])
     traverseDirectoryWith dirTree

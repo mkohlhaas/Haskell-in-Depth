@@ -6,7 +6,8 @@ import App
 import Data.Foldable (traverse_)
 import System.Directory (listDirectory)
 
-traverseDirectoryWith ∷ MyApp le s () → MyApp le s ()
+-- monadic style without do notation
+traverseDirectoryWith ∷ MyApp logentry state () → MyApp logentry state ()
 traverseDirectoryWith app =
   asks path >>= liftIO . listDirectory >>= traverse_ go
   where
@@ -17,7 +18,8 @@ traverseDirectoryWith app =
             depth = depth env + 1
           }
 
-traverseDirectoryWith' ∷ MyApp le s () → MyApp le s ()
+-- monadic style with do notation
+traverseDirectoryWith' ∷ MyApp logentry state () → MyApp logentry state ()
 traverseDirectoryWith' app = do
   curPath ← asks path
   fPaths ← liftIO $ listDirectory curPath
@@ -30,8 +32,8 @@ traverseDirectoryWith' app = do
             depth = depth env + 1
           }
 
-currentPathStatus ∷ MyApp l s FileStatus
-currentPathStatus = do
+currentFileStatus ∷ MyApp logentry state FileStatus
+currentFileStatus = do
   AppEnv {fileStatusFn, path} ← ask
   liftIO $ fileStatusFn path
 

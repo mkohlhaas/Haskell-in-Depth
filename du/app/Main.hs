@@ -21,7 +21,7 @@ type Depth = Int
 treeEntryBuilder ∷ (FilePath, Depth) → Builder
 treeEntryBuilder (fp, n) = fromString indent <> fromString fp
   where
-    indent = replicate (2 * n) ' '
+    indent = replicate (2 * (n - 1)) ' '
 
 type FileSize = FileOffset
 
