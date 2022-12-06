@@ -47,7 +47,9 @@ instance Applicative m ⇒ Alternative (MaybeT m) where
   (MaybeT mx) <|> (MaybeT my) = MaybeT ((<|>) <$> mx <*> my)
 
 instance (Alternative m, Monad m) ⇒ MonadPlus (MaybeT m) where
+  mzero ∷ (Alternative m, Monad m) ⇒ MaybeT m a
   mzero = empty
+  mplus ∷ (Alternative m, Monad m) ⇒ MaybeT m a → MaybeT m a → MaybeT m a
   mplus = (<|>)
 
 instance MonadIO m ⇒ MonadIO (MaybeT m) where

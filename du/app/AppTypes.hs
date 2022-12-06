@@ -12,7 +12,7 @@ data AppConfig = AppConfig
     followSymlinks ∷ !Bool
   }
 
--- read-write (run-time info)
+-- read-write (run-time info) via State's `local` function
 data AppEnv = AppEnv
   { cfg ∷ !AppConfig,
     path ∷ !FilePath, -------------------------- current file path

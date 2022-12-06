@@ -37,19 +37,22 @@ readSafe str = maybe empty pure (readMaybe str)
 evalRPN ∷ String → Maybe Integer
 evalRPN str = evalState (runMaybeT evalRPN') []
   where
+    evalRPN' ∷ EvalM Integer
     evalRPN' = traverse_ step (words str) >> oneElementOnStack >> pop
+    step ∷ String → EvalM ()
     step "+" = processTops (+)
     step "*" = processTops (*)
     step "-" = processTops (-)
     step t = readSafe t >>= push
+    processTops ∷ (Integer → Integer → Integer) → EvalM ()
     processTops op = flip op <$> pop <*> pop >>= push
 
 -- >>> evalRPN "2 3 + 6 *"
 -- Just 30
-
+--
 -- >>> evalRPN "2 3"
 -- Nothing
-
+--
 -- >>> evalRPN "2 +"
 -- Nothing
 

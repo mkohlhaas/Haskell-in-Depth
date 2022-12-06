@@ -13,12 +13,12 @@ import STExcept (SunInfoException (ConfigError))
 import System.Exit (ExitCode)
 import System.IO.Error (ioeGetFileName, isDoesNotExistError)
 
-data AppMode = FileInput FilePath | Interactive
+data AppMode = FileInput !FilePath | Interactive
 
 data Params
   = Params
-      AppMode -- mode
-      FilePath -- config file
+      !AppMode -- mode
+      !FilePath -- config file
 
 mkParams ∷ Parser Params
 mkParams = Params <$> (fileInput <|> interactive) <*> configFile

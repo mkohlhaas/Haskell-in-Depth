@@ -48,9 +48,9 @@ getSunTimes gc d = do
     noTimeHandler e = throwM e
 
 data TimeZoneInfo = TimeZoneInfo
-  { gmtOffset ∷ Int,
-    abbreviation ∷ String,
-    dst ∷ String
+  { gmtOffset ∷ !Int,
+    abbreviation ∷ !String,
+    dst ∷ !String
   }
   deriving (Show, Generic, FromJSON)
 

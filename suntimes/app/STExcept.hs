@@ -1,4 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
+{-# LANGUAGE InstanceSigs #-}
 
 module STExcept where
 
@@ -8,19 +9,20 @@ import qualified Network.HTTP.Client as NC
 import Network.HTTP.Req (HttpException (..))
 import Types (GeoCoords)
 
-data RequestError = EmptyRequest | WrongDay Text
+data RequestError = EmptyRequest | WrongDay !Text
   deriving (Show)
 
 data SunInfoException
-  = UnknownLocation Text
-  | UnknownTime GeoCoords
-  | FormatError RequestError
-  | ServiceAPIError String
-  | NetworkError SomeException
+  = UnknownLocation !Text
+  | UnknownTime !GeoCoords
+  | FormatError !RequestError
+  | ServiceAPIError !String
+  | NetworkError !SomeException
   | ConfigError
   deriving (Exception)
 
 instance Show SunInfoException where
+  show ∷ SunInfoException → String
   show (UnknownLocation _) = "Failed while determining coordinates"
   show (UnknownTime _) = "Failed while determining sunrise/sunset times"
   show (FormatError er) = show er

@@ -17,6 +17,15 @@ divPure ∷ Int → Int → Int
 divPure _ 0 = throw DivByZero
 divPure a b = a `div` b
 
+-- >>> mult 0 (divPure 1 0)
+-- 0
+--
+-- >>> (divPure 10 2, divPure 5 0)
+-- DivByZero
+--
+-- >>> fst (divPure 10 2, divPure 5 0)
+-- 5
+
 divIO ∷ Int → Int → IO Int
 divIO _ 0 = throwIO DivByZero
 divIO a b = pure (a `div` b)
@@ -27,6 +36,15 @@ divM a b = pure (a `div` b)
 
 testComputation ∷ MonadThrow m ⇒ Int → Int → Int → m Int
 testComputation a b c = divM a b >>= divM c
+
+-- >>> testComputation 6 3 10
+-- 5
+--
+-- >>> testComputation 6 3 10 ∷ Maybe Int
+-- Just 5
+--
+-- >>> testComputation 6 0 10 ∷ Maybe Int
+-- Nothing
 
 divTestWithRecovery ∷ Int → Int → Int → IO Int
 divTestWithRecovery a b c = try (testComputation a b c) <&> (fromRight 0 ∷ Either MyArithException _ → _)
@@ -42,6 +60,12 @@ divTestIO a b c = testComputation a b c `catch` handler
   where
     handler ∷ MyArithException → IO Int
     handler e = putStrLn ("We've got an exception: " ++ show e ++ ". Using default value 0") >> pure 0
+
+-- >>> divTestIO 6 3 10
+-- 5
+--
+-- >>> divTestIO 6 0 10
+-- 0
 
 main ∷ IO ()
 main = do

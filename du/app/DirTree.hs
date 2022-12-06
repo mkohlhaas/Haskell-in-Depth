@@ -7,7 +7,7 @@ import Utils (currentFileStatus, traverseDirectoryWith)
 
 type Depth = Int
 
-dirTree ∷ MyApp (FilePath, Depth) s ()
+dirTree ∷ MyApp (FilePath, Depth) state ()
 dirTree = do
   AppEnv {..} ← ask
   fileStatus ← currentFileStatus

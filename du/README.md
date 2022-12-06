@@ -1,4 +1,5 @@
 - Order of Code Examples
+  - `./app/App.hs`
   - `./app/AppTypes.hs`
   - `./app/AppRWST.hs`
   - `./app/AppRTWTST.hs`
