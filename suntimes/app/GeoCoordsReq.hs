@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module GeoCoordsReq (getCoords) where
@@ -7,7 +8,7 @@ import Control.Monad.Catch (MonadThrow (throwM), handle)
 import Control.Monad.Reader (MonadIO (liftIO), MonadReader (ask))
 import qualified Data.Text as T
 import Data.Text.Encoding (encodeUtf8)
-import Network.HTTP.Req (GET (GET), NoReqBody (NoReqBody), defaultHttpConfig, header, https, jsonResponse, req, responseBody, runReq, (/:), (=:))
+import Network.HTTP.Req (GET (GET), NoReqBody (NoReqBody), defaultHttpConfig, header, https, jsonResponse, req, responseBody, runReq, (/:), (=:), Url, Scheme (Https), Option, Req, JsonResponse)
 import STExcept (SunInfoException (UnknownLocation), rethrowReqException)
 import Types (Address, GeoCoords, WebAPIAuth (agent, email))
 import Debug.Trace (trace)
@@ -20,7 +21,10 @@ import Debug.Trace (trace)
 getCoords ∷ Address → MyApp GeoCoords
 getCoords addr = handle rethrowReqException $ do
   wauth ← ask
-  let endPoint = https "nominatim.openstreetmap.org" /: "search"
+  let
+      endPoint ∷ Url 'Https
+      endPoint = https "nominatim.openstreetmap.org" /: "search"
+      reqParams ∷ Option scheme
       reqParams =
         mconcat
           [ "q" =: addr,
@@ -29,6 +33,7 @@ getCoords addr = handle rethrowReqException $ do
             "email" =: email wauth,
             header "User-Agent" (encodeUtf8 $ agent wauth)
           ]
+      request ∷ Req (JsonResponse [GeoCoords])
       request = req GET endPoint NoReqBody jsonResponse reqParams
   res ← liftIO $ responseBody <$> runReq defaultHttpConfig request
   case res of

@@ -1,3 +1,4 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveAnyClass #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -12,7 +13,7 @@ import Data.Aeson (FromJSON)
 import qualified Data.Text as T
 import Data.Time (TimeZone (timeZoneName, timeZoneSummerOnly), UTCTime, ZonedTime, defaultTimeLocale, formatTime, minutesToTimeZone, utc, utcToZonedTime)
 import GHC.Generics (Generic)
-import Network.HTTP.Req (GET (GET), NoReqBody (NoReqBody), defaultHttpConfig, http, https, jsonResponse, req, responseBody, runReq, (/:), (=:))
+import Network.HTTP.Req (GET (GET), NoReqBody (NoReqBody), defaultHttpConfig, http, https, jsonResponse, req, responseBody, runReq, (/:), (=:), Url, Scheme (Https, Http), Option)
 import STExcept (SunInfoException (ServiceAPIError, UnknownTime), rethrowReqException)
 import Types (GeoCoords (..), SunTimes (..), WebAPIAuth (timeZoneDBkey), When (..))
 
@@ -26,7 +27,9 @@ getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
       r ← req GET endPoint NoReqBody jsonResponse reqParams
       pure (results $ responseBody r)
   where
+    endPoint ∷ Url 'Https
     endPoint = https "api.sunrise-sunset.org" /: "json"
+    reqParams ∷ Option 'Https
     reqParams =
       mconcat $
         [ "lat" =: lat,
@@ -34,6 +37,7 @@ getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
           "formatted" =: (0 ∷ Int)
         ]
           ++ whenToOptions w
+    whenToOptions ∷ When → [Option 'Https]
     whenToOptions Now = []
     whenToOptions (On day) = ["date" =: formatTime defaultTimeLocale "%Y-%m-%d" day]
 
@@ -57,7 +61,10 @@ data TimeZoneInfo = TimeZoneInfo
 lookupTimeZone ∷ GeoCoords → UTCTime → MyApp TimeZone
 lookupTimeZone GeoCoords {..} t = do
   key ← asks timeZoneDBkey
-  let ep = http "api.timezonedb.com" /: "v2.1" /: "get-time-zone"
+  let
+      ep ∷ Url 'Http
+      ep = http "api.timezonedb.com" /: "v2.1" /: "get-time-zone"
+      reqParams ∷ Option 'Http
       reqParams =
         mconcat
           [ "key" =: key,
@@ -73,7 +80,9 @@ lookupTimeZone GeoCoords {..} t = do
         req GET ep NoReqBody jsonResponse reqParams
   pure (timeZoneInfo2TimeZone $ responseBody r)
   where
+    secondsToTimeZone ∷ Int → TimeZone
     secondsToTimeZone s = minutesToTimeZone (s `div` 60)
+    timeZoneInfo2TimeZone ∷ TimeZoneInfo → TimeZone
     timeZoneInfo2TimeZone TimeZoneInfo {..} =
       (secondsToTimeZone gmtOffset)
         { timeZoneName = abbreviation,

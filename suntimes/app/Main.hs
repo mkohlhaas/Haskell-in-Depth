@@ -1,4 +1,4 @@
-import App (runMyApp)
+import App (runMyApp, MyApp)
 import Control.Exception (IOException)
 import Control.Monad.Catch (Handler (Handler), MonadThrow (throwM), SomeException, catches)
 import Control.Monad.Trans (MonadIO (liftIO))
@@ -12,6 +12,7 @@ import ProcessRequest (processInteractively, processMany)
 import STExcept (SunInfoException (ConfigError))
 import System.Exit (ExitCode)
 import System.IO.Error (ioeGetFileName, isDoesNotExistError)
+import Options.Applicative.Common (ParserInfo)
 
 data AppMode = FileInput !FilePath | Interactive
 
@@ -23,8 +24,11 @@ data Params
 mkParams ∷ Parser Params
 mkParams = Params <$> (fileInput <|> interactive) <*> configFile
   where
+    fileInput ∷ Parser AppMode
     fileInput = FileInput <$> strOption (long "file" <> short 'f' <> metavar "FILENAME" <> help "Input file")
+    interactive ∷ Parser AppMode
     interactive = flag Interactive Interactive (long "interactive" <> short 'i' <> help "Interactive mode")
+    configFile ∷ Parser String
     configFile = strOption (long "conf" <> short 'c' <> value "config.json" <> showDefault <> metavar "CONFIGNAME" <> help "Configuration file")
 
 withConfig ∷ Params → IO ()
@@ -32,6 +36,7 @@ withConfig (Params appMode config) = do
   wauth ← eitherDecodeStrict <$> B.readFile config
   either (const $ throwM ConfigError) (runMyApp $ run appMode) wauth
   where
+    run ∷ AppMode → MyApp ()
     run (FileInput fname) = liftIO (TIO.readFile fname) >>= processMany . T.lines
     run Interactive = processInteractively
 
@@ -43,6 +48,7 @@ main =
                 Handler printOtherErrors
               ]
   where
+    opts ∷ ParserInfo Params
     opts = info (mkParams <**> helper) (fullDesc <> progDesc "Reports sunrise/sunset times for the specified location")
 
     parserExit ∷ ExitCode → IO ()
