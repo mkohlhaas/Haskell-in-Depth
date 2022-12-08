@@ -16,12 +16,13 @@ import GHC.Generics (Generic)
 import Network.HTTP.Req (GET (GET), NoReqBody (NoReqBody), defaultHttpConfig, http, https, jsonResponse, req, responseBody, runReq, (/:), (=:), Url, Scheme (Https, Http), Option)
 import STExcept (SunInfoException (ServiceAPIError, UnknownTime), rethrowReqException)
 import Types (GeoCoords (..), SunTimes (..), WebAPIAuth (timeZoneDBkey), When (..))
+import System.Console.GetOpt (getOpt)
 
 newtype SunTimesWrapper dt = SunTimesWrapper {results ∷ SunTimes dt}
   deriving (Show, Generic, FromJSON)
 
 getSunTimesUTC ∷ GeoCoords → When → MyApp (SunTimes UTCTime)
-getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
+getSunTimesUTC GeoCoords {..} when = handle rethrowReqException $
   liftIO $
     runReq defaultHttpConfig $ do
       r ← req GET endPoint NoReqBody jsonResponse reqParams
@@ -36,19 +37,19 @@ getSunTimesUTC GeoCoords {..} w = handle rethrowReqException $
           "lng" =: lon,
           "formatted" =: (0 ∷ Int)
         ]
-          ++ whenToOptions w
+          ++ whenToOptions when
     whenToOptions ∷ When → [Option 'Https]
     whenToOptions Now = []
     whenToOptions (On day) = ["date" =: formatTime defaultTimeLocale "%Y-%m-%d" day]
 
 getSunTimes ∷ GeoCoords → When → MyApp (SunTimes ZonedTime)
-getSunTimes gc d = do
-  SunTimes {..} ← getSunTimesUTC gc d `catch` noTimeHandler
-  ltz ← lookupTimeZone gc sunrise `catchAll` const (pure utc)
+getSunTimes getCoords atDay = do
+  SunTimes {..} ← getSunTimesUTC getCoords atDay `catch` noTimeHandler
+  ltz ← lookupTimeZone getCoords sunrise `catchAll` const (pure utc)
   pure $ SunTimes (utcToZonedTime ltz sunrise) (utcToZonedTime ltz sunset)
   where
     noTimeHandler ∷ MonadThrow m ⇒ SunInfoException → m a
-    noTimeHandler (ServiceAPIError _) = throwM (UnknownTime gc)
+    noTimeHandler (ServiceAPIError _) = throwM (UnknownTime getCoords)
     noTimeHandler e = throwM e
 
 data TimeZoneInfo = TimeZoneInfo
@@ -75,9 +76,7 @@ lookupTimeZone GeoCoords {..} t = do
             "fields" =: ("gmtOffset,abbreviation,dst" ∷ T.Text),
             "by" =: ("position" ∷ T.Text)
           ]
-  r ← liftIO $
-      runReq defaultHttpConfig $
-        req GET ep NoReqBody jsonResponse reqParams
+  r ← liftIO $ runReq defaultHttpConfig $ req GET ep NoReqBody jsonResponse reqParams
   pure (timeZoneInfo2TimeZone $ responseBody r)
   where
     secondsToTimeZone ∷ Int → TimeZone

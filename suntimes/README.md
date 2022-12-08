@@ -7,5 +7,5 @@ Paris
 06/17/22 @ Paris
     05:44:32 CEST
     21:58:46 CEST
-$ cabal run suntimes -- -f ./data/ssrequests.txt
+$ cabal run suntimes -- -f ./data/strequests.txt
 ```
