@@ -11,3 +11,11 @@ main = do
   printTemp paperBurning
   printTemp absoluteZero
   printTemp diff
+
+-- Output:
+-- Temperature: 451.0°F
+-- Units: F
+-- Temperature: -273.15°C
+-- Units: C
+-- Temperature: 505.92777777777775°C
+-- Units: C

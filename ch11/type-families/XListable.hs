@@ -17,7 +17,7 @@ data family XList a
 newtype instance XList () = XListUnit Integer
 
 -- [Bool]
---                                 bits (?)
+--                                 bits
 --                                  |  used bits
 --                                  |      |
 data instance XList Bool = XBits Integer Integer
@@ -52,7 +52,7 @@ instance XListable Bool where
   xheadMaybe ∷ XList Bool → Maybe Bool
   xheadMaybe (XBits bits n)
     | n == 0 = Nothing
-    | otherwise = Just $ odd bits
+    | otherwise = Just $ odd bits -- head is the right-most bit
 
 instance XListable Char where
   xempty ∷ XList Char
@@ -65,16 +65,17 @@ instance XListable Char where
 
 -- function that works with different list implementations.
 testXList ∷ (Eq a, XListable a) ⇒ a → Bool
-testXList a = xheadMaybe (xcons a xempty) == Just a
+testXList a = xheadMaybe (xcons a (xcons a (xcons a xempty))) == Just a
 
 -- >>> testXList ()
 -- True
-
+--
 -- >>> testXList True
 -- True
-
+--
 -- >>> testXList False
 -- True
-
+--
 -- >>> testXList 'c'
 -- True
+

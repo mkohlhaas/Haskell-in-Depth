@@ -2,8 +2,9 @@
 {-# LANGUAGE KindSignatures #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE UnicodeSyntax #-}
+{-# LANGUAGE InstanceSigs #-}
 
-module SuffixedStrings (SuffixedString, suffixed, asString) where
+module SuffixedStrings (SuffixedString, suffixed) where
 
 import Data.Proxy (Proxy (..))
 import GHC.TypeLits (KnownSymbol, Symbol, symbolVal)
@@ -16,11 +17,13 @@ newtype SuffixedString (suffix ∷ Symbol) = SuffixedString String
 suffixed ∷ String → SuffixedString suffix
 suffixed = SuffixedString
 
-asString ∷ ∀ suffix. KnownSymbol suffix ⇒ SuffixedString suffix → String
-asString (SuffixedString str) = str ++ "@" ++ symbolVal (Proxy ∷ Proxy suffix)
+instance KnownSymbol suffix ⇒ Show (SuffixedString suffix) where
+  show ∷ KnownSymbol suffix ⇒ SuffixedString suffix → String
+  show (SuffixedString str) = str ++ "@" ++ symbolVal (Proxy ∷ Proxy suffix)
 
--- >>> asString (suffixed "bravit" ∷ SuffixedString "teachers")
--- "bravit@teachers"
+-- >>> suffixed "bravit" ∷ SuffixedString "teachers"
+-- bravit@teachers
+--
+-- >>> suffixed "bravit" ∷ SuffixedString "devs"
+-- bravit@devs
 
--- >>> asString (suffixed "bravit" ∷ SuffixedString "devs")
--- "bravit@devs"

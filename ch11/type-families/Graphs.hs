@@ -45,12 +45,12 @@ newtype EdgesList = EdgesList [Edge EdgesList] -- Edge representation is not kno
 instance Graph EdgesList where
   type Vertex EdgesList = Int
   data Edge EdgesList = MkEdge1 (Vertex EdgesList) (Vertex EdgesList)
-  outEdges ∷ EdgesList → Vertex EdgesList → [Edge EdgesList]
   src ∷ Edge EdgesList → Vertex EdgesList
-  src = undefined
+  src (MkEdge1 v _) = v
   tgt ∷ Edge EdgesList → Vertex EdgesList
-  tgt = undefined
-  outEdges = undefined
+  tgt (MkEdge1 _ v)= v
+  outEdges ∷ EdgesList → Vertex EdgesList → [Edge EdgesList]
+  outEdges graph vertex = [] -- dummy implementation
 
 g1 ∷ EdgesList
 g1 = EdgesList [MkEdge1 0 1, MkEdge1 1 0]
@@ -59,13 +59,13 @@ g1 = EdgesList [MkEdge1 0 1, MkEdge1 1 0]
 
 -- >>> neighbors g1 0
 -- Prelude.undefined
-
+--
 -- >>> isEdgeLoopy g1 (MkEdge1 0 1)
 -- Prelude.undefined
-
+--
 -- >>> neighbors g2 "A"
 -- Prelude.undefined
-
+--
 -- >>> isEdgeLoopy g2 (MkEdge2 "A" "B")
 -- Prelude.undefined
 
@@ -81,12 +81,12 @@ newtype VertexMap = VertexMap (Map (Vertex VertexMap) [Vertex VertexMap])
 instance Graph VertexMap where
   type Vertex VertexMap = String
   data Edge VertexMap = MkEdge2 (Vertex VertexMap) (Vertex VertexMap)
-  outEdges ∷ VertexMap → Vertex VertexMap → [Edge VertexMap]
   src ∷ Edge VertexMap → Vertex VertexMap
-  src = undefined
+  src (MkEdge2 v _) = v
   tgt ∷ Edge VertexMap → Vertex VertexMap
-  tgt = undefined
-  outEdges = undefined
+  tgt (MkEdge2 _ v)= v
+  outEdges ∷ VertexMap → Vertex VertexMap → [Edge VertexMap]
+  outEdges graph vertex = [] -- dummy implementation
 
 g2 ∷ VertexMap
 g2 = VertexMap (Map.fromList [("A", ["B"]), ("B", ["A"])])

@@ -53,41 +53,41 @@ instance Simplifier Integer where
   simplify = id
 
 instance Simplifier Int where
-  simplify ∷ Int → Simplify Int -- Int → Integer
+  simplify ∷ Int → Simplify Int ---------- Int     → Integer
   simplify = fromIntegral
 
 instance Simplifier Double where
-  simplify ∷ Double → Simplify Double -- Double → Integer
+  simplify ∷ Double → Simplify Double ---- Double  → Integer
   simplify = round
 
 instance Simplifier String where
-  simplify ∷ String → Simplify String -- String → String
+  simplify ∷ String → Simplify String ---- String  → String
   simplify = id
 
 -- instance Simplifier Bool where
--- simplify ∷ Bool → Simplify Bool -- Bool → Integer
+-- simplify ∷ Bool → Simplify Bool ------- Bool    → Integer
 --   simplify False = 0
 --   simplify True = 1
 
 -- author's suggestion for Bool
 instance Simplifier Bool where
-  simplify ∷ Bool → Simplify Bool -- Bool → String
+  simplify ∷ Bool → Simplify Bool -------- Bool    → String
   simplify = show
 
 instance Simplifier Char where
-  simplify ∷ Char → Simplify Char -- Char → String
-  simplify = (: "")
+  simplify ∷ Char → Simplify Char -------- Char    → String
+  simplify = (: [])
 
 -- >>> :kind! Simplify Bool
 -- Simplify Bool ∷ Type
 -- = String
-
+--
 -- >>> simplify (3.14 ∷ Double)
 -- 3
-
+--
 -- >>> simplify True
 -- "True"
-
+--
 -- >>> simplify 'x'
 -- "x"
 
@@ -116,7 +116,7 @@ instance Widener Int where
 
 instance Widener Char where
   widen ∷ Char → Widen Char
-  widen c = [c]
+  widen = (: [])
 
 instance Widener Double where
   widen ∷ Double → Widen Double
@@ -127,10 +127,10 @@ instance Widener Integer where
   widen = show
 
 -- >>> :type widen False
--- widen False :: Int
+-- widen False ∷ Int
 --
 -- >>> :type widen (1 ∷ Int)
--- widen (1 ∷ Int) :: Integer
+-- widen (1 ∷ Int) ∷ Integer
 
 -- >>> widen False
 -- 0

@@ -44,7 +44,7 @@ ptrValue (Pointer p) = p * natVal (Proxy ∷ Proxy align)
 
 -- >>> show (Pointer 42 ∷ Pointer 4)
 -- "Pointer 42"
-
+--
 -- >>> ptrValue (Pointer 42 ∷ Pointer 4)
 -- 168
 
@@ -53,7 +53,7 @@ inc (Pointer p) = Pointer (p + 1)
 
 -- >>> inc (Pointer 42 ∷ Pointer 4)
 -- Pointer 43
-
+--
 -- >>> ptrValue $ inc (Pointer 42 ∷ Pointer 4)
 -- 172
 
@@ -66,13 +66,13 @@ maybePtr p
 
 -- >>> maybePtr 4 ∷ Maybe (Pointer 8)
 -- Nothing
-
+--
 -- >>> ptrValue <$> (maybePtr 4 ∷ Maybe (Pointer 8))
 -- Nothing
-
+--
 -- >>> maybePtr 8 ∷ Maybe (Pointer 4)
 -- Just (Pointer 2)
-
+--
 -- >>> ptrValue <$> (maybePtr 8 ∷ Maybe (Pointer 4))
 -- Just 8
 
@@ -82,13 +82,13 @@ zeroPtr = Pointer 0
 
 -- >>> ptrValue (zeroPtr ∷ Pointer 8)
 -- 0
-
+--
 -- >>> ptrValue (zeroPtr ∷ Pointer 4)
 -- 0
-
+--
 -- >>> inc (inc $ zeroPtr ∷ Pointer 4)
 -- Pointer 2
-
+--
 -- >>> ptrValue (inc (inc $ zeroPtr ∷ Pointer 4))
 -- 8
 

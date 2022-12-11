@@ -32,11 +32,6 @@ data TempUnits = F | C
 -- >>> :kind TempUnits
 -- TempUnits ∷ Type
 
--- >>> paperBurning - absoluteZero
--- Couldn't match type ‘'C’ with ‘'F’
--- Expected type: Temp 'F
---   Actual type: Temp 'C
-
 -- Sometimes we or the compiler need to disambiguate equally named values and corresponding promoted types.
 -- In these situations, a tick (') is used to mention a type and not a value.
 
@@ -49,6 +44,17 @@ paperBurning = 451
 
 absoluteZero ∷ Temp C
 absoluteZero = -273.15
+
+-- >>> paperBurning - paperBurning
+-- 0.0°F
+--
+-- >>> absoluteZero - absoluteZero
+-- 0.0°C
+--
+-- >>> paperBurning - absoluteZero
+-- Couldn't match type ‘'C’ with ‘'F’
+-- Expected type: Temp 'F
+--   Actual type: Temp 'C
 
 f2c ∷ Temp F → Temp C
 f2c (Temp f) = Temp ((f -32) * 5 / 9)
@@ -85,21 +91,16 @@ unit _ = unitName @u
 
 -- >>> unit absoluteZero
 -- "C"
-
+--
 -- >>> unit paperBurning
 -- "F"
-
--- >>> show absoluteZero
--- "-273.15\176C"
-
--- >>> show paperBurning
--- "451.0\176F"
-
--- >>> paperBurning - absoluteZero
--- Couldn't match type ‘'C’ with ‘'F’
--- Expected type: Temp 'F
---   Actual type: Temp 'C
-
+--
+-- >>> absoluteZero
+-- -273.15°C
+--
+-- >>> paperBurning
+-- 451.0°F
+--
 -- >>> f2c paperBurning - absoluteZero
 -- 505.92777777777775°C
 
@@ -113,3 +114,11 @@ main = do
   printTemp paperBurning
   printTemp absoluteZero
   printTemp diff
+
+-- Output:
+-- Temperature: 451.0°F
+-- Units: F
+-- Temperature: -273.15°C
+-- Units: C
+-- Temperature: 505.92777777777775°C
+-- Units: C

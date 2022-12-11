@@ -1,3 +1,5 @@
+- `temp-proxies`, `temp-type-apps` and `temp-kinds` are identical but use different implementations for UnitName.
+
 - Order of Code Examples
   - `$ cabal run temp-proxies`
     - `temperature/temp-proxies.hs`
@@ -26,8 +28,6 @@
   - `$ cabal run nummod-rank-n`
     - `nummod-rank-n/NumUtils.hs`
     - `nummod-rank-n/Main.hs`
-
-- `temp-proxies`, `temp-type-apps` and `temp-kinds` are identical but using different implementations for UnitName.
 
 - Sometimes we need to map types onto types.
   - Type families allow expressing such computations: they map one or several types to a result, which is also a type.

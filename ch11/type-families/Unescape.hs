@@ -21,6 +21,11 @@ newtype UnescapingChar = UnescapingChar {unescapingChar ∷ Char}
 
 -- Create a Show instance for our new Char without any escaping.
 -- Just a shameless copy of the Char's Show instance without escaping.
+-- https://hackage.haskell.org/package/base-4.17.0.0/docs/src/GHC.Show.html#line-188
+-- instance  Show Char  where
+--     showsPrec _ '\'' = showString "'\\''"
+--     showsPrec _ c    = showChar '\'' . showLitChar c . showChar '\''
+--     showList cs = showChar '"' . showLitString cs . showChar '"'
 instance Show UnescapingChar where
   showsPrec ∷ Int → UnescapingChar → ShowS
   showsPrec _ (UnescapingChar '\'') = showString "'\\''"
@@ -28,8 +33,11 @@ instance Show UnescapingChar where
   showList ∷ [UnescapingChar] → ShowS
   showList cs = showChar '"' . showLitString' (map unescapingChar cs) . showChar '"'
 
+-- In the original Show instance for Char there is this weird protectEsc function
+-- showLitChar c s | c > '\DEL' =  showChar '\\' (protectEsc isDec (shows (ord c)) s)
+
 showLitChar' ∷ Char → ShowS
-showLitChar' c s | c > '\DEL' = showChar c s
+showLitChar' c s | c > '\DEL' = showChar c s -- here is the main difference to the original Show instance for Char
 showLitChar' c s = showLitChar c s
 
 showLitString' ∷ String → ShowS
@@ -40,7 +48,7 @@ showLitString' (c : cs) s = showLitChar' c (showLitString' cs s)
 -- before
 -- >>> 'ë'
 -- '\235'
-
+--
 -- after
 -- >>> UnescapingChar 'ë'
 -- 'ë'
@@ -57,7 +65,7 @@ showLitString' (c : cs) s = showLitChar' c (showLitString' cs s)
 --     - `Either String String` becomes `Either [UnescapingChar] [UnescapingChar]`.
 --   - All unapplied type constructors (such as Maybe or Either) and concrete types (such as Int or Double) remain unaffected.
 
-type family ToUnescapingTF (a ∷ k) ∷ k where -- using PolyKinds
+type family ToUnescapingTF (a ∷ k) ∷ k where ------------------------ using PolyKinds
   ToUnescapingTF Char = UnescapingChar ------------------------------ Char becomes UnescapingChar
   ToUnescapingTF (t b ∷ k) = (ToUnescapingTF t) (ToUnescapingTF b) -- the applied type constructor needs recursion using currying
   ToUnescapingTF a = a ---------------------------------------------- everything else is left alone
@@ -94,13 +102,13 @@ type family ToUnescapingTF (a ∷ k) ∷ k where -- using PolyKinds
 class ToUnescaping a where
   toUnescaping ∷ a → ToUnescapingTF a
 
--- Due to using newtype for UnescapingChar, the type resulting from ToUnescapingTF t shares the same run-time representation as t.
+-- Due to using newtype for UnescapingChar, the type resulting from `ToUnescapingTF t` shares the same run-time representation as `t`.
 -- The unsafeCoerce function implements toUnescaping by doing nothing. Its only role is to persuade the type checker that everything is all right.
 instance Show a ⇒ ToUnescaping a where
   toUnescaping ∷ Show a ⇒ a → ToUnescapingTF a
   toUnescaping = unsafeCoerce
 
--- We can combine these two constraints into one using the ConstraintKinds GHC extension.
+-- We can combine these two constraints (ToUnescaping and Show) into one using the ConstraintKinds GHC extension.
 type UnescapingShow t = (ToUnescaping t, Show (ToUnescapingTF t))
 
 -- replacement for show
