@@ -3,7 +3,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 
 import Pointers (Pointer, inc, maybePtr, ptrValue, zeroPtr)
-import SuffixedStrings (SuffixedString, asString, suffixed)
+import SuffixedStrings (SuffixedString, suffixed)
 
 main ∷ IO ()
 main = do

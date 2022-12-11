@@ -2,7 +2,10 @@
 
 -- GADTs add type control to arithmetic expressions.
 
-data Expr' a = Lit' !a | Add' !(Expr' a) !(Expr' a) | Mult' !(Expr' a) !(Expr' a)
+data Expr' a
+  = Lit' !a
+  | Add' !(Expr' a) !(Expr' a)
+  | Mult' !(Expr' a) !(Expr' a)
 
 myeval' ∷ Num a ⇒ Expr' a → a
 myeval' (Lit' e) = e
@@ -10,7 +13,7 @@ myeval' (Add' e1 e2) = myeval' e1 + myeval' e2
 myeval' (Mult' e1 e2) = myeval' e1 * myeval' e2
 
 -- GADT Syntax (exactly the same as Expr')
--- Usable with `{-# LANGUAGE GADTSyntax #-}`
+-- Always returns an `Expr'' a`. (`{-# LANGUAGE GADTSyntax #-}` sufficient.)
 data Expr'' a where
   Lit'' ∷ a → Expr'' a
   Add'' ∷ Expr'' a → Expr'' a → Expr'' a
@@ -20,7 +23,10 @@ data Expr'' a where
 -- They are not numbers, so we cannot simply use the a type variable for Bool because then we'd have to deal with additions and multiplications of Booleans.
 -- Moreover, we’d like to have conditional expressions once we have Booleans.
 
--- GADT (expanded to support Booleans)
+-- GADT (expanded to support Booleans).
+-- GADTs allow data constructors to return a data type parameterized by specific types!
+-- In comparison, e.g. a `Maybe a` always returns a `Maybe a` for all `a`!
+-- Returns `Expr a` for `Num a`, `Expr a` for all `a` and `Expr Bool`.
 data Expr a where
   Add ∷ Num a ⇒ Expr a → Expr a → Expr a ------- SAME
   Mult ∷ Num a ⇒ Expr a → Expr a → Expr a ------ SAME
@@ -49,7 +55,8 @@ expr2 = If (IsZero expr1) (NumLit 0.5) (NumLit 1)
 -- >>> myeval expr2
 -- 0.5
 
--- Type Error
+-- Trying to construct a wrong expression.
+-- Compiler Error: No instance for (Num Bool) arising from a use of ‘IsZero’
 -- expr3 = IsZero (BoolLit True)
 
 -- It is hard to construct `Expr a`s programmatically.

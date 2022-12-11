@@ -12,6 +12,8 @@
 -- GADTs allow data constructors to return a data type parameterized by the specific types.
 -- GADTs allow keeping and using information about types after constructing a value.
 -- `a` can be String, Char, Bool. Compare this to e.g. `Maybe a` that doesn't restrict `a` in any way, shape or form.
+-- GADTs allow data constructors to return a data type parameterized by specific types!
+-- In comparison, e.g. a `Maybe a` always returns a `Maybe a` for all `a`!
 data DynValue a where ----------- GADTs come with a new syntax, `data/where`.
   S ∷ String → DynValue String -- returns a String parameterized dynamic value
   C ∷ Char → DynValue Char
@@ -23,7 +25,7 @@ getValue (S s) = s
 getValue (B b) = b
 getValue (C c) = c
 
--- Different equations of the function definition return different types depending on the constructor(!):
+-- Different equations of the function definition return DIFFERENT types depending on the constructor(!):
 
 -- >>> getValue (S "hello")
 -- "hello"
@@ -36,13 +38,16 @@ getValue (C c) = c
 
 printValue ∷ DynValue a → IO ()
 printValue (S s) = print s -- s has type String, and GHC knows how to print String
-printValue (B b) = print b -- b has type Bool, and GHC knows how to print Bool
-printValue (C c) = print c -- c has type Char, and GHC knows how to print Char
+printValue (B b) = print b -- b has type Bool,   and GHC knows how to print Bool
+printValue (C c) = print c -- c has type Char,   and GHC knows how to print Char
 
 -- works in the REPL
 -- >>> mapM_ printValue [S "hello", S "bye"]
 -- "hello"
 -- "bye"
+
+-- >>> map getValue [S "hello", S "bye"]
+-- ["hello","bye"]
 
 -- does NOT work
 -- >>> mapM_ printValue [S "hello", S "bye", B True]
@@ -50,7 +55,12 @@ printValue (C c) = print c -- c has type Char, and GHC knows how to print Char
 -- Expected type: DynValue String
 --   Actual type: DynValue Bool
 
--- Is it possible to write a function of the `a -> DynValue a` type?
+-- >>> map getValue [S "hello", S "bye", B True]
+-- Couldn't match type ‘Bool’ with ‘[Char]’
+-- Expected type: DynValue String
+--   Actual type: DynValue Bool
+
+-- Is it possible to write a function of  type `a → DynValue a` ?
 -- In fact, we cannot provide `DynValue a` for all types. We are limited to `a` being String, Char and Bool(!)
 
 -- Workaround Technique
@@ -69,6 +79,9 @@ fromString str
 -- Do something with the wrapped value by simply pattern matching:
 printWDValue ∷ WrappedDynValue → IO ()
 printWDValue (Wrap dv) = printValue dv
+
+-- Compiler Error: Couldn't match expected type ‘p’ with actual type ‘DynValue a’ because type variable ‘a’ would escape its scope.
+-- getWDValue (Wrap dv) = dv
 
 main ∷ IO ()
 main = mapM_ (printWDValue . fromString) ["y", "no", "xxx", "c"]
