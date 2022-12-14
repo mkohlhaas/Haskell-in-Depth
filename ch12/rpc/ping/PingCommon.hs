@@ -33,6 +33,7 @@ instance RemoteState Integer where
 --              |           |
 type RemotePing a = RSIO Integer a
 
+-- e.g.
 --             running number/number of pings
 --                 |
 -- PingAnswer "Ok" 2
