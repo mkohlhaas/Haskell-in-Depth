@@ -20,7 +20,6 @@ okVal = from Ok
 --   to ∷ Rep a x → a
 --   {-# MINIMAL from, to #-}
 
--- Not sure how to use Generic1 which can also be derived with the DeriveGeneric extension.
 -- >>> :info Generic1
 -- type Generic1 ∷ ∀ k. (k → Type) → Constraint
 -- class Generic1 f where
@@ -30,9 +29,19 @@ okVal = from Ok
 --   to1 ∷ ∀ (a ∷ k). Rep1 f a → f a
 --   {-# MINIMAL from1, to1 #-}
 
--- not very interesting in itself
 -- >>> from Ok
 -- M1 {unM1 = L1 (M1 {unM1 = U1})}
+
+-- >>> from Err
+-- M1 {unM1 = R1 (M1 {unM1 = U1})}
+
+-- L1 and R1 are the constructors of the sum type `:+:`.
+
+-- D1 is just a type alias for `M1 D`
+-- >>> :info D1
+-- type D1 ∷ ∀ k. Meta → (k → Type) → k → Type
+-- type D1 = M1 D ∷ Meta → (k → Type) → k → Type
+--   	-- Defined in ‘GHC.Generics’
 
 -- >>> :type from Ok
 -- from Ok
@@ -42,6 +51,7 @@ okVal = from Ok
 --         :+: C1 ('MetaCons "Err" 'PrefixI 'False) U1)
 --        x
 
+-- basically the same
 -- >>> :kind! (Rep Status)
 -- (Rep Status) ∷ Type → Type
 -- = D1
@@ -91,12 +101,14 @@ data Request = Request !String !Int
 --        (S1
 --           ('MetaSel
 --              'Nothing 'NoSourceUnpackedness 'SourceStrict 'DecidedStrict)
---           (Rec0 String)
+--           (Rec0 String) ← here is the String
 --         :*: S1
 --               ('MetaSel
 --                  'Nothing 'NoSourceUnpackedness 'SourceStrict 'DecidedStrict)
---               (Rec0 Int)))
+--               (Rec0 Int))) ← here is the Int
 
+-- Constructor field values at run time are represented with the K1 data constructor.
+-- In K1 we have the actual values.
 -- >>> from $ Request "Get" 10
 -- M1 {unM1 = M1 {unM1 = M1 {unM1 = K1 {unK1 = "Get"}} :*: M1 {unM1 = K1 {unK1 = 10}}}}
 

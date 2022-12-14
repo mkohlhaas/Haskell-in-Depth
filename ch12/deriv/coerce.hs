@@ -11,22 +11,44 @@ newtype Age = Age Int
 toAges ∷ [Int] → [Age]
 toAges = map Age
 
--- >>> toAges [1..5]
--- [Age 1,Age 2,Age 3,Age 4,Age 5]
+-- >>> toAges [20..25]
+-- [Age 20,Age 21,Age 22,Age 23,Age 24,Age 25]
 
--- >>> toAges [20, 30, 40, 50]
--- [Age 20,Age 30,Age 40,Age 50]
-
+-- At runtime [Int] and [Age] are EXACTLY the same.
+-- So toAges' should not do anything!
 toAges' ∷ [Int] → [Age]
 toAges' = coerce
 
--- >>> toAges' [1..5]
--- [Age 1,Age 2,Age 3,Age 4,Age 5]
+-- >>> toAges' [20..25]
+-- [Age 20,Age 21,Age 22,Age 23,Age 24,Age 25]
 
--- >>> toAges' [20, 30, 40, 50]
--- [Age 20,Age 30,Age 40,Age 50]
+-- `fmap`/`map` + constructor should always replaced with `coerce` (unless the functor instance is polymorphic)!
 
--- `fmap`/`map` should always replaced with `coerce` (unless the functor instance is polymorphic)!
+-- Just as the type system ensures terms are used correctly,
+-- and the kind system ensures types are logical,
+-- THE ROLE SYSTEM ENSURES COERCIONS ARE SAFE.
+
+-- Every type parameter for a given type constructor is assigned a role.
+-- PHANTOM:          Two types are always phantomly equal to one another.
+-- REPRESENTATIONAL: Types `a` and `b` are representationally equal iff it’s safe to reinterpret the memory of an `a` as a `b`.
+-- NOMINAL:          The everyday notion of type-equality, corresponding to the `a ∼ b` constraint. E.g. Int is nominally equal only to itself.
+
+-- There is an inherent ordering in roles:
+-- phantom < representational < nominal
+-- Upgrading from a weaker role to a stronger one is known as STRENGTHENING.
+
+-- Just like types, roles are automatically inferred by the compiler, though they can be specified explicitly.
+-- This inference works as follows:
+
+-- 1. All type parameters are assumed to be at role PHANTOM.
+-- 2. The type constructor (→) has two REPRESENTATIONAL roles; any type parameter applied to a (→) gets
+--    upgraded to representational. Data constructors count as applying (→).
+-- 3. The type constructor (∼) has two NOMINAL roles; any type parameter applied to a (∼) gets upgraded to
+--    nominal. GADTs and type families count as applying (∼).
+
+-- It's possible to strengthen an inferred role to a less permissive one by providing a role signature.
+
+-- It's only possible to STRENGTHEN inferred roles.
 
 -- `ageType` has representational role
 data Student ageType = Student !String !ageType deriving (Show)
@@ -77,4 +99,4 @@ check3' = unsafeCoerce
 main ∷ IO ()
 main = do
   print $ toAges [20, 30, 40, 50] --- [Age 20,Age 30,Age 40,Age 50]
-  print $ toAges' [20, 30, 40, 50] --  [Age 20,Age 30,Age 40,Age 50]
+  print $ toAges' [20, 30, 40, 50] -- [Age 20,Age 30,Age 40,Age 50]

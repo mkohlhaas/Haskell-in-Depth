@@ -2,7 +2,6 @@
 - `https://markkarpov.com/tutorial/th.html`
 - `https://serokell.io/blog/introduction-to-template-haskell`
   - `https://github.com/mkohlhaas/Serokell-Introduction-to-Template-Haskell`
-- `https://functional.works-hub.com/learn/a-brief-introduction-to-template-haskell-a2e73`
 - `https://wiki.haskell.org/A_practical_Template_Haskell_Tutorial`
 - `https://wiki.haskell.org/Template_Haskell`
 

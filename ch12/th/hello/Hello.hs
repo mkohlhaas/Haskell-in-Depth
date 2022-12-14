@@ -4,6 +4,10 @@ module Hello where
 
 import Language.Haskell.TH
 
+-- Better visit these web pages for an introduction to TH!
+-- - `https://serokell.io/blog/introduction-to-template-haskell`
+--   - `https://github.com/mkohlhaas/Serokell-Introduction-to-Template-Haskell`
+
 -- ExpQ(= Q Expr): [| 42 |]
 -- Exp/AST:        LitE (IntegerL 42)
 --
@@ -13,7 +17,7 @@ import Language.Haskell.TH
 --                 |
 --         in a mondadic context
 --
--- Splicing $(...) needs an ExpQ and "evaluates' it.
+-- Splicing $(...) needs an ExpQ and "evaluates" it, i.e. generates code.
 -- [| ... |] are called Oxford brackets.
 -- >>> $([| 42 |])
 -- 42
@@ -71,6 +75,7 @@ hello = [|putStrLn "Hello world"|]
 hello1 ∷ ExpQ
 hello1 = [|"Hello world"|]
 
+-- Staging
 -- It is not allowed to splice TH definitions created in the same module.
 -- GHC error: ‘hello1’ is used in a top-level splice, quasi-quote, or annotation, and must be imported, not defined locally.
 -- $hello1

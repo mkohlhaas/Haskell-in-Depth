@@ -44,7 +44,7 @@ type Operation = String
 
 -- a = input params of client
 -- b = output of server
--- Basically function `a → b` embedded in a monadic context.
+-- Basically function `a → b` embedded in a monadic context (monadic function).
 type RemoteAction st a b = a → RSIO st b
 
 type RPCTable st = [(Operation, RemoteAction st ByteString ByteString)]

@@ -18,8 +18,12 @@ data Shape
   | Square !Double
   | Triangle !Double !Double !Double
 
+-- The built-in syntax 'f and ''T can be used to construct names.
+-- The expression 'f gives a Name which refers to the value f.
+-- ''T gives a Name which refers to the type T.
+
 -- 3. Use TH splices to actually generate code for predicates.
--- We refer to the name of the data constructor in the TH splice using the '' prefix.
+-- We refer to the name of the data type in the TH splice using the '' prefix.
 $(mkPredicates ''Shape)
 
 -- >>> :type mkPredicates ''Shape
