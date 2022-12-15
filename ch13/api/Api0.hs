@@ -14,17 +14,17 @@ get _ = fail "Malformed request"
 -- >>> get ["title", "4711"]
 -- "Haskell in Depth"
 
--- >>> get ["foo", "4711"]
--- user error (Not implemented)
-
--- >>> get ["foo", "4711", "useless"]
--- user error (Malformed request)
-
 -- >>> get ["year", "4711"]
 -- "2021"
 
 -- >>> get ["rating", "4711"]
 -- "Great"
+
+-- >>> get ["foo", "4711"]
+-- user error (Not implemented)
+
+-- >>> get ["foo", "4711", "useless"]
+-- user error (Malformed request)
 
 check ∷ IO ()
 check = do
@@ -33,4 +33,4 @@ check = do
   putStrLn (if b == "OK" && y == "2021" then "OK" else "Wrong answer!")
 
 main ∷ IO ()
-main = check
+main = check -- "OK"

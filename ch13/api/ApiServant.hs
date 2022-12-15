@@ -3,6 +3,7 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE OverloadedStrings #-}
 {-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE NoStarIsType #-}
 
 import Data.Aeson (ToJSON)
 import GHC.Generics (Generic)
@@ -24,6 +25,13 @@ type BookInfoAPI =
     :<|> "title" :> Capture "id" BookID :> Get '[HTML] H.Html
     :<|> "year" :> Capture "id" BookID :> Get '[JSON] Int
     :<|> "rating" :> Capture "id" BookID :> Get '[JSON] Rating
+
+-- >>> :kind! Server BookInfoAPI
+-- Server BookInfoAPI ∷ *
+-- = Handler ServiceStatus
+--   :<|> ((Int → Handler (MarkupM ()))
+--   :<|> ((Int → Handler Int)
+--   :<|>  (Int → Handler Rating)))
 
 impl ∷ Server BookInfoAPI
 impl =
