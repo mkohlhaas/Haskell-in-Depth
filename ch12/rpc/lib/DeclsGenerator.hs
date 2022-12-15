@@ -39,11 +39,35 @@ genClientStub callee FuncInfo {..} = do
     stubBody = [|$(curryAll (arity ty)) $ $(dyn callee) name|]
 
 curryAll ∷ Int → Q Exp
-curryAll 0 = [|\f → f ()|] -- function with no args
+curryAll 0 = [|\fn → fn ()|] -- function with no args
 curryAll 1 = [|id|] --------- function with one arg
 curryAll n ------------------ function with several args
   | n > 1 = [|curry . $(curryAll (n -1))|]
   | otherwise = fail "curryAll argument can't be negative"
+
+-- ping ∷ RemotePing PingAnswer
+-- ping = ((\f → f ()) $ callRemote "ping")
+
+-- echo ∷ String → RemotePing String
+-- echo = (id $ callRemote "echo")
+
+-- echo1 ∷ String → String → RemotePing String
+-- echo2 = ((curry . id) $ callRemote "echo2")
+--
+-- echo2 ∷ String → String → String → RemotePing String
+-- echo3 = ((curry . (curry . id)) $ callRemote "echo3")
+
+-- >>> :type id
+-- id ∷ a → a
+
+-- >>> :type curry
+-- curry ∷ ((a, b) → c) → a → b → c
+
+-- >>> :type curry . curry
+-- curry . curry ∷ (((a, b1), b2) → c) → a → b1 → b2 → c
+
+-- >>> :type $(curryAll 3)
+-- $(curryAll 3) ∷ (((a, b1), b2) → c) → a → b1 → b2 → c
 
 ------------
 -- Server --
@@ -68,11 +92,23 @@ reifyFunc nm = do
   pure $ FuncInfo (nameBase nm) t
 
 uncurryAll ∷ Int → Q Exp
-uncurryAll 0 = [|(const ∷ a → () → a)|] -- type signature won't hurt but not necessary
+uncurryAll 0 = [|(const ∷ fn → () → fn)|]
 uncurryAll 1 = [|id|]
 uncurryAll n
   | n > 1 = [|uncurry . $(uncurryAll (n -1))|]
   | otherwise = fail "uncurryAll argument can't be negative"
+
+-- >>> :type uncurry
+-- uncurry ∷ (a → b → c) → (a, b) → c
+
+-- >>> :type uncurry . uncurry
+-- uncurry . uncurry ∷ (a → b1 → b2 → c) → ((a, b1), b2) → c
+
+-- >>> :type uncurry . uncurry . id
+-- uncurry . uncurry . id ∷ (a → b1 → b2 → c) → ((a, b1), b2) → c
+
+-- >>> :type $(uncurryAll 3)
+-- $(uncurryAll 3) ∷ (a → b1 → b2 → c) → ((a, b1), b2) → c
 
 ------------
 -- Common --
