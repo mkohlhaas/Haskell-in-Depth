@@ -1,4 +1,4 @@
-==========================================================================================
+=============================================================================================
 https://github.com/lovasko/tablize
 https://serokell.io/blog/type-families-haskell
 https://serokell.io/blog/haskell-type-level-witness
@@ -12,7 +12,7 @@ https://holmusk.dev/blog/2021-08-20-Exploring-Template-Haskell.html
 https://github.com/jhrcek/hs-playground/blob/main/template-haskell-intro/presentation.odp
 https://www.reddit.com/r/haskell/comments/s33jnu/typed_template_haskell_in_ghc_9/
 Ch. 12.3.2: RPC
-==========================================================================================
+=============================================================================================
 1. https://github.com/mkohlhaas/Dependent-Types (proofs)
 2. https://github.com/mkohlhaas/Haskell-in-Depth: safe elevator chapter
 3. https://github.com/mkohlhaas/Functional-Programming-Made-Easier
@@ -31,7 +31,15 @@ optparse-applicative
 text
 text builder
 transformers
-==========================================================================================
+=============================================================================================
+1.1 OpalEye & Rel8                                                           1.2 CS410 & PLFA
+    |                                                                                    |
+    +---------------------------------------+--------------------------------------------+
+                                            |
+                              2. Ch. 13.2 Haskell in Depth
+ - https://hackage.haskell.org/package/fin-0.2.1/docs/src/Data.Type.Nat.html#ProofPlusNZero
+ - write own Nat library based on https://github.com/mkohlhaas/Dependent-Types
+=============================================================================================
 Haskell in Depth
 
 CORE HASKELL
